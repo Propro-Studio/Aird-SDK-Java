@@ -24,12 +24,13 @@ public class DDAParserTest {
 
 //    String filePath1 = "D:\\AirdTest\\ComboComp2\\File2.json";
 //    String filePath1 = "D:\\ComboCompTest\\Aird\\DDA-Agilent-PXD004712-Set 3_F1.json";
+    String filePath0= "D:\\AirdTest\\2023-007_BEH-Neg_QC01.json";
     String filePath1= "C:\\Users\\LMS\\Desktop\\File1.json";
     String filePath2 = "D:\\ComboCompTest\\Aird\\DDA-Sciex-MTBLS733-SampleA_1.json";
 
     @Test
     public void testXICSpeed() throws Exception {
-        BaseParser parser = BaseParser.buildParser(filePath1);
+        BaseParser parser = BaseParser.buildParser(filePath0);
         AirdInfo airdInfo = parser.getAirdInfo();
         try {
             List<DDAMs> allMsList = ((DDAParser) parser).readAllToMemory();
