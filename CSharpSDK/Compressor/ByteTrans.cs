@@ -9,6 +9,7 @@
  */
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace AirdSDK.Compressor
 {
@@ -18,9 +19,12 @@ namespace AirdSDK.Compressor
         public static byte[] shortToByte(short[] src)
         {
             var bytes = new byte[src.Length * 2];
+
             for (var i = 0; i < src.Length; i++)
             {
-                BitConverter.GetBytes(src[i]).CopyTo(bytes, i * 2);
+                var value = src[i];
+                bytes[i * 2] = (byte)value;
+                bytes[(i * 2) + 1] = (byte)(value >> 8);
             }
 
             return bytes;
@@ -29,13 +33,19 @@ namespace AirdSDK.Compressor
         //将int数组转化为byte数组
         public static byte[] intToByte(int[] src)
         {
-            var bytes = new byte[src.Length * 4];
-            for (var i = 0; i < src.Length; i++)
+            byte[] byteArray = new byte[src.Length * 4];
+            Span<byte> byteSpan = byteArray.AsSpan();
+
+            for (int index = 0; index < src.Length; ++index)
             {
-                BitConverter.GetBytes(src[i]).CopyTo(bytes, i * 4);
+                int value = src[index];
+                byteSpan[index * 4] = (byte)value;
+                byteSpan[(index * 4) + 1] = (byte)(value >> 8);
+                byteSpan[(index * 4) + 2] = (byte)(value >> 16);
+                byteSpan[(index * 4) + 3] = (byte)(value >> 24);
             }
 
-            return bytes;
+            return byteArray;
         }
 
         //将float数组转化为byte数组
@@ -65,13 +75,8 @@ namespace AirdSDK.Compressor
         //将byte数组转化为float数组,使用BigEndian进行转换
         public static int[] byteToInt(byte[] src)
         {
-            int[] fArray = new int[src.Length / 4];
-            for (int i = 0; i < fArray.Length; i++)
-            {
-                fArray[i] = BitConverter.ToInt32(src, i * 4);
-            }
-
-            return fArray;
+            var intArray = MemoryMarshal.Cast<byte, int>(src);
+            return intArray.ToArray();
         }
     }
 }
