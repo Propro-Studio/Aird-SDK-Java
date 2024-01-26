@@ -10,9 +10,9 @@
 
 namespace AirdSDK.Enums
 {
-    public class MsLevel
+    public static class MsLevel
     {
-        public static string MS1 = "1";
-        public static string MS2 = "2";
+        public const string MS1 = "1";
+        public const string MS2 = "2";
     }
 }

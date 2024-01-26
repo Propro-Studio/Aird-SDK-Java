@@ -11,10 +11,10 @@
 namespace AirdSDK.Enums
 {
    
-    public class Scene
+    public static class Scene
     {
-        public static string Computation = "Computation";
-        public static string Storage = "Storage";
-        public static string Search = "Search";
+        public const string Computation = "Computation";
+        public const string Storage = "Storage";
+        public const string Search = "Search";
     }
 }
