@@ -12,16 +12,29 @@ namespace AirdSDK.Constants;
 
 public class SymbolConst
 {
-    public static string COMMA = ",";
-    public static string TAB = "\t";
-    public static string RETURN = "\r";
-    public static string DOT = ".";
-    public static string DELIMITER = "-";
-    public static string UNDERLINE = "_";
-    public static string BAR = "|";
-    public static string SPACE = " ";
-    public static string LEFT_SLASH = "/";
-    public static string RIGHT_SLASH = "\\";
-    public static string DOUBLE_QUOTA = "\"";
-    public static string QUOTA = "'";
+    public const string COMMA = ",";
+    public const string TAB = "\t";
+    public const string RETURN = "\r";
+    public const string DOT = ".";
+    public const string DELIMITER = "-";
+    public const string BAR = "|";
+    public const string SPACE = " ";
+    public const string AMPERSAND = "&";
+    public const string ASTERISK = "*";
+    public const string AT = "@";
+    public const string BACKSLASH = "\\";
+    public const string COLON = ":";
+    public const string DOLLAR = "$";
+    public const string DOUBLEQUOTE = "\"";
+    public const string EQUAL = "=";
+    public const string EXCLAMATION = "!";
+    public const string HASH = "#";
+    public const string HYPHEN = "-";
+    public const string PERCENT = "%";
+    public const string PLUS = "+";
+    public const string QUESTION = "?";
+    public const string SINGLEQUOTE = "'";
+    public const string SLASH = "/";
+    public const string TILDE = "~";
+    public const string UNDERSCORE = "_";
 }

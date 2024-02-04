@@ -9,24 +9,27 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
 
 namespace AirdSDK.Utils;
 
 public class NetworkUtil
 {
     //获取本地IP的方法
-    public static string getHostIP()
+    public static List<string> GetHostIpList()
     {
-        var host = Dns.GetHostEntry(Dns.GetHostName());
-        foreach (var ip in host.AddressList)
+        List<string> ipList = new List<string>();
+        foreach (IPAddress address in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
         {
-            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            if (address.AddressFamily == AddressFamily.InterNetwork)
             {
-                return Convert.ToString(ip);
+                string ip = Convert.ToString(address);
+                ipList.Add(ip);
             }
         }
 
-        return "Unknown IP Address";
+        return ipList;
     }
 }
