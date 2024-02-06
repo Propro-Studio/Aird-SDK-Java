@@ -172,8 +172,8 @@ public class ColumnParser {
             startPtr += spectraIdLengths[k];
             byte[] intensityBytes = readByte(startPtr, intensityLengths[k]);
             startPtr += intensityLengths[k];
-            int[] spectraIds = decodeAsSortedInteger(spectraIdBytes);
-            int[] ints = decode(intensityBytes);
+            int[] spectraIds = fastDecodeAsSortedInteger(spectraIdBytes);
+            int[] ints = fastDecode(intensityBytes);
             HashMap<Integer, Double> map = new HashMap<>();
             //解码intensity
             for (int t = 0; t < spectraIds.length; t++) {
@@ -215,9 +215,25 @@ public class ColumnParser {
         }
     }
 
+    public int[] fastDecodeAsSortedInteger(byte[] origin) {
+        if (origin.length > 16) {
+            return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(origin));
+        } else {
+            return ByteTrans.byteToInt(origin);
+        }
+    }
+
     public int[] decode(byte[] origin) {
         if (origin.length > 16) {
             return new VarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
+        } else {
+            return ByteTrans.byteToInt(origin);
+        }
+    }
+
+    public int[] fastDecode(byte[] origin) {
+        if (origin.length > 16) {
+            return new VarByteWrapper().decode(ByteTrans.byteToInt(origin));
         } else {
             return ByteTrans.byteToInt(origin);
         }
