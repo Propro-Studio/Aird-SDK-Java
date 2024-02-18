@@ -43,7 +43,7 @@ public class ColumnIndex {
 
     int[] rts; //矩阵纵坐标
 
-    int[] spectraIds; //spectraId的数组文件坐标delta值
+    long[] spectraIds; //spectraId的数组文件坐标delta值
 
-    int[] intensities; //强度数组坐标delta
+    long[] intensities; //强度数组坐标delta
 }

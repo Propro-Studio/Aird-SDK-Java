@@ -86,12 +86,12 @@ public class ColumnParser {
             }
             if (columnIndex.getSpectraIds() == null) {
                 byte[] spectraIdBytes = readByte(columnIndex.getStartSpecrtaIdListPtr(), columnIndex.getEndSpecrtaIdListPtr());
-                int[] spectraIds = decode(spectraIdBytes);
+                long[] spectraIds = decodeLong(spectraIdBytes);
                 columnIndex.setSpectraIds(spectraIds);
             }
             if (columnIndex.getIntensities() == null) {
                 byte[] intensityBytes = readByte(columnIndex.getStartIntensityListPtr(), columnIndex.getEndIntensityListPtr());
-                int[] intensities = decode(intensityBytes);
+                long[] intensities = decodeLong(intensityBytes);
                 columnIndex.setIntensities(intensities);
             }
         }
@@ -158,19 +158,19 @@ public class ColumnParser {
             IntPair rightRtPair = AirdMathUtil.binarySearch(index.getRts(), (int) (rtEnd * 1000));
             rightRtIndex = rightRtPair.left();
         }
-        int[] spectraIdLengths = index.getSpectraIds();
-        int[] intensityLengths = index.getIntensities();
+        long[] spectraIdLengths = index.getSpectraIds();
+        long[] intensityLengths = index.getIntensities();
         long startPtr = index.getStartPtr();
         System.out.println("耗时A0:"+(System.currentTimeMillis() - startTime));
-        for (int i = 0; i < leftMzIndex; i++) {
-            startPtr += spectraIdLengths[i];
-            startPtr += intensityLengths[i];
-        }
+//        for (int i = 0; i < leftMzIndex; i++) {
+//            startPtr += spectraIdLengths[i];
+//            startPtr += intensityLengths[i];
+//        }
         List<Map<Integer, Double>> columnMapList = new ArrayList<>();
         System.out.println("耗时A:"+(System.currentTimeMillis() - startTime));
         TreeSet<Integer> spectraIdSet = new TreeSet<>();
         for (int k = leftMzIndex; k <= rightMzIndex; k++) {
-            byte[] spectraIdBytes = readByte(startPtr, spectraIdLengths[k]);
+            byte[] spectraIdBytes = readByte(startPtr, spectraIdLengths[k] - star);
             startPtr += spectraIdLengths[k];
             byte[] intensityBytes = readByte(startPtr, intensityLengths[k]);
             startPtr += intensityLengths[k];
@@ -234,6 +234,10 @@ public class ColumnParser {
 
     public int[] decode(byte[] origin) {
         return new VarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
+    }
+
+    public long[] decodeLong(byte[] origin) {
+        return ByteTrans.byteToLong(new ZstdWrapper().decode(origin));
     }
 
     public int[] fastDecode(byte[] origin) {

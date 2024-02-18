@@ -17,7 +17,7 @@ public class TestSliceV2 {
     public void testEIC() throws IOException {
         long start = System.currentTimeMillis();
 
-        ColumnParser parserNew = new ColumnParser(indexPath2);
+        ColumnParser parserNew = new ColumnParser(indexPath);
         System.out.println("索引初始化时间为:"+(System.currentTimeMillis() - start)+"毫秒");
         start = System.currentTimeMillis();
 //        ColumnParser parserOld = new ColumnParser(oldIndexPath);

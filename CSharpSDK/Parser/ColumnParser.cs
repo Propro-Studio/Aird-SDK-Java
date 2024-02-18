@@ -80,14 +80,14 @@ public class ColumnParser
             if (columnIndex.spectraIds == null)
             {
                 byte[] spectraIdBytes = readByte(columnIndex.startSpecrtaIdListPtr, columnIndex.endSpecrtaIdListPtr);
-                long[] spectraIds = decodeLong(spectraIdBytes);
+                int[] spectraIds = decode(spectraIdBytes);
                 columnIndex.spectraIds = spectraIds;
             }
 
             if (columnIndex.intensities == null)
             {
                 byte[] intensityBytes = readByte(columnIndex.startIntensityListPtr, columnIndex.endIntensityListPtr);
-                long[] intensities = decodeLong(intensityBytes);
+                int[] intensities = decode(intensityBytes);
                 columnIndex.intensities = intensities;
             }
         }
@@ -178,14 +178,14 @@ public class ColumnParser
             rightRtIndex = rightRtPair.left;
         }
 
-        long[] spectraIdLengths = index.spectraIds;
-        long[] intensityLengths = index.intensities;
+        int[] spectraIdLengths = index.spectraIds;
+        int[] intensityLengths = index.intensities;
         long startPtr = index.startPtr;
-        // for (int i = 0; i < leftMzIndex; i++)
-        // {
-        //     startPtr += spectraIdLengths[i];
-        //     startPtr += intensityLengths[i];
-        // }
+        for (int i = 0; i < leftMzIndex; i++)
+        {
+            startPtr += spectraIdLengths[i];
+            startPtr += intensityLengths[i];
+        }
 
         List<Dictionary<int, double>> columnMapList = new List<Dictionary<int, double>>();
 

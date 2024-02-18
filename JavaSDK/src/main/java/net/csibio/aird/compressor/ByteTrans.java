@@ -46,6 +46,38 @@ public class ByteTrans {
     }
 
     /**
+     * byte to long conversion
+     *
+     * @param bytes the bytes array
+     * @return the converted data
+     */
+    public static long[] byteToLong(byte[] bytes) {
+        return byteToLong(bytes, ByteOrder.LITTLE_ENDIAN);
+    }
+
+    /**
+     * byte to long conversion
+     *
+     * @param bytes the bytes array
+     * @param order the target byte order
+     * @return the converted data
+     */
+    public static long[] byteToLong(byte[] bytes, ByteOrder order) {
+        order = (order == null ? ByteOrder.LITTLE_ENDIAN : order);
+        ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+        byteBuffer = ByteBuffer.wrap(byteBuffer.array());
+        byteBuffer.order(order);
+        LongBuffer longs = byteBuffer.asLongBuffer();
+        long[] longValues = new long[longs.capacity()];
+        for (int i = 0; i < longs.capacity(); i++) {
+            longValues[i] = longs.get(i);
+        }
+
+        byteBuffer.clear();
+        return longValues;
+    }
+
+    /**
      * double to Float conversion
      *
      * @param doubles the doubles array
