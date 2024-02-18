@@ -121,7 +121,6 @@ public class ColumnParser {
     }
 
     public Xic calcXic(Double mzStart, Double mzEnd, Double rtStart, Double rtEnd, Double precursorMz) throws IOException {
-        long startTime = System.currentTimeMillis();
         if (columnInfo.getIndexList() == null || columnInfo.getIndexList().size() == 0) {
             return null;
         }
@@ -198,7 +197,6 @@ public class ColumnParser {
             iteration++;
         }
 
-        System.out.println("耗时:" + (System.currentTimeMillis() - startTime));
         return new Xic(rts, intensities);
     }
 
@@ -212,10 +210,6 @@ public class ColumnParser {
 
     public int[] decode(byte[] origin) {
         return new VarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
-    }
-
-    public long[] decodeLong(byte[] origin) {
-        return ByteTrans.byteToLong(new ZstdWrapper().decode(origin));
     }
 
     public int[] fastDecode(byte[] origin) {
