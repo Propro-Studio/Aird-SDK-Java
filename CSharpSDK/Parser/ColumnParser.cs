@@ -67,28 +67,28 @@ public class ColumnParser
             if (columnIndex.mzs == null)
             {
                 byte[] mzsByte = readByte(columnIndex.startMzListPtr, columnIndex.endMzListPtr);
-                int[] mzsAsInt = decodeAsSortedInteger(mzsByte);
+                int[] mzsAsInt = decodeToSorted(mzsByte);
                 columnIndex.mzs = mzsAsInt;
             }
 
             if (columnIndex.rts == null)
             {
                 byte[] rtsByte = readByte(columnIndex.startRtListPtr, columnIndex.endRtListPtr);
-                int[] rtsAsInt = decodeAsSortedInteger(rtsByte);
+                int[] rtsAsInt = decodeToSorted(rtsByte);
                 columnIndex.rts = rtsAsInt;
             }
 
             if (columnIndex.spectraIds == null)
             {
                 byte[] spectraIdBytes = readByte(columnIndex.startSpecrtaIdListPtr, columnIndex.endSpecrtaIdListPtr);
-                int[] spectraIds = decode(spectraIdBytes);
+                long[] spectraIds = decodeLong(spectraIdBytes);
                 columnIndex.spectraIds = spectraIds;
             }
 
             if (columnIndex.intensities == null)
             {
                 byte[] intensityBytes = readByte(columnIndex.startIntensityListPtr, columnIndex.endIntensityListPtr);
-                int[] intensities = decode(intensityBytes);
+                long[] intensities = decodeLong(intensityBytes);
                 columnIndex.intensities = intensities;
             }
         }
@@ -179,14 +179,14 @@ public class ColumnParser
             rightRtIndex = rightRtPair.left;
         }
 
-        int[] spectraIdLengths = index.spectraIds;
-        int[] intensityLengths = index.intensities;
+        long[] spectraIdLengths = index.spectraIds;
+        long[] intensityLengths = index.intensities;
         long startPtr = index.startPtr;
-        for (int i = 0; i < leftMzIndex; i++)
-        {
-            startPtr += spectraIdLengths[i];
-            startPtr += intensityLengths[i];
-        }
+        // for (int i = 0; i < leftMzIndex; i++)
+        // {
+        //     startPtr += spectraIdLengths[i];
+        //     startPtr += intensityLengths[i];
+        // }
 
         List<Dictionary<int, double>> columnMapList = new List<Dictionary<int, double>>();
 
@@ -196,8 +196,8 @@ public class ColumnParser
             startPtr += spectraIdLengths[k];
             byte[] intensityBytes = readByte(startPtr, intensityLengths[k]);
             startPtr += intensityLengths[k];
-            int[] spectraIds = decodeAsSortedInteger(spectraIdBytes);
-            int[] ints = decode(intensityBytes);
+            int[] spectraIds = fastDecodeToSorted(spectraIdBytes);
+            int[] ints = fastDecode(intensityBytes);
             Dictionary<int, double> map = new Dictionary<int, double>();
             //解码intensity
             for (int t = 0; t < spectraIds.Length; t++)
@@ -240,27 +240,28 @@ public class ColumnParser
         return new Xic(rts, intensities);
     }
 
-    public int[] decodeAsSortedInteger(byte[] origin)
+    public int[] decodeToSorted(byte[] origin)
     {
-        if (origin.Length > 16)
-        {
-            return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
-        }
-        else
-        {
-            return ByteTrans.byteToInt(origin);
-        }
+        return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
     }
-
+    
     public int[] decode(byte[] origin)
     {
-        if (origin.Length > 16)
-        {
-            return new VarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
-        }
-        else
-        {
-            return ByteTrans.byteToInt(origin);
-        }
+        return new VarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
+    }
+    
+    public int[] fastDecodeToSorted(byte[] origin)
+    {
+        return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(origin));
+    }
+    
+    public int[] fastDecode(byte[] origin)
+    {
+        return new VarByteWrapper().decode(ByteTrans.byteToInt(origin));
+    }
+
+    public long[] decodeLong(byte[] origin)
+    {
+        return ByteTrans.byteToLong(new ZstdWrapper().decode(origin));
     }
 }

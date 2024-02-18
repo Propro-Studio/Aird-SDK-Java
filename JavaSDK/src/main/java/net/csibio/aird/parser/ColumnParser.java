@@ -121,6 +121,7 @@ public class ColumnParser {
     }
 
     public Xic calcXic(Double mzStart, Double mzEnd, Double rtStart, Double rtEnd, Double precursorMz) throws IOException {
+        long startTime = System.currentTimeMillis();
         if (columnInfo.getIndexList() == null || columnInfo.getIndexList().size() == 0) {
             return null;
         }
@@ -157,16 +158,17 @@ public class ColumnParser {
             IntPair rightRtPair = AirdMathUtil.binarySearch(index.getRts(), (int) (rtEnd * 1000));
             rightRtIndex = rightRtPair.left();
         }
-
         int[] spectraIdLengths = index.getSpectraIds();
         int[] intensityLengths = index.getIntensities();
         long startPtr = index.getStartPtr();
+        System.out.println("耗时A0:"+(System.currentTimeMillis() - startTime));
         for (int i = 0; i < leftMzIndex; i++) {
             startPtr += spectraIdLengths[i];
             startPtr += intensityLengths[i];
         }
         List<Map<Integer, Double>> columnMapList = new ArrayList<>();
-
+        System.out.println("耗时A:"+(System.currentTimeMillis() - startTime));
+        TreeSet<Integer> spectraIdSet = new TreeSet<>();
         for (int k = leftMzIndex; k <= rightMzIndex; k++) {
             byte[] spectraIdBytes = readByte(startPtr, spectraIdLengths[k]);
             startPtr += spectraIdLengths[k];
@@ -174,68 +176,67 @@ public class ColumnParser {
             startPtr += intensityLengths[k];
             int[] spectraIds = fastDecodeAsSortedInteger(spectraIdBytes);
             int[] ints = fastDecode(intensityBytes);
-            HashMap<Integer, Double> map = new HashMap<>();
+            HashMap<Integer, Double> map = new HashMap<>();  //key为spectraId，value为intensity
+
             //解码intensity
             for (int t = 0; t < spectraIds.length; t++) {
-                if (spectraIds[t] >= leftRtIndex && spectraIds[t] <= rightRtIndex) {
+                int spectraId = spectraIds[t];
+                if (spectraId >= leftRtIndex && spectraId <= rightRtIndex) {
                     double intensity = ints[t];
                     if (intensity < 0) {
                         intensity = Math.pow(2, -intensity / 100000d);
                     }
-                    map.put(spectraIds[t], intensity / intPrecision);
+                    map.put(spectraId, intensity / intPrecision);
+                    spectraIdSet.add(spectraId);
                 }
             }
 
             columnMapList.add(map);
         }
-
+        System.out.println("耗时B:"+(System.currentTimeMillis() - startTime));
         int rtRange = rightRtIndex - leftRtIndex + 1;
         double[] intensities = new double[rtRange];
         double[] rts = new double[rtRange];
         int iteration = 0;
-        for (int i = leftRtIndex; i <= rightRtIndex; i++) {
+        for (Integer id : spectraIdSet) {
             double intensity = 0;
-            for (int j = 0; j < columnMapList.size(); j++) {
-                if (columnMapList.get(j).containsKey(i)){
-                    intensity += columnMapList.get(j).get(i);
+            for (Map<Integer, Double> map : columnMapList) {
+                if (map.containsKey(id)) {
+                    intensity += map.get(id);
                 }
             }
             intensities[iteration] = intensity;
-            rts[iteration] = index.getRts()[i] / 1000d;
+            rts[iteration] = index.getRts()[id] / 1000d;
             iteration++;
         }
+//        for (int id = leftRtIndex; id <= rightRtIndex; id++) {
+//            double intensity = 0;
+//            for (Map<Integer, Double> map : columnMapList) {
+//                if (map.containsKey(id)) {
+//                    intensity += map.get(id);
+//                }
+//            }
+//            intensities[iteration] = intensity;
+//            rts[iteration] = index.getRts()[id] / 1000d;
+//            iteration++;
+//        }
+        System.out.println("耗时C:"+(System.currentTimeMillis() - startTime));
         return new Xic(rts, intensities);
     }
 
     public int[] decodeAsSortedInteger(byte[] origin) {
-        if (origin.length > 16) {
-            return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
-        } else {
-            return ByteTrans.byteToInt(origin);
-        }
+        return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
     }
 
     public int[] fastDecodeAsSortedInteger(byte[] origin) {
-        if (origin.length > 16) {
-            return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(origin));
-        } else {
-            return ByteTrans.byteToInt(origin);
-        }
+        return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(origin));
     }
 
     public int[] decode(byte[] origin) {
-        if (origin.length > 16) {
-            return new VarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
-        } else {
-            return ByteTrans.byteToInt(origin);
-        }
+        return new VarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
     }
 
     public int[] fastDecode(byte[] origin) {
-        if (origin.length > 16) {
-            return new VarByteWrapper().decode(ByteTrans.byteToInt(origin));
-        } else {
-            return ByteTrans.byteToInt(origin);
-        }
+        return new VarByteWrapper().decode(ByteTrans.byteToInt(origin));
     }
 }

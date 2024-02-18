@@ -47,7 +47,31 @@ namespace AirdSDK.Compressor
 
             return byteArray;
         }
+        
+        //将long数组转化为byte数组
+        public static byte[] longToByte(long[] src)
+        {
+            int byteLength = src.Length * sizeof(long);
+            byte[] byteArray = new byte[byteLength];
+            Buffer.BlockCopy(src, 0, byteArray, 0, byteLength);
+            return byteArray;
+        }
 
+        public static long[] byteToLong(byte[] byteArray)
+        {
+            int longCount = byteArray.Length / sizeof(long);
+            long[] longArray = new long[longCount];
+
+            Buffer.BlockCopy(byteArray, 0, longArray, 0, byteArray.Length);
+
+            for (int i = 0; i < longCount; i++)
+            {
+                longArray[i] = BitConverter.ToInt64(byteArray, i * sizeof(long));
+            }
+
+            return longArray;
+        }
+        
         //将float数组转化为byte数组
         public static byte[] floatToByte(float[] src)
         {

@@ -10,16 +10,27 @@ import java.io.IOException;
 public class TestSliceV2 {
 
     static String indexPath = "F:\\测试\\SA1.cjson";
+    static String indexPath2 = "F:\\测试\\SampleA_1.cjson";
     static String oldIndexPath = "F:\\测试\\V1\\SA1.cjson";
 
     @Test
     public void testEIC() throws IOException {
-        ColumnParser parserNew = new ColumnParser(indexPath);
-        ColumnParser parserOld = new ColumnParser(oldIndexPath);
+        long start = System.currentTimeMillis();
+
+        ColumnParser parserNew = new ColumnParser(indexPath2);
+        System.out.println("索引初始化时间为:"+(System.currentTimeMillis() - start)+"毫秒");
+        start = System.currentTimeMillis();
+//        ColumnParser parserOld = new ColumnParser(oldIndexPath);
         Xic newXic = parserNew.calcXicByMz(313.1733, 0.015);
+        System.out.println("构建EIC单次的时间:"+(System.currentTimeMillis() - start)+"毫秒");
+        start = System.currentTimeMillis();
+        for (int i = 0; i < 10; i++) {
+            Xic xic = parserNew.calcXicByMz(313.1733+i*5, 0.015);
+        }
+        System.out.println("构建EIC 10次的时间:"+(System.currentTimeMillis() - start)+"毫秒");
 //        Xic oldXic = parserOld.calcXicByMz(313.1733, 0.015);
-//        System.out.println(JSON.toJSONString(newXic.getRts()));
-        System.out.println(JSON.toJSONString(newXic.getInts()));
+        System.out.println(JSON.toJSONString(newXic.getRts()));
+//        System.out.println(JSON.toJSONString(newXic.getInts()));
 //        System.out.println(JSON.toJSONString(oldXic.getRts()));
 //        System.out.println(JSON.toJSONString(oldXic.getInts()));
     }

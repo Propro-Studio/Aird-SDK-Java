@@ -40,9 +40,9 @@ public class ColumnIndex
 
     public int[] rts; //矩阵纵坐标
 
-    public int[] spectraIds; //spectraId的数组文件坐标delta值
+    public long[] spectraIds; //spectraId的数组文件坐标
 
-    public int[] intensities; //强度数组坐标delta
+    public long[] intensities; //强度数组坐标
 
     public string toString()
     {
