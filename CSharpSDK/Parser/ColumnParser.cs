@@ -60,7 +60,7 @@ public class ColumnParser
 
     public void parseColumnIndex()
     {
-        List<ColumnIndex> indexList = columnInfo.indexList;
+        List<AirdSDK.Beans.ColumnIndex> indexList = columnInfo.indexList;
         foreach (var columnIndex in indexList)
         {
             if (columnIndex.mzs == null)
@@ -134,7 +134,7 @@ public class ColumnParser
             return null;
         }
 
-        ColumnIndex index = null;
+        AirdSDK.Beans.ColumnIndex index = null;
         if (precursorMz != null)
         {
             foreach (var columnIndex in columnInfo.indexList)
