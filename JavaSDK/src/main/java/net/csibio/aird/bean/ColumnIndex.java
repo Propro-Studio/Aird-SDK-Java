@@ -43,7 +43,9 @@ public class ColumnIndex {
 
     int[] rts; //矩阵纵坐标
 
-    long[] spectraIds; //spectraId的数组文件坐标delta值
+    int[] spectraIds; //spectraId的数组文件坐标delta值
 
-    long[] intensities; //强度数组坐标delta
+    int[] intensities; //强度数组坐标delta
+
+    long[] anchors; //坐标插值,用于减少mzIndex定位时的耗时
 }

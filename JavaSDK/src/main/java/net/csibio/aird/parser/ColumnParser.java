@@ -86,12 +86,12 @@ public class ColumnParser {
             }
             if (columnIndex.getSpectraIds() == null) {
                 byte[] spectraIdBytes = readByte(columnIndex.getStartSpecrtaIdListPtr(), columnIndex.getEndSpecrtaIdListPtr());
-                long[] spectraIds = decodeLong(spectraIdBytes);
+                int[] spectraIds = decode(spectraIdBytes);
                 columnIndex.setSpectraIds(spectraIds);
             }
             if (columnIndex.getIntensities() == null) {
                 byte[] intensityBytes = readByte(columnIndex.getStartIntensityListPtr(), columnIndex.getEndIntensityListPtr());
-                long[] intensities = decodeLong(intensityBytes);
+                int[] intensities = decode(intensityBytes);
                 columnIndex.setIntensities(intensities);
             }
         }
@@ -158,27 +158,23 @@ public class ColumnParser {
             IntPair rightRtPair = AirdMathUtil.binarySearch(index.getRts(), (int) (rtEnd * 1000));
             rightRtIndex = rightRtPair.left();
         }
-        long[] spectraIdLengths = index.getSpectraIds();
-        long[] intensityLengths = index.getIntensities();
-        long startPtr = index.getStartPtr();
-        System.out.println("耗时A0:"+(System.currentTimeMillis() - startTime));
-//        for (int i = 0; i < leftMzIndex; i++) {
-//            startPtr += spectraIdLengths[i];
-//            startPtr += intensityLengths[i];
-//        }
+        int[] spectraIdLengths = index.getSpectraIds();
+        int[] intensityLengths = index.getIntensities();
+        int anchorIndex = leftMzIndex / 100000;
+        long startPtr = index.getAnchors()[anchorIndex];
+        for (int i = anchorIndex * 100000; i < leftMzIndex; i++) {
+            startPtr += spectraIdLengths[i];
+            startPtr += intensityLengths[i];
+        }
         List<Map<Integer, Double>> columnMapList = new ArrayList<>();
-        System.out.println("耗时A:"+(System.currentTimeMillis() - startTime));
-        TreeSet<Integer> spectraIdSet = new TreeSet<>();
+        TreeMap<Integer, Double> map = new TreeMap<>();  //key为spectraId，value为intensity
         for (int k = leftMzIndex; k <= rightMzIndex; k++) {
-            byte[] spectraIdBytes = readByte(startPtr, spectraIdLengths[k] - star);
+            byte[] spectraIdBytes = readByte(startPtr, spectraIdLengths[k]);
             startPtr += spectraIdLengths[k];
             byte[] intensityBytes = readByte(startPtr, intensityLengths[k]);
             startPtr += intensityLengths[k];
             int[] spectraIds = fastDecodeAsSortedInteger(spectraIdBytes);
             int[] ints = fastDecode(intensityBytes);
-            HashMap<Integer, Double> map = new HashMap<>();  //key为spectraId，value为intensity
-
-            //解码intensity
             for (int t = 0; t < spectraIds.length; t++) {
                 int spectraId = spectraIds[t];
                 if (spectraId >= leftRtIndex && spectraId <= rightRtIndex) {
@@ -186,41 +182,23 @@ public class ColumnParser {
                     if (intensity < 0) {
                         intensity = Math.pow(2, -intensity / 100000d);
                     }
-                    map.put(spectraId, intensity / intPrecision);
-                    spectraIdSet.add(spectraId);
+                    map.merge(spectraId, intensity / intPrecision, Double::sum);
                 }
             }
 
             columnMapList.add(map);
         }
-        System.out.println("耗时B:"+(System.currentTimeMillis() - startTime));
         int rtRange = rightRtIndex - leftRtIndex + 1;
         double[] intensities = new double[rtRange];
         double[] rts = new double[rtRange];
         int iteration = 0;
-        for (Integer id : spectraIdSet) {
-            double intensity = 0;
-            for (Map<Integer, Double> map : columnMapList) {
-                if (map.containsKey(id)) {
-                    intensity += map.get(id);
-                }
-            }
-            intensities[iteration] = intensity;
-            rts[iteration] = index.getRts()[id] / 1000d;
+        for (int i = leftRtIndex; i <= rightRtIndex; i++) {
+            intensities[iteration] = map.getOrDefault(i, 0d);
+            rts[iteration] = index.getRts()[i] / 1000d;
             iteration++;
         }
-//        for (int id = leftRtIndex; id <= rightRtIndex; id++) {
-//            double intensity = 0;
-//            for (Map<Integer, Double> map : columnMapList) {
-//                if (map.containsKey(id)) {
-//                    intensity += map.get(id);
-//                }
-//            }
-//            intensities[iteration] = intensity;
-//            rts[iteration] = index.getRts()[id] / 1000d;
-//            iteration++;
-//        }
-        System.out.println("耗时C:"+(System.currentTimeMillis() - startTime));
+
+        System.out.println("耗时:" + (System.currentTimeMillis() - startTime));
         return new Xic(rts, intensities);
     }
 

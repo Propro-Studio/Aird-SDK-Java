@@ -29,8 +29,8 @@ public class TestSliceV2 {
         }
         System.out.println("构建EIC 10次的时间:"+(System.currentTimeMillis() - start)+"毫秒");
 //        Xic oldXic = parserOld.calcXicByMz(313.1733, 0.015);
-        System.out.println(JSON.toJSONString(newXic.getRts()));
-//        System.out.println(JSON.toJSONString(newXic.getInts()));
+//        System.out.println(JSON.toJSONString(newXic.getRts()));
+        System.out.println(JSON.toJSONString(newXic.getInts()));
 //        System.out.println(JSON.toJSONString(oldXic.getRts()));
 //        System.out.println(JSON.toJSONString(oldXic.getInts()));
     }

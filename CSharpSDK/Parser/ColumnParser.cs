@@ -180,15 +180,16 @@ public class ColumnParser
 
         int[] spectraIdLengths = index.spectraIds;
         int[] intensityLengths = index.intensities;
-        long startPtr = index.startPtr;
-        for (int i = 0; i < leftMzIndex; i++)
+        int anchorIndex = leftMzIndex / 100000;
+        long startPtr = index.anchors[anchorIndex];
+        for (int i = anchorIndex * 100000; i < leftMzIndex; i++)
         {
             startPtr += spectraIdLengths[i];
             startPtr += intensityLengths[i];
         }
 
         List<Dictionary<int, double>> columnMapList = new List<Dictionary<int, double>>();
-
+        Dictionary<int, double> map = new Dictionary<int, double>();
         for (int k = leftMzIndex; k <= rightMzIndex; k++)
         {
             byte[] spectraIdBytes = readByte(startPtr, spectraIdLengths[k]);
@@ -197,11 +198,11 @@ public class ColumnParser
             startPtr += intensityLengths[k];
             int[] spectraIds = fastDecodeToSorted(spectraIdBytes);
             int[] ints = fastDecode(intensityBytes);
-            Dictionary<int, double> map = new Dictionary<int, double>();
             //解码intensity
             for (int t = 0; t < spectraIds.Length; t++)
             {
-                if (spectraIds[t] >= leftRtIndex && spectraIds[t] <= rightRtIndex)
+                int spectraId = spectraIds[t];
+                if (spectraId >= leftRtIndex && spectraId <= rightRtIndex)
                 {
                     double intensity = ints[t];
                     if (intensity < 0)
@@ -209,7 +210,15 @@ public class ColumnParser
                         intensity = Math.Pow(2, -intensity / 100000d);
                     }
 
-                    map[spectraIds[t]] = intensity / intPrecision;
+                    if (map.ContainsKey(spectraId))
+                    {
+                        map[spectraId] = map[spectraId] + intensity / intPrecision;
+                    }
+                    else
+                    {
+                        map[spectraId] = intensity / intPrecision;
+                    }
+                    
                 }
             }
 
@@ -222,16 +231,15 @@ public class ColumnParser
         int iteration = 0;
         for (int i = leftRtIndex; i <= rightRtIndex; i++)
         {
-            double intensity = 0;
-            for (int j = 0; j < columnMapList.Count; j++)
+            if (map.TryGetValue(i, out double value))
             {
-                if (columnMapList[j].ContainsKey(i))
-                {
-                    intensity += columnMapList[j][i];
-                }
+                intensities[iteration] = value;
             }
-
-            intensities[iteration] = intensity;
+            else
+            {
+                intensities[iteration] = 0d;
+            }
+            
             rts[iteration] = index.rts[i] / 1000d;
             iteration++;
         }
@@ -257,10 +265,5 @@ public class ColumnParser
     public int[] fastDecode(byte[] origin)
     {
         return new VarByteWrapper().decode(ByteTrans.byteToInt(origin));
-    }
-
-    public long[] decodeLong(byte[] origin)
-    {
-        return ByteTrans.byteToLong(new ZstdWrapper().decode(origin));
     }
 }
