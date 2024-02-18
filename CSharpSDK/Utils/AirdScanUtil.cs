@@ -72,10 +72,9 @@ public class AirdScanUtil
      * @param indexFile 索引文件
      * @return 该索引文件内的JSON信息, 即ColumnInfo信息
      */
-    public static ColumnInfo loadColumnInfo(FileInfo indexFile) {
+    public static AirdSDK.Beans.ColumnInfo loadColumnInfo(FileInfo indexFile) {
         String content = FileUtil.readFile(indexFile);
-        JsonSerializer serializer = new JsonSerializer();
-        ColumnInfo columnInfo = JsonConvert.DeserializeObject<ColumnInfo>(content);
+        AirdSDK.Beans.ColumnInfo columnInfo = JsonConvert.DeserializeObject<AirdSDK.Beans.ColumnInfo>(content);
         return columnInfo;
     }
     

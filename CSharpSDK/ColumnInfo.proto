@@ -1,10 +1,19 @@
 ﻿syntax = "proto3";
 
-message ColumnIndex {
+message ColumnInfoProto {
+  repeated ColumnIndexProto indexList = 1;
+  string type = 2;
+  string airdPath = 3;
+  int32 mzPrecision = 4;
+  int32 intPrecision = 5;
+}
+
+
+message ColumnIndexProto {
   int32 level = 1;
   int64 startPtr = 2;
   int64 endPtr = 3;
-  WindowRange range = 4;
+  WindowRangeProto range = 4;
   int64 startMzListPtr = 5;
   int64 endMzListPtr = 6;
   int64 startRtListPtr = 7;
@@ -20,7 +29,7 @@ message ColumnIndex {
   repeated int64 anchors = 17;
 }
 
-message WindowRange {
+message WindowRangeProto {
   double start = 1;
   double end = 2;
   double mz = 3;
