@@ -7,7 +7,6 @@ using AirdSDK.Compressor;
 using AirdSDK.Enums;
 using AirdSDK.Exception;
 using AirdSDK.Utils;
-using CSharpFastPFOR.Port;
 
 namespace AirdSDK.Parser;
 

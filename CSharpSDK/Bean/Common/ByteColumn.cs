@@ -2,12 +2,12 @@
 
 public class ByteColumn
 {
-    public byte[] indexIds;
+    public byte[] spectraIds;
     public byte[] intensities;
 
-    public ByteColumn(byte[] indexIds, byte[] intensities)
+    public ByteColumn(byte[] spectraIds, byte[] intensities)
     {
-        this.indexIds = indexIds;
+        this.spectraIds = spectraIds;
         this.intensities = intensities;
     }
 }
