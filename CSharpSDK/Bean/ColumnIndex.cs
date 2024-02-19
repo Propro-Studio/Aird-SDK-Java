@@ -70,7 +70,7 @@ public class ColumnIndex
             StartSpectraIdListPtr = this.startSpectraIdListPtr,
             EndSpectraIdListPtr = this.endSpectraIdListPtr,
             StartIntensityListPtr = this.startIntensityListPtr,
-            EndIntensityListPtr = this.endIntensityListPtr,
+            EndIntensityListPtr = this.endIntensityListPtr
         };
         if (mzs != null && mzs.Length > 0)
         {
