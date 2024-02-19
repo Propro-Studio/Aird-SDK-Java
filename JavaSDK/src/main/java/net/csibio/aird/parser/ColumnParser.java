@@ -54,20 +54,17 @@ public class ColumnParser {
      */
     public RandomAccessFile raf;
 
-    public ColumnParser(String indexPath) throws IOException {
-        this.indexFile = new File(indexPath);
+    public ColumnParser(String protoPath) throws IOException {
+//        this.indexFile = new File(indexPath);
         long start = System.currentTimeMillis();
-        columnInfo = AirdScanUtil.loadColumnInfo(indexFile);
-        System.out.println("JSON序列化耗时:"+(System.currentTimeMillis()-start));
-        String protoPath = AirdScanUtil.getProtoPathByCjsonPath(indexPath);
-        start = System.currentTimeMillis();
-        ColumnInfo columnInfo2 = AirdScanUtil.loadFromProto(protoPath);
-        System.out.println("Proto序列化耗时:"+(System.currentTimeMillis()-start));
+//        columnInfo = AirdScanUtil.loadColumnInfo(indexFile);
+//        String protoPath = AirdScanUtil.getProtoPathByCjsonPath(indexPath);
+        columnInfo = AirdScanUtil.loadFromProto(protoPath);
         if (columnInfo == null) {
             throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
         }
 
-        this.airdFile = new File(AirdScanUtil.getAirdPathByColumnIndexPath(indexPath));
+        this.airdFile = new File(AirdScanUtil.getAirdPathByColumnIndexPath(protoPath));
         try {
             raf = new RandomAccessFile(airdFile, "r");
         } catch (FileNotFoundException e) {
@@ -77,9 +74,7 @@ public class ColumnParser {
         //获取mzPrecision
         mzPrecision = columnInfo.getMzPrecision();
         intPrecision = columnInfo.getIntPrecision();
-        start = System.currentTimeMillis();
         parseColumnIndex();
-        System.out.println("Parser 耗时"+(System.currentTimeMillis() - start));
     }
 
     public void parseColumnIndex() throws IOException {

@@ -9,9 +9,9 @@ import java.io.IOException;
 
 public class TestSliceV2 {
 
-    static String indexPath = "F:\\测试\\SA1.cjson";
-    static String indexPath2 = "F:\\测试\\SampleA_1.cjson";
-    static String oldIndexPath = "F:\\测试\\V1\\SA1.cjson";
+    static String indexPath = "F:\\测试\\SA1.index";
+    static String indexPath2 = "F:\\测试\\SampleA_1.index";
+    static String oldIndexPath = "F:\\测试\\V1\\SA1.index";
 
     @Test
     public void testEIC() throws IOException {
