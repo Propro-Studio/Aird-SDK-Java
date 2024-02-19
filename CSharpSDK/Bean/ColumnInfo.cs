@@ -24,4 +24,18 @@ public class ColumnInfo
 
     public int intPrecision;
 
+    public ColumnInfoProto ToProto()
+    {
+        ColumnInfoProto proto = new ColumnInfoProto();
+        foreach (ColumnIndex columnIndex in indexList)
+        {
+            proto.IndexList.Add(columnIndex.ToProto());
+        }
+       
+        proto.Type = this.type;
+        proto.AirdPath = this.airdPath;
+        proto.MzPrecision = this.mzPrecision;
+        proto.IntPrecision = this.intPrecision;
+        return proto;
+    }
 }

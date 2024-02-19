@@ -55,4 +55,49 @@ public class ColumnIndex
         }
     }
 
+    public ColumnIndexProto ToProto()
+    {
+        ColumnIndexProto proto = new ColumnIndexProto()
+        {
+            Level = this.level,
+            StartPtr = this.startPtr,
+            EndPtr = this.endPtr,
+            Range = this.range?.ToProto(),
+            StartMzListPtr = this.startMzListPtr,
+            EndMzListPtr = this.endMzListPtr,
+            StartRtListPtr = this.startRtListPtr,
+            EndRtListPtr = this.endRtListPtr,
+            StartSpecrtaIdListPtr = this.startSpecrtaIdListPtr,
+            EndSpecrtaIdListPtr = this.endSpecrtaIdListPtr,
+            StartIntensityListPtr = this.startIntensityListPtr,
+            EndIntensityListPtr = this.endIntensityListPtr,
+        };
+        if (mzs != null && mzs.Length > 0)
+        {
+            proto.Mzs.AddRange(this.mzs);
+        }
+
+        if (rts != null && rts.Length > 0)
+        {
+            proto.Rts.AddRange(this.rts);
+        }
+
+        if (spectraIds != null && spectraIds.Length > 0)
+        {
+            proto.SpectraIds.AddRange(this.spectraIds);
+        }
+
+        if (intensities != null && intensities.Length > 0)
+        {
+            proto.Intensities.AddRange(this.intensities);
+        }
+
+        if (anchors != null && anchors.Length > 0)
+        {
+            proto.Anchors.AddRange(this.anchors);
+        }
+       
+        return proto;
+    }
+
 }
