@@ -108,7 +108,7 @@ public class AirdScanUtil {
         return columnInfo;
     }
 
-    public static ColumnInfo loadFromProto(String indexPath){
+    public static ColumnInfo loadFromProto(String indexPath) {
         ColumnInfo columnInfo = new ColumnInfo();
         try {
             FileInputStream fis = new FileInputStream(indexPath);
@@ -117,7 +117,8 @@ public class AirdScanUtil {
             columnInfo.setAirdPath(proto.getAirdPath());
             columnInfo.setIntPrecision(proto.getIntPrecision());
             columnInfo.setMzPrecision(proto.getMzPrecision());
-            if (proto.getIndexListCount() > 0){
+            if (proto.getIndexListCount() > 0) {
+                List<ColumnIndex> indexList = new ArrayList<ColumnIndex>();
                 for (int i = 0; i < proto.getIndexListCount(); i++) {
                     ColumnIndex index = new ColumnIndex();
                     net.csibio.aird.bean.proto.ColumnInfo.ColumnIndexProto indexProto = proto.getIndexList(i);
@@ -128,13 +129,51 @@ public class AirdScanUtil {
                     index.setEndMzListPtr(indexProto.getEndMzListPtr());
                     index.setStartRtListPtr(indexProto.getStartRtListPtr());
                     index.setEndRtListPtr(indexProto.getEndRtListPtr());
-                    index.setStartSpectraIdListPtr(indexProto.getStartSpectra());
-
+                    index.setStartSpectraIdListPtr(indexProto.getStartSpectraIdListPtr());
+                    index.setEndSpectraIdListPtr(indexProto.getEndSpectraIdListPtr());
+                    index.setStartIntensityListPtr(indexProto.getStartIntensityListPtr());
+                    index.setEndIntensityListPtr(indexProto.getEndIntensityListPtr());
+                    if (indexProto.getMzsCount() > 0) {
+                        int[] mzs = new int[indexProto.getMzsCount()];
+                        for (int j = 0; j < indexProto.getMzsCount(); j++) {
+                            mzs[j] = indexProto.getMzs(j);
+                        }
+                        index.setMzs(mzs);
+                    }
+                    if (indexProto.getRtsCount() > 0) {
+                        int[] rts = new int[indexProto.getRtsCount()];
+                        for (int j = 0; j < indexProto.getRtsCount(); j++) {
+                            rts[j] = indexProto.getRts(j);
+                        }
+                        index.setRts(rts);
+                    }
+                    if (indexProto.getSpectraIdsCount() > 0) {
+                        int[] spectraIds = new int[indexProto.getSpectraIdsCount()];
+                        for (int j = 0; j < indexProto.getSpectraIdsCount(); j++) {
+                            spectraIds[j] = indexProto.getSpectraIds(j);
+                        }
+                        index.setSpectraIds(spectraIds);
+                    }
+                    if (indexProto.getIntensitiesCount() > 0) {
+                        int[] intensities = new int[indexProto.getIntensitiesCount()];
+                        for (int j = 0; j < indexProto.getIntensitiesCount(); j++) {
+                            intensities[j] = indexProto.getIntensities(j);
+                        }
+                        index.setIntensities(intensities);
+                    }
+                    if (indexProto.getAnchorsCount() > 0) {
+                        long[] anchors = new long[indexProto.getAnchorsCount()];
+                        for (int j = 0; j < indexProto.getAnchorsCount(); j++) {
+                            anchors[j] = indexProto.getAnchors(j);
+                        }
+                        index.setAnchors(anchors);
+                    }
+                    indexList.add(index);
                 }
+                columnInfo.setIndexList(indexList);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         }
 
         return columnInfo;
@@ -193,6 +232,13 @@ public class AirdScanUtil {
             return null;
         }
         return airdPath.substring(0, airdPath.lastIndexOf(SymbolConst.DOT)) + SuffixConst.JSON;
+    }
+
+    public static String getProtoPathByCjsonPath(String jsonPath) {
+        if (jsonPath == null || !jsonPath.contains(SymbolConst.DOT) || !jsonPath.endsWith(SuffixConst.CJSON)) {
+            return null;
+        }
+        return jsonPath.substring(0, jsonPath.lastIndexOf(SymbolConst.DOT)) + SuffixConst.INDEX;
     }
 
     /**

@@ -108,7 +108,7 @@ public final class ColumnInfo {
     }
 
     @Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    protected FieldAccessorTable
         internalGetFieldAccessorTable() {
       return ColumnInfo.internal_static_ColumnInfoProto_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
@@ -453,7 +453,7 @@ public final class ColumnInfo {
 
     @Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -470,7 +470,7 @@ public final class ColumnInfo {
       }
 
       @Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      protected FieldAccessorTable
           internalGetFieldAccessorTable() {
         return ColumnInfo.internal_static_ColumnInfoProto_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -483,7 +483,7 @@ public final class ColumnInfo {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          BuilderParent parent) {
         super(parent);
 
       }
@@ -1297,16 +1297,16 @@ public final class ColumnInfo {
     long getEndRtListPtr();
 
     /**
-     * <code>int64 startSpecrtaIdListPtr = 9;</code>
-     * @return The startSpecrtaIdListPtr.
+     * <code>int64 startSpectraIdListPtr = 9;</code>
+     * @return The startSpectraIdListPtr.
      */
-    long getStartSpecrtaIdListPtr();
+    long getStartSpectraIdListPtr();
 
     /**
-     * <code>int64 endSpecrtaIdListPtr = 10;</code>
-     * @return The endSpecrtaIdListPtr.
+     * <code>int64 endSpectraIdListPtr = 10;</code>
+     * @return The endSpectraIdListPtr.
      */
-    long getEndSpecrtaIdListPtr();
+    long getEndSpectraIdListPtr();
 
     /**
      * <code>int64 startIntensityListPtr = 11;</code>
@@ -1438,7 +1438,7 @@ public final class ColumnInfo {
     }
 
     @Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    protected FieldAccessorTable
         internalGetFieldAccessorTable() {
       return ColumnInfo.internal_static_ColumnIndexProto_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
@@ -1549,26 +1549,26 @@ public final class ColumnInfo {
       return endRtListPtr_;
     }
 
-    public static final int STARTSPECRTAIDLISTPTR_FIELD_NUMBER = 9;
-    private long startSpecrtaIdListPtr_ = 0L;
+    public static final int STARTSPECTRAIDLISTPTR_FIELD_NUMBER = 9;
+    private long startSpectraIdListPtr_ = 0L;
     /**
-     * <code>int64 startSpecrtaIdListPtr = 9;</code>
-     * @return The startSpecrtaIdListPtr.
+     * <code>int64 startSpectraIdListPtr = 9;</code>
+     * @return The startSpectraIdListPtr.
      */
     @Override
-    public long getStartSpecrtaIdListPtr() {
-      return startSpecrtaIdListPtr_;
+    public long getStartSpectraIdListPtr() {
+      return startSpectraIdListPtr_;
     }
 
-    public static final int ENDSPECRTAIDLISTPTR_FIELD_NUMBER = 10;
-    private long endSpecrtaIdListPtr_ = 0L;
+    public static final int ENDSPECTRAIDLISTPTR_FIELD_NUMBER = 10;
+    private long endSpectraIdListPtr_ = 0L;
     /**
-     * <code>int64 endSpecrtaIdListPtr = 10;</code>
-     * @return The endSpecrtaIdListPtr.
+     * <code>int64 endSpectraIdListPtr = 10;</code>
+     * @return The endSpectraIdListPtr.
      */
     @Override
-    public long getEndSpecrtaIdListPtr() {
-      return endSpecrtaIdListPtr_;
+    public long getEndSpectraIdListPtr() {
+      return endSpectraIdListPtr_;
     }
 
     public static final int STARTINTENSITYLISTPTR_FIELD_NUMBER = 11;
@@ -1782,11 +1782,11 @@ public final class ColumnInfo {
       if (endRtListPtr_ != 0L) {
         output.writeInt64(8, endRtListPtr_);
       }
-      if (startSpecrtaIdListPtr_ != 0L) {
-        output.writeInt64(9, startSpecrtaIdListPtr_);
+      if (startSpectraIdListPtr_ != 0L) {
+        output.writeInt64(9, startSpectraIdListPtr_);
       }
-      if (endSpecrtaIdListPtr_ != 0L) {
-        output.writeInt64(10, endSpecrtaIdListPtr_);
+      if (endSpectraIdListPtr_ != 0L) {
+        output.writeInt64(10, endSpectraIdListPtr_);
       }
       if (startIntensityListPtr_ != 0L) {
         output.writeInt64(11, startIntensityListPtr_);
@@ -1870,13 +1870,13 @@ public final class ColumnInfo {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(8, endRtListPtr_);
       }
-      if (startSpecrtaIdListPtr_ != 0L) {
+      if (startSpectraIdListPtr_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(9, startSpecrtaIdListPtr_);
+          .computeInt64Size(9, startSpectraIdListPtr_);
       }
-      if (endSpecrtaIdListPtr_ != 0L) {
+      if (endSpectraIdListPtr_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(10, endSpecrtaIdListPtr_);
+          .computeInt64Size(10, endSpectraIdListPtr_);
       }
       if (startIntensityListPtr_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
@@ -1990,10 +1990,10 @@ public final class ColumnInfo {
           != other.getStartRtListPtr()) return false;
       if (getEndRtListPtr()
           != other.getEndRtListPtr()) return false;
-      if (getStartSpecrtaIdListPtr()
-          != other.getStartSpecrtaIdListPtr()) return false;
-      if (getEndSpecrtaIdListPtr()
-          != other.getEndSpecrtaIdListPtr()) return false;
+      if (getStartSpectraIdListPtr()
+          != other.getStartSpectraIdListPtr()) return false;
+      if (getEndSpectraIdListPtr()
+          != other.getEndSpectraIdListPtr()) return false;
       if (getStartIntensityListPtr()
           != other.getStartIntensityListPtr()) return false;
       if (getEndIntensityListPtr()
@@ -2043,12 +2043,12 @@ public final class ColumnInfo {
       hash = (37 * hash) + ENDRTLISTPTR_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getEndRtListPtr());
-      hash = (37 * hash) + STARTSPECRTAIDLISTPTR_FIELD_NUMBER;
+      hash = (37 * hash) + STARTSPECTRAIDLISTPTR_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getStartSpecrtaIdListPtr());
-      hash = (37 * hash) + ENDSPECRTAIDLISTPTR_FIELD_NUMBER;
+          getStartSpectraIdListPtr());
+      hash = (37 * hash) + ENDSPECTRAIDLISTPTR_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getEndSpecrtaIdListPtr());
+          getEndSpectraIdListPtr());
       hash = (37 * hash) + STARTINTENSITYLISTPTR_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getStartIntensityListPtr());
@@ -2168,7 +2168,7 @@ public final class ColumnInfo {
 
     @Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -2185,7 +2185,7 @@ public final class ColumnInfo {
       }
 
       @Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      protected FieldAccessorTable
           internalGetFieldAccessorTable() {
         return ColumnInfo.internal_static_ColumnIndexProto_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -2198,7 +2198,7 @@ public final class ColumnInfo {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
@@ -2224,8 +2224,8 @@ public final class ColumnInfo {
         endMzListPtr_ = 0L;
         startRtListPtr_ = 0L;
         endRtListPtr_ = 0L;
-        startSpecrtaIdListPtr_ = 0L;
-        endSpecrtaIdListPtr_ = 0L;
+        startSpectraIdListPtr_ = 0L;
+        endSpectraIdListPtr_ = 0L;
         startIntensityListPtr_ = 0L;
         endIntensityListPtr_ = 0L;
         mzs_ = emptyIntList();
@@ -2295,10 +2295,10 @@ public final class ColumnInfo {
           result.endRtListPtr_ = endRtListPtr_;
         }
         if (((from_bitField0_ & 0x00000100) != 0)) {
-          result.startSpecrtaIdListPtr_ = startSpecrtaIdListPtr_;
+          result.startSpectraIdListPtr_ = startSpectraIdListPtr_;
         }
         if (((from_bitField0_ & 0x00000200) != 0)) {
-          result.endSpecrtaIdListPtr_ = endSpecrtaIdListPtr_;
+          result.endSpectraIdListPtr_ = endSpectraIdListPtr_;
         }
         if (((from_bitField0_ & 0x00000400) != 0)) {
           result.startIntensityListPtr_ = startIntensityListPtr_;
@@ -2397,11 +2397,11 @@ public final class ColumnInfo {
         if (other.getEndRtListPtr() != 0L) {
           setEndRtListPtr(other.getEndRtListPtr());
         }
-        if (other.getStartSpecrtaIdListPtr() != 0L) {
-          setStartSpecrtaIdListPtr(other.getStartSpecrtaIdListPtr());
+        if (other.getStartSpectraIdListPtr() != 0L) {
+          setStartSpectraIdListPtr(other.getStartSpectraIdListPtr());
         }
-        if (other.getEndSpecrtaIdListPtr() != 0L) {
-          setEndSpecrtaIdListPtr(other.getEndSpecrtaIdListPtr());
+        if (other.getEndSpectraIdListPtr() != 0L) {
+          setEndSpectraIdListPtr(other.getEndSpectraIdListPtr());
         }
         if (other.getStartIntensityListPtr() != 0L) {
           setStartIntensityListPtr(other.getStartIntensityListPtr());
@@ -2533,12 +2533,12 @@ public final class ColumnInfo {
                 break;
               } // case 64
               case 72: {
-                startSpecrtaIdListPtr_ = input.readInt64();
+                startSpectraIdListPtr_ = input.readInt64();
                 bitField0_ |= 0x00000100;
                 break;
               } // case 72
               case 80: {
-                endSpecrtaIdListPtr_ = input.readInt64();
+                endSpectraIdListPtr_ = input.readInt64();
                 bitField0_ |= 0x00000200;
                 break;
               } // case 80
@@ -2994,66 +2994,66 @@ public final class ColumnInfo {
         return this;
       }
 
-      private long startSpecrtaIdListPtr_ ;
+      private long startSpectraIdListPtr_ ;
       /**
-       * <code>int64 startSpecrtaIdListPtr = 9;</code>
-       * @return The startSpecrtaIdListPtr.
+       * <code>int64 startSpectraIdListPtr = 9;</code>
+       * @return The startSpectraIdListPtr.
        */
       @Override
-      public long getStartSpecrtaIdListPtr() {
-        return startSpecrtaIdListPtr_;
+      public long getStartSpectraIdListPtr() {
+        return startSpectraIdListPtr_;
       }
       /**
-       * <code>int64 startSpecrtaIdListPtr = 9;</code>
-       * @param value The startSpecrtaIdListPtr to set.
+       * <code>int64 startSpectraIdListPtr = 9;</code>
+       * @param value The startSpectraIdListPtr to set.
        * @return This builder for chaining.
        */
-      public Builder setStartSpecrtaIdListPtr(long value) {
+      public Builder setStartSpectraIdListPtr(long value) {
 
-        startSpecrtaIdListPtr_ = value;
+        startSpectraIdListPtr_ = value;
         bitField0_ |= 0x00000100;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 startSpecrtaIdListPtr = 9;</code>
+       * <code>int64 startSpectraIdListPtr = 9;</code>
        * @return This builder for chaining.
        */
-      public Builder clearStartSpecrtaIdListPtr() {
+      public Builder clearStartSpectraIdListPtr() {
         bitField0_ = (bitField0_ & ~0x00000100);
-        startSpecrtaIdListPtr_ = 0L;
+        startSpectraIdListPtr_ = 0L;
         onChanged();
         return this;
       }
 
-      private long endSpecrtaIdListPtr_ ;
+      private long endSpectraIdListPtr_ ;
       /**
-       * <code>int64 endSpecrtaIdListPtr = 10;</code>
-       * @return The endSpecrtaIdListPtr.
+       * <code>int64 endSpectraIdListPtr = 10;</code>
+       * @return The endSpectraIdListPtr.
        */
       @Override
-      public long getEndSpecrtaIdListPtr() {
-        return endSpecrtaIdListPtr_;
+      public long getEndSpectraIdListPtr() {
+        return endSpectraIdListPtr_;
       }
       /**
-       * <code>int64 endSpecrtaIdListPtr = 10;</code>
-       * @param value The endSpecrtaIdListPtr to set.
+       * <code>int64 endSpectraIdListPtr = 10;</code>
+       * @param value The endSpectraIdListPtr to set.
        * @return This builder for chaining.
        */
-      public Builder setEndSpecrtaIdListPtr(long value) {
+      public Builder setEndSpectraIdListPtr(long value) {
 
-        endSpecrtaIdListPtr_ = value;
+        endSpectraIdListPtr_ = value;
         bitField0_ |= 0x00000200;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 endSpecrtaIdListPtr = 10;</code>
+       * <code>int64 endSpectraIdListPtr = 10;</code>
        * @return This builder for chaining.
        */
-      public Builder clearEndSpecrtaIdListPtr() {
+      public Builder clearEndSpectraIdListPtr() {
         bitField0_ = (bitField0_ & ~0x00000200);
-        endSpecrtaIdListPtr_ = 0L;
+        endSpectraIdListPtr_ = 0L;
         onChanged();
         return this;
       }
@@ -3674,7 +3674,7 @@ public final class ColumnInfo {
     }
 
     @Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    protected FieldAccessorTable
         internalGetFieldAccessorTable() {
       return ColumnInfo.internal_static_WindowRangeProto_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
@@ -3966,7 +3966,7 @@ public final class ColumnInfo {
 
     @Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -3983,7 +3983,7 @@ public final class ColumnInfo {
       }
 
       @Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      protected FieldAccessorTable
           internalGetFieldAccessorTable() {
         return ColumnInfo.internal_static_WindowRangeProto_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -3996,7 +3996,7 @@ public final class ColumnInfo {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          BuilderParent parent) {
         super(parent);
 
       }
@@ -4484,7 +4484,7 @@ public final class ColumnInfo {
       "indowRangeProto\022\026\n\016startMzListPtr\030\005 \001(\003\022" +
       "\024\n\014endMzListPtr\030\006 \001(\003\022\026\n\016startRtListPtr\030" +
       "\007 \001(\003\022\024\n\014endRtListPtr\030\010 \001(\003\022\035\n\025startSpec" +
-      "rtaIdListPtr\030\t \001(\003\022\033\n\023endSpecrtaIdListPt" +
+      "traIdListPtr\030\t \001(\003\022\033\n\023endSpectraIdListPt" +
       "r\030\n \001(\003\022\035\n\025startIntensityListPtr\030\013 \001(\003\022\033" +
       "\n\023endIntensityListPtr\030\014 \001(\003\022\013\n\003mzs\030\r \003(\005" +
       "\022\013\n\003rts\030\016 \003(\005\022\022\n\nspectraIds\030\017 \003(\005\022\023\n\013int" +
@@ -4508,7 +4508,7 @@ public final class ColumnInfo {
     internal_static_ColumnIndexProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ColumnIndexProto_descriptor,
-        new String[] { "Level", "StartPtr", "EndPtr", "Range", "StartMzListPtr", "EndMzListPtr", "StartRtListPtr", "EndRtListPtr", "StartSpecrtaIdListPtr", "EndSpecrtaIdListPtr", "StartIntensityListPtr", "EndIntensityListPtr", "Mzs", "Rts", "SpectraIds", "Intensities", "Anchors", });
+        new String[] { "Level", "StartPtr", "EndPtr", "Range", "StartMzListPtr", "EndMzListPtr", "StartRtListPtr", "EndRtListPtr", "StartSpectraIdListPtr", "EndSpectraIdListPtr", "StartIntensityListPtr", "EndIntensityListPtr", "Mzs", "Rts", "SpectraIds", "Intensities", "Anchors", });
     internal_static_WindowRangeProto_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_WindowRangeProto_fieldAccessorTable = new

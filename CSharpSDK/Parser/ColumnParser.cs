@@ -249,12 +249,12 @@ public class ColumnParser
 
     public int[] decodeToSorted(byte[] origin)
     {
-        return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
+        return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(origin));
     }
     
     public int[] decode(byte[] origin)
     {
-        return new VarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
+        return new VarByteWrapper().decode(ByteTrans.byteToInt(origin));
     }
     
     public int[] fastDecodeToSorted(byte[] origin)

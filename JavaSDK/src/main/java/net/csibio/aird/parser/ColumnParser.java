@@ -1,12 +1,15 @@
 package net.csibio.aird.parser;
 
+import me.lemire.integercompression.differential.IntegratedBinaryPacking;
 import net.csibio.aird.bean.ColumnIndex;
 import net.csibio.aird.bean.ColumnInfo;
 import net.csibio.aird.bean.common.IntPair;
 import net.csibio.aird.bean.common.Xic;
 import net.csibio.aird.compressor.ByteTrans;
 import net.csibio.aird.compressor.bytecomp.ZstdWrapper;
+import net.csibio.aird.compressor.intcomp.BinPackingWrapper;
 import net.csibio.aird.compressor.intcomp.VarByteWrapper;
+import net.csibio.aird.compressor.sortedintcomp.IntegratedBinPackingWrapper;
 import net.csibio.aird.compressor.sortedintcomp.IntegratedVarByteWrapper;
 import net.csibio.aird.enums.ResultCodeEnum;
 import net.csibio.aird.exception.ScanException;
@@ -53,7 +56,13 @@ public class ColumnParser {
 
     public ColumnParser(String indexPath) throws IOException {
         this.indexFile = new File(indexPath);
+        long start = System.currentTimeMillis();
         columnInfo = AirdScanUtil.loadColumnInfo(indexFile);
+        System.out.println("JSON序列化耗时:"+(System.currentTimeMillis()-start));
+        String protoPath = AirdScanUtil.getProtoPathByCjsonPath(indexPath);
+        start = System.currentTimeMillis();
+        ColumnInfo columnInfo2 = AirdScanUtil.loadFromProto(protoPath);
+        System.out.println("Proto序列化耗时:"+(System.currentTimeMillis()-start));
         if (columnInfo == null) {
             throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
         }
@@ -68,7 +77,9 @@ public class ColumnParser {
         //获取mzPrecision
         mzPrecision = columnInfo.getMzPrecision();
         intPrecision = columnInfo.getIntPrecision();
+        start = System.currentTimeMillis();
         parseColumnIndex();
+        System.out.println("Parser 耗时"+(System.currentTimeMillis() - start));
     }
 
     public void parseColumnIndex() throws IOException {
@@ -85,7 +96,7 @@ public class ColumnParser {
                 columnIndex.setRts(rtsAsInt);
             }
             if (columnIndex.getSpectraIds() == null) {
-                byte[] spectraIdBytes = readByte(columnIndex.getStartSpecrtaIdListPtr(), columnIndex.getEndSpecrtaIdListPtr());
+                byte[] spectraIdBytes = readByte(columnIndex.getStartSpectraIdListPtr(), columnIndex.getEndSpectraIdListPtr());
                 int[] spectraIds = decode(spectraIdBytes);
                 columnIndex.setSpectraIds(spectraIds);
             }
@@ -201,7 +212,7 @@ public class ColumnParser {
     }
 
     public int[] decodeAsSortedInteger(byte[] origin) {
-        return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
+        return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(origin));
     }
 
     public int[] fastDecodeAsSortedInteger(byte[] origin) {
@@ -209,7 +220,7 @@ public class ColumnParser {
     }
 
     public int[] decode(byte[] origin) {
-        return new VarByteWrapper().decode(ByteTrans.byteToInt(new ZstdWrapper().decode(origin)));
+        return new VarByteWrapper().decode(ByteTrans.byteToInt(origin));
     }
 
     public int[] fastDecode(byte[] origin) {
