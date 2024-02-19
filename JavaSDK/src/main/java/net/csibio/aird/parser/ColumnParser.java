@@ -55,10 +55,6 @@ public class ColumnParser {
     public RandomAccessFile raf;
 
     public ColumnParser(String protoPath) throws IOException {
-//        this.indexFile = new File(indexPath);
-        long start = System.currentTimeMillis();
-//        columnInfo = AirdScanUtil.loadColumnInfo(indexFile);
-//        String protoPath = AirdScanUtil.getProtoPathByCjsonPath(indexPath);
         columnInfo = AirdScanUtil.loadFromProto(protoPath);
         if (columnInfo == null) {
             throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
