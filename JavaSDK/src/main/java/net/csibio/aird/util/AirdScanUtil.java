@@ -174,6 +174,7 @@ public class AirdScanUtil {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
 
         return columnInfo;
@@ -257,14 +258,14 @@ public class AirdScanUtil {
     /**
      * 根据索引文件路径获取aird文件路径
      *
-     * @param indexPath 索引文件路径
+     * @param protoPath 索引文件路径
      * @return aird文件路径
      */
-    public static String getAirdPathByColumnIndexPath(String indexPath) {
-        if (indexPath == null || !indexPath.contains(SymbolConst.DOT) || !indexPath.endsWith(SuffixConst.CJSON)) {
+    public static String getAirdPathByColumnIndexPath(String protoPath) {
+        if (protoPath == null || !protoPath.contains(SymbolConst.DOT) || !protoPath.endsWith(SuffixConst.INDEX)) {
             return null;
         }
-        return indexPath.substring(0, indexPath.lastIndexOf(SymbolConst.DOT)) + SuffixConst.AIRD;
+        return protoPath.substring(0, protoPath.lastIndexOf(SymbolConst.DOT)) + SuffixConst.AIRD;
     }
 
     /**
