@@ -28,8 +28,8 @@ public class ColumnIndex
     public long startRtListPtr;
     public long endRtListPtr;
 
-    public long startSpecrtaIdListPtr;
-    public long endSpecrtaIdListPtr;
+    public long startSpectraIdListPtr;
+    public long endSpectraIdListPtr;
 
     public long startIntensityListPtr;
     public long endIntensityListPtr;
@@ -67,8 +67,8 @@ public class ColumnIndex
             EndMzListPtr = this.endMzListPtr,
             StartRtListPtr = this.startRtListPtr,
             EndRtListPtr = this.endRtListPtr,
-            StartSpecrtaIdListPtr = this.startSpecrtaIdListPtr,
-            EndSpecrtaIdListPtr = this.endSpecrtaIdListPtr,
+            StartSpectraIdListPtr = this.startSpectraIdListPtr,
+            EndSpectraIdListPtr = this.endSpectraIdListPtr,
             StartIntensityListPtr = this.startIntensityListPtr,
             EndIntensityListPtr = this.endIntensityListPtr,
         };

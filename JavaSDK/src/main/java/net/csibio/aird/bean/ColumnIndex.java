@@ -33,8 +33,8 @@ public class ColumnIndex {
     Long startRtListPtr;
     Long endRtListPtr;
 
-    Long startSpecrtaIdListPtr;
-    Long endSpecrtaIdListPtr;
+    Long startSpectraIdListPtr;
+    Long endSpectraIdListPtr;
 
     Long startIntensityListPtr;
     Long endIntensityListPtr;

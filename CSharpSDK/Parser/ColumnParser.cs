@@ -79,7 +79,7 @@ public class ColumnParser
 
             if (columnIndex.spectraIds == null)
             {
-                byte[] spectraIdBytes = readByte(columnIndex.startSpecrtaIdListPtr, columnIndex.endSpecrtaIdListPtr);
+                byte[] spectraIdBytes = readByte(columnIndex.startSpectraIdListPtr, columnIndex.endSpectraIdListPtr);
                 int[] spectraIds = decode(spectraIdBytes);
                 columnIndex.spectraIds = spectraIds;
             }

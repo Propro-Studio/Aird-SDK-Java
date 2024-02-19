@@ -121,11 +121,16 @@
             <version>4.13.2</version>
         </dependency>
         <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.25.3</version>
+        </dependency>
+        <dependency>
             <artifactId>msdk-io-mzml</artifactId>
             <groupId>io.github.msdk</groupId>
             <scope>test</scope>
             <version>0.0.27</version>
-        </dependency>
+        </dependency>/
         <dependency>
             <artifactId>opencsv</artifactId>
             <groupId>com.opencsv</groupId>

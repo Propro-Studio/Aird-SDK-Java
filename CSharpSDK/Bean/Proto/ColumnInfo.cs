@@ -30,7 +30,7 @@ public static partial class ColumnInfoReflection {
           "cmFuZ2UYBCABKAsyES5XaW5kb3dSYW5nZVByb3RvEhYKDnN0YXJ0TXpMaXN0",
           "UHRyGAUgASgDEhQKDGVuZE16TGlzdFB0chgGIAEoAxIWCg5zdGFydFJ0TGlz",
           "dFB0chgHIAEoAxIUCgxlbmRSdExpc3RQdHIYCCABKAMSHQoVc3RhcnRTcGVj",
-          "cnRhSWRMaXN0UHRyGAkgASgDEhsKE2VuZFNwZWNydGFJZExpc3RQdHIYCiAB",
+          "dHJhSWRMaXN0UHRyGAkgASgDEhsKE2VuZFNwZWN0cmFJZExpc3RQdHIYCiAB",
           "KAMSHQoVc3RhcnRJbnRlbnNpdHlMaXN0UHRyGAsgASgDEhsKE2VuZEludGVu",
           "c2l0eUxpc3RQdHIYDCABKAMSCwoDbXpzGA0gAygFEgsKA3J0cxgOIAMoBRIS",
           "CgpzcGVjdHJhSWRzGA8gAygFEhMKC2ludGVuc2l0aWVzGBAgAygFEg8KB2Fu",
@@ -41,7 +41,7 @@ public static partial class ColumnInfoReflection {
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::ColumnInfoProto), global::ColumnInfoProto.Parser, new[]{ "IndexList", "Type", "AirdPath", "MzPrecision", "IntPrecision" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::ColumnIndexProto), global::ColumnIndexProto.Parser, new[]{ "Level", "StartPtr", "EndPtr", "Range", "StartMzListPtr", "EndMzListPtr", "StartRtListPtr", "EndRtListPtr", "StartSpecrtaIdListPtr", "EndSpecrtaIdListPtr", "StartIntensityListPtr", "EndIntensityListPtr", "Mzs", "Rts", "SpectraIds", "Intensities", "Anchors" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::ColumnIndexProto), global::ColumnIndexProto.Parser, new[]{ "Level", "StartPtr", "EndPtr", "Range", "StartMzListPtr", "EndMzListPtr", "StartRtListPtr", "EndRtListPtr", "StartSpectraIdListPtr", "EndSpectraIdListPtr", "StartIntensityListPtr", "EndIntensityListPtr", "Mzs", "Rts", "SpectraIds", "Intensities", "Anchors" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::WindowRangeProto), global::WindowRangeProto.Parser, new[]{ "Start", "End", "Mz", "Charge", "Features" }, null, null, null, null)
         }));
   }
@@ -419,8 +419,8 @@ public sealed partial class ColumnIndexProto : pb::IMessage<ColumnIndexProto>
     endMzListPtr_ = other.endMzListPtr_;
     startRtListPtr_ = other.startRtListPtr_;
     endRtListPtr_ = other.endRtListPtr_;
-    startSpecrtaIdListPtr_ = other.startSpecrtaIdListPtr_;
-    endSpecrtaIdListPtr_ = other.endSpecrtaIdListPtr_;
+    startSpectraIdListPtr_ = other.startSpectraIdListPtr_;
+    endSpectraIdListPtr_ = other.endSpectraIdListPtr_;
     startIntensityListPtr_ = other.startIntensityListPtr_;
     endIntensityListPtr_ = other.endIntensityListPtr_;
     mzs_ = other.mzs_.Clone();
@@ -533,27 +533,27 @@ public sealed partial class ColumnIndexProto : pb::IMessage<ColumnIndexProto>
     }
   }
 
-  /// <summary>Field number for the "startSpecrtaIdListPtr" field.</summary>
-  public const int StartSpecrtaIdListPtrFieldNumber = 9;
-  private long startSpecrtaIdListPtr_;
+  /// <summary>Field number for the "startSpectraIdListPtr" field.</summary>
+  public const int StartSpectraIdListPtrFieldNumber = 9;
+  private long startSpectraIdListPtr_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public long StartSpecrtaIdListPtr {
-    get { return startSpecrtaIdListPtr_; }
+  public long StartSpectraIdListPtr {
+    get { return startSpectraIdListPtr_; }
     set {
-      startSpecrtaIdListPtr_ = value;
+      startSpectraIdListPtr_ = value;
     }
   }
 
-  /// <summary>Field number for the "endSpecrtaIdListPtr" field.</summary>
-  public const int EndSpecrtaIdListPtrFieldNumber = 10;
-  private long endSpecrtaIdListPtr_;
+  /// <summary>Field number for the "endSpectraIdListPtr" field.</summary>
+  public const int EndSpectraIdListPtrFieldNumber = 10;
+  private long endSpectraIdListPtr_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public long EndSpecrtaIdListPtr {
-    get { return endSpecrtaIdListPtr_; }
+  public long EndSpectraIdListPtr {
+    get { return endSpectraIdListPtr_; }
     set {
-      endSpecrtaIdListPtr_ = value;
+      endSpectraIdListPtr_ = value;
     }
   }
 
@@ -659,8 +659,8 @@ public sealed partial class ColumnIndexProto : pb::IMessage<ColumnIndexProto>
     if (EndMzListPtr != other.EndMzListPtr) return false;
     if (StartRtListPtr != other.StartRtListPtr) return false;
     if (EndRtListPtr != other.EndRtListPtr) return false;
-    if (StartSpecrtaIdListPtr != other.StartSpecrtaIdListPtr) return false;
-    if (EndSpecrtaIdListPtr != other.EndSpecrtaIdListPtr) return false;
+    if (StartSpectraIdListPtr != other.StartSpectraIdListPtr) return false;
+    if (EndSpectraIdListPtr != other.EndSpectraIdListPtr) return false;
     if (StartIntensityListPtr != other.StartIntensityListPtr) return false;
     if (EndIntensityListPtr != other.EndIntensityListPtr) return false;
     if(!mzs_.Equals(other.mzs_)) return false;
@@ -683,8 +683,8 @@ public sealed partial class ColumnIndexProto : pb::IMessage<ColumnIndexProto>
     if (EndMzListPtr != 0L) hash ^= EndMzListPtr.GetHashCode();
     if (StartRtListPtr != 0L) hash ^= StartRtListPtr.GetHashCode();
     if (EndRtListPtr != 0L) hash ^= EndRtListPtr.GetHashCode();
-    if (StartSpecrtaIdListPtr != 0L) hash ^= StartSpecrtaIdListPtr.GetHashCode();
-    if (EndSpecrtaIdListPtr != 0L) hash ^= EndSpecrtaIdListPtr.GetHashCode();
+    if (StartSpectraIdListPtr != 0L) hash ^= StartSpectraIdListPtr.GetHashCode();
+    if (EndSpectraIdListPtr != 0L) hash ^= EndSpectraIdListPtr.GetHashCode();
     if (StartIntensityListPtr != 0L) hash ^= StartIntensityListPtr.GetHashCode();
     if (EndIntensityListPtr != 0L) hash ^= EndIntensityListPtr.GetHashCode();
     hash ^= mzs_.GetHashCode();
@@ -742,13 +742,13 @@ public sealed partial class ColumnIndexProto : pb::IMessage<ColumnIndexProto>
       output.WriteRawTag(64);
       output.WriteInt64(EndRtListPtr);
     }
-    if (StartSpecrtaIdListPtr != 0L) {
+    if (StartSpectraIdListPtr != 0L) {
       output.WriteRawTag(72);
-      output.WriteInt64(StartSpecrtaIdListPtr);
+      output.WriteInt64(StartSpectraIdListPtr);
     }
-    if (EndSpecrtaIdListPtr != 0L) {
+    if (EndSpectraIdListPtr != 0L) {
       output.WriteRawTag(80);
-      output.WriteInt64(EndSpecrtaIdListPtr);
+      output.WriteInt64(EndSpectraIdListPtr);
     }
     if (StartIntensityListPtr != 0L) {
       output.WriteRawTag(88);
@@ -805,13 +805,13 @@ public sealed partial class ColumnIndexProto : pb::IMessage<ColumnIndexProto>
       output.WriteRawTag(64);
       output.WriteInt64(EndRtListPtr);
     }
-    if (StartSpecrtaIdListPtr != 0L) {
+    if (StartSpectraIdListPtr != 0L) {
       output.WriteRawTag(72);
-      output.WriteInt64(StartSpecrtaIdListPtr);
+      output.WriteInt64(StartSpectraIdListPtr);
     }
-    if (EndSpecrtaIdListPtr != 0L) {
+    if (EndSpectraIdListPtr != 0L) {
       output.WriteRawTag(80);
-      output.WriteInt64(EndSpecrtaIdListPtr);
+      output.WriteInt64(EndSpectraIdListPtr);
     }
     if (StartIntensityListPtr != 0L) {
       output.WriteRawTag(88);
@@ -860,11 +860,11 @@ public sealed partial class ColumnIndexProto : pb::IMessage<ColumnIndexProto>
     if (EndRtListPtr != 0L) {
       size += 1 + pb::CodedOutputStream.ComputeInt64Size(EndRtListPtr);
     }
-    if (StartSpecrtaIdListPtr != 0L) {
-      size += 1 + pb::CodedOutputStream.ComputeInt64Size(StartSpecrtaIdListPtr);
+    if (StartSpectraIdListPtr != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(StartSpectraIdListPtr);
     }
-    if (EndSpecrtaIdListPtr != 0L) {
-      size += 1 + pb::CodedOutputStream.ComputeInt64Size(EndSpecrtaIdListPtr);
+    if (EndSpectraIdListPtr != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(EndSpectraIdListPtr);
     }
     if (StartIntensityListPtr != 0L) {
       size += 1 + pb::CodedOutputStream.ComputeInt64Size(StartIntensityListPtr);
@@ -916,11 +916,11 @@ public sealed partial class ColumnIndexProto : pb::IMessage<ColumnIndexProto>
     if (other.EndRtListPtr != 0L) {
       EndRtListPtr = other.EndRtListPtr;
     }
-    if (other.StartSpecrtaIdListPtr != 0L) {
-      StartSpecrtaIdListPtr = other.StartSpecrtaIdListPtr;
+    if (other.StartSpectraIdListPtr != 0L) {
+      StartSpectraIdListPtr = other.StartSpectraIdListPtr;
     }
-    if (other.EndSpecrtaIdListPtr != 0L) {
-      EndSpecrtaIdListPtr = other.EndSpecrtaIdListPtr;
+    if (other.EndSpectraIdListPtr != 0L) {
+      EndSpectraIdListPtr = other.EndSpectraIdListPtr;
     }
     if (other.StartIntensityListPtr != 0L) {
       StartIntensityListPtr = other.StartIntensityListPtr;
@@ -984,11 +984,11 @@ public sealed partial class ColumnIndexProto : pb::IMessage<ColumnIndexProto>
           break;
         }
         case 72: {
-          StartSpecrtaIdListPtr = input.ReadInt64();
+          StartSpectraIdListPtr = input.ReadInt64();
           break;
         }
         case 80: {
-          EndSpecrtaIdListPtr = input.ReadInt64();
+          EndSpectraIdListPtr = input.ReadInt64();
           break;
         }
         case 88: {
@@ -1075,11 +1075,11 @@ public sealed partial class ColumnIndexProto : pb::IMessage<ColumnIndexProto>
           break;
         }
         case 72: {
-          StartSpecrtaIdListPtr = input.ReadInt64();
+          StartSpectraIdListPtr = input.ReadInt64();
           break;
         }
         case 80: {
-          EndSpecrtaIdListPtr = input.ReadInt64();
+          EndSpectraIdListPtr = input.ReadInt64();
           break;
         }
         case 88: {

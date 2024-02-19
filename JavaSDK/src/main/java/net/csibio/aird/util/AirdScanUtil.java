@@ -12,6 +12,7 @@ package net.csibio.aird.util;
 
 import com.alibaba.fastjson2.JSON;
 import net.csibio.aird.bean.AirdInfo;
+import net.csibio.aird.bean.ColumnIndex;
 import net.csibio.aird.bean.ColumnInfo;
 import net.csibio.aird.constant.SuffixConst;
 import net.csibio.aird.constant.SymbolConst;
@@ -19,6 +20,8 @@ import net.csibio.aird.enums.ResultCodeEnum;
 import net.csibio.aird.exception.ScanException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +100,38 @@ public class AirdScanUtil {
 
         try {
             columnInfo = JSON.parseObject(content, ColumnInfo.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        return columnInfo;
+    }
+
+    public static ColumnInfo loadFromProto(String indexPath){
+        ColumnInfo columnInfo = new ColumnInfo();
+        try {
+            FileInputStream fis = new FileInputStream(indexPath);
+            net.csibio.aird.bean.proto.ColumnInfo.ColumnInfoProto proto = net.csibio.aird.bean.proto.ColumnInfo.ColumnInfoProto.parseFrom(fis);
+            columnInfo.setType(proto.getType());
+            columnInfo.setAirdPath(proto.getAirdPath());
+            columnInfo.setIntPrecision(proto.getIntPrecision());
+            columnInfo.setMzPrecision(proto.getMzPrecision());
+            if (proto.getIndexListCount() > 0){
+                for (int i = 0; i < proto.getIndexListCount(); i++) {
+                    ColumnIndex index = new ColumnIndex();
+                    net.csibio.aird.bean.proto.ColumnInfo.ColumnIndexProto indexProto = proto.getIndexList(i);
+                    index.setLevel(indexProto.getLevel());
+                    index.setStartPtr(indexProto.getStartPtr());
+                    index.setEndPtr(indexProto.getEndPtr());
+                    index.setStartMzListPtr(indexProto.getStartMzListPtr());
+                    index.setEndMzListPtr(indexProto.getEndMzListPtr());
+                    index.setStartRtListPtr(indexProto.getStartRtListPtr());
+                    index.setEndRtListPtr(indexProto.getEndRtListPtr());
+                    index.setStartSpectraIdListPtr(indexProto.getStartSpectra());
+
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
