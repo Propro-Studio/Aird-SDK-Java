@@ -255,4 +255,18 @@ public class ArrayUtil {
         }
         return map;
     }
+
+    public static double[] mergeArrays(double[] arr1, double[] arr2) {
+        double[] mergedArray = new double[arr1.length + arr2.length];
+        System.arraycopy(arr1, 0, mergedArray, 0, arr1.length);
+        System.arraycopy(arr2, 0, mergedArray, arr1.length, arr2.length);
+        return mergedArray;
+    }
+
+    public static int[] mergeArrays(int[] arr1, int[] arr2) {
+        int[] mergedArray = new int[arr1.length + arr2.length];
+        System.arraycopy(arr1, 0, mergedArray, 0, arr1.length);
+        System.arraycopy(arr2, 0, mergedArray, arr1.length, arr2.length);
+        return mergedArray;
+    }
 }
