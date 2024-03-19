@@ -52,13 +52,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="C:\Users\LMS\.nuget\packages\zstdnet\1.4.5\build\x64\q_compress_ffi.dll">
-      <Link>x64\q_compress_ffi.dll</Link>
-    </Content>
-    <Content Include="C:\Users\LMS\.nuget\packages\zstdnet\1.4.5\build\x86\q_compress_ffi.dll">
-      <Link>x86\q_compress_ffi.dll</Link>
-    </Content>
-  </ItemGroup>
-
 </Project>
