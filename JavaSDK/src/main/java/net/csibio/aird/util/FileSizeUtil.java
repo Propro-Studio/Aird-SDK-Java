@@ -3,6 +3,7 @@ package net.csibio.aird.util;
 import net.csibio.aird.bean.common.RawFileInfo;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.TreeMap;
 
 public class FileSizeUtil {
@@ -20,5 +21,26 @@ public class FileSizeUtil {
             }
         }
         return sizeMap;
+    }
+
+    public static String getSizeLabel(long size) {
+        if (size == 0) {
+            return "0";
+        }
+
+        if (size < 1024) {
+            return size + " Byte";
+        }
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        if (size < 1024 * 1024) {
+            return df.format(size / 1024d) + "KB";
+        }
+
+        if (size < 1024 * 1024 * 1024) {
+            return df.format(size / 1024d / 1024) + "MB";
+        }
+
+        return df.format(size / 1024d / 1024 / 1024) + "GB";
     }
 }

@@ -4,54 +4,66 @@ import net.csibio.aird.bean.BlockIndex;
 import net.csibio.aird.bean.DDAMs;
 import net.csibio.aird.compressor.ByteTrans;
 import net.csibio.aird.compressor.bytecomp.ZstdWrapper;
-import net.csibio.aird.compressor.intcomp.VarByteWrapper;
+import net.csibio.aird.compressor.sortedintcomp.IntegratedVarByteWrapper;
 import net.csibio.aird.parser.DDAParser;
+import net.csibio.aird.util.ArrayUtil;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class AirdV3Try2 {
 
-        static String indexPath = "E:\\ComboCompTest\\Aird\\DDA-Sciex-MTBLS733-SampleA_1.json";
+//    static String indexPath = "E:\\ComboCompTest\\Aird\\DDA-Sciex-MTBLS733-SampleA_1.json";
 //    static String indexPath = "E:\\ComboCompTest\\Aird\\DDA-Thermo-MTBLS733-SA1.json";
+    static String indexPath = "E:\\ComboCompTest\\Aird\\DDA-Agilent-PXD004712-Set 3_F1.json";
 
     @Test
     public void test() throws Exception {
         DDAParser parser = new DDAParser(indexPath);
         List<DDAMs> ms1List = parser.readAllToMemory();
 
-        ArrayList[] buckets = new ArrayList[3000];
+        ArrayList<Integer>[] buckets = new ArrayList[5000];
+        ArrayList<Integer>[] bucketIndexes = new ArrayList[5000];
 
         BlockIndex index = parser.getAirdInfo().getIndexList().get(0);
         System.out.println("Aird中ms1块-mz大小：" + index.getMzs().stream().mapToInt(Integer::intValue).sum() / 1024 / 1024 + "MB");
         System.out.println("Aird中ms1块-intensity大小：" + index.getInts().stream().mapToInt(Integer::intValue).sum() / 1024 / 1024 + "MB");
 
         for (int i = 0; i < ms1List.size(); i++) {
-            HashMap<Integer, ArrayList<Double>> bucketMap = groupArray(ms1List.get(i).getSpectrum().getMzs(), ms1List.get(i).getSpectrum().getInts());
-            bucketMap.forEach((key, value) -> {
-                ArrayList<Integer> bucket = buckets[key];
-                ArrayList<Integer> mz = bpMz(value, 10);
-                if (bucket == null) {
-                    bucket = mz;
-                } else {
-                    bucket.addAll(mz);
+            TreeMap<Integer, ArrayList<Double>> bucketMap = groupArray(ms1List.get(i).getSpectrum().getMzs());
+            for (int k = 0; k < buckets.length; k++) {
+                if (buckets[k] == null) {
+                    buckets[k] = new ArrayList<>();
+                    bucketIndexes[k] = new ArrayList<>();
                 }
-                buckets[key] = bucket;
-            });
+                ArrayList<Double> subBucket = bucketMap.get(k);
+                if (subBucket != null) {
+                    int[] bucket = new IntegratedVarByteWrapper().encode(ByteTrans.doubleToInt(subBucket, 100000));
+                    if (i == 0) {
+                        bucketIndexes[k].add(bucket.length);
+                    } else {
+                        bucketIndexes[k].add(bucketIndexes[k].get(i-1)+ bucket.length);
+                    }
+                    buckets[k].addAll(Arrays.stream(bucket).boxed().toList());
+                } else {
+                    if (i == 0) {
+                        bucketIndexes[k].add(0);
+                    } else {
+                        bucketIndexes[k].add(bucketIndexes[k].get(i-1));
+                    }
+                }
+            }
         }
 
         long totalSize = 0l;
         for (int i = 0; i < buckets.length; i++) {
-            ArrayList<Integer> bucket = buckets[i];
-            if (bucket == null) {
+            if (buckets[i] == null || buckets[i].isEmpty()) {
                 continue;
             }
-            int[] intArray = bucket.stream().mapToInt(Integer::intValue).toArray();
-            totalSize += new ZstdWrapper().encode(ByteTrans.intToByte(new VarByteWrapper().encode(intArray))).length;
+            totalSize += new ZstdWrapper().encode(ByteTrans.intToByte(ArrayUtil.toIntPrimitive(buckets[i]))).length;
+            totalSize += new ZstdWrapper().encode(ByteTrans.intToByte(new IntegratedVarByteWrapper().encode(ArrayUtil.toIntPrimitive(bucketIndexes[i])))).length;
         }
-        System.out.println("压缩后大小：" + totalSize / 1024 / 1024 + "MB");
+        System.out.println("压缩后大小：" + totalSize*1.0 / 1024 / 1024 + "MB");
     }
 
     public static HashMap<Integer, ArrayList<Double>> groupArray(double[] mzArray, double[] intensityArray) {
@@ -71,8 +83,8 @@ public class AirdV3Try2 {
         return result;
     }
 
-    public static HashMap<Integer, ArrayList<Double>> groupArray(double[] mzArray) {
-        HashMap<Integer, ArrayList<Double>> result = new HashMap<>();
+    public static TreeMap<Integer, ArrayList<Double>> groupArray(double[] mzArray) {
+        TreeMap<Integer, ArrayList<Double>> result = new TreeMap<>();
 
         for (double value : mzArray) {
             int intPart = (int) (value);
@@ -86,18 +98,5 @@ public class AirdV3Try2 {
         }
 
         return result;
-    }
-
-    public ArrayList<Integer> bpMz(ArrayList<Double> array, int precision) {
-        int[] intArray = new int[array.size()];
-        for (int i = 0; i < array.size(); i++) {
-            intArray[i] = (int) Math.round(array.get(i) * precision);
-        }
-        ArrayList<Integer> mzs = new ArrayList<>();
-        for (int i = 0; i < intArray.length; i++) {
-            mzs.add(intArray[i]);
-        }
-
-        return mzs;
     }
 }

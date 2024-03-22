@@ -11,6 +11,7 @@
 package net.csibio.aird.compressor;
 
 import java.nio.*;
+import java.util.List;
 
 /**
  * type trans for different types
@@ -114,7 +115,21 @@ public class ByteTrans {
     public static int[] doubleToInt(double[] doubles, int precision) {
         int[] newArray = new int[doubles.length];
         for (int i = 0; i < newArray.length; i++) {
-            newArray[i] = (int)Math.round(doubles[i]*precision);
+            newArray[i] = (int) Math.round(doubles[i] * precision);
+        }
+        return newArray;
+    }
+
+    /**
+     * double to int conversion
+     *
+     * @param doubles the doubles array to convert
+     * @return the converted data
+     */
+    public static int[] doubleToInt(List<Double> doubles, int precision) {
+        int[] newArray = new int[doubles.size()];
+        for (int i = 0; i < newArray.length; i++) {
+            newArray[i] = (int) Math.round(doubles.get(i) * precision);
         }
         return newArray;
     }
@@ -128,7 +143,7 @@ public class ByteTrans {
     public static double[] intToDouble(int[] ints, double precision) {
         double[] newArray = new double[ints.length];
         for (int i = 0; i < newArray.length; i++) {
-            newArray[i] = ints[i]/precision;
+            newArray[i] = ints[i] / precision;
         }
         return newArray;
     }
