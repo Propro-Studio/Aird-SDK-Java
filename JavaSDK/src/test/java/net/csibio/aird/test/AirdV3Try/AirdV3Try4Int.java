@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AirdV3Try2 {
+public class AirdV3Try4Int {
 
-    static String indexPath = "E:\\msfile_converted\\Aird2Ex\\35.json";
+    static String indexPath = "E:\\msfile_converted\\DDA-Sciex-MTBLS733-SampleA_3.json";
 //    static String indexPath = "E:\\msfile_converted\\DDA-Thermo-MTBLS733-SA1.json";
 
     @Test

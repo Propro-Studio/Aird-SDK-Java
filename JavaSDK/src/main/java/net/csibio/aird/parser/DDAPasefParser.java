@@ -12,15 +12,15 @@ package net.csibio.aird.parser;
 
 import net.csibio.aird.bean.AirdInfo;
 import net.csibio.aird.bean.BlockIndex;
+import net.csibio.aird.bean.DDAMs;
 import net.csibio.aird.bean.DDAPasefMs;
 import net.csibio.aird.bean.common.Spectrum;
 import net.csibio.aird.exception.ScanException;
 import net.csibio.aird.util.DDAUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * DDA模式的转换器 The parser for DDA acquisition mode. The index is group like MS1-MS2 Group DDA reader
@@ -107,6 +107,90 @@ public class DDAPasefParser extends BaseParser {
                     e.printStackTrace();
                 }
             }
+            ms1List.add(ms1);
+        }
+        return ms1List;
+    }
+
+
+    /**
+     * @param rtStart the start of the retention time
+     * @param rtEnd   the end of the retention time
+     * @return all the spectra in the target retention time range
+     */
+    public List<DDAPasefMs> getSpectraByRtRange(double rtStart, double rtEnd, boolean includeMS2) {
+        BlockIndex ms1Index = getMs1Index();
+        Double[] rts = new Double[ms1Index.getRts().size()];
+        ms1Index.getRts().toArray(rts);
+        //如果范围不在已有的rt数组范围内,则直接返回empty map
+        if (rtStart > rts[rts.length - 1] || rtEnd < rts[0]) {
+            return null;
+        }
+
+        int start = Arrays.binarySearch(rts, rtStart);
+        if (start < 0) {
+            start = -start - 1;
+        }
+        int end = Arrays.binarySearch(rts, rtEnd);
+        if (end < 0) {
+            end = -end - 2;
+        }
+        TreeMap<Double, Spectrum> ms1Map = new TreeMap<>();
+        for (int i = start; i <= end; i++) {
+            ms1Map.put(rts[i], getSpectrumByIndex(ms1Index, i));
+        }
+
+        List<DDAPasefMs> ms1List = buildDDAMsList(ms1Index.getRts(), start, end+1, ms1Index, ms1Map, includeMS2);
+        return ms1List;
+    }
+
+    /**
+     * key为parentNum
+     *
+     * @return the ms2 index,key is the num, value is the index instance
+     */
+    public Map<Integer, BlockIndex> getMs2IndexMap() {
+        if (airdInfo != null && airdInfo.getIndexList() != null && airdInfo.getIndexList().size() > 0) {
+            List<BlockIndex> ms2IndexList = airdInfo.getIndexList().subList(1, airdInfo.getIndexList().size());
+            return ms2IndexList.stream().collect(Collectors.toMap(BlockIndex::getParentNum, Function.identity()));
+        }
+        return null;
+    }
+
+    /**
+     * @param rtList     the target rt list
+     * @param start      start
+     * @param end        end
+     * @param ms1Index   the ms1 index
+     * @param ms1Map     the ms1 map
+     * @param includeMS2 if including the ms2 spectra
+     * @return the search DDAMs results
+     */
+    private List<DDAPasefMs> buildDDAMsList(List<Double> rtList, int start, int end, BlockIndex ms1Index, TreeMap<Double, Spectrum> ms1Map, boolean includeMS2) {
+        List<DDAPasefMs> ms1List = new ArrayList<>();
+        Map<Integer, BlockIndex> ms2IndexMap = null;
+        if (includeMS2) {
+            ms2IndexMap = getMs2IndexMap();
+        }
+         for (int i = start; i < end; i++) {
+            DDAPasefMs ms1 = new DDAPasefMs(rtList.get(i), ms1Map.get(rtList.get(i)));
+            DDAUtil.initFromIndex(airdInfo, ms1, ms1Index, i);
+            if (includeMS2) {
+                BlockIndex ms2Index = ms2IndexMap.get(ms1.getNum());
+                if (ms2Index != null) {
+                    TreeMap<Double, Spectrum> ms2Map = getSpectra(ms2Index.getStartPtr(), ms2Index.getEndPtr(),
+                            ms2Index.getRts(), ms2Index.getMzs(), ms2Index.getInts());
+                    List<Double> ms2RtList = new ArrayList<>(ms2Map.keySet());
+                    List<DDAPasefMs> ms2List = new ArrayList<>();
+                    for (int j = 0; j < ms2RtList.size(); j++) {
+                        DDAPasefMs ms2 = new DDAPasefMs(ms2RtList.get(j), ms2Map.get(ms2RtList.get(j)));
+                        DDAUtil.initFromIndex(airdInfo, ms2, ms2Index, j);
+                        ms2List.add(ms2);
+                    }
+                    ms1.setMs2List(ms2List);
+                }
+            }
+
             ms1List.add(ms1);
         }
         return ms1List;

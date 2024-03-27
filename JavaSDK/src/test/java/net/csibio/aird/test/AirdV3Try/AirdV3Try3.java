@@ -1,21 +1,24 @@
 package net.csibio.aird.test.AirdV3Try;
 
+import com.alibaba.fastjson2.JSON;
 import net.csibio.aird.bean.BlockIndex;
 import net.csibio.aird.bean.DDAMs;
 import net.csibio.aird.compressor.ByteTrans;
 import net.csibio.aird.compressor.bytecomp.ZstdWrapper;
+import net.csibio.aird.compressor.intcomp.BinPackingWrapper;
 import net.csibio.aird.compressor.intcomp.VarByteWrapper;
+import net.csibio.aird.compressor.sortedintcomp.IntegratedVarByteWrapper;
 import net.csibio.aird.parser.DDAParser;
+import net.csibio.aird.test.AirdV3Try.Compressor.*;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class AirdV3Try2 {
-
-    static String indexPath = "E:\\msfile_converted\\Aird2Ex\\35.json";
-//    static String indexPath = "E:\\msfile_converted\\DDA-Thermo-MTBLS733-SA1.json";
+public class AirdV3Try3 {
+    static String indexPath = "E:\\msfile_converted\\Aird2Ex\\DDA-Sciex-MTBLS733-SampleA_3.json";
 
     @Test
     public void test() throws Exception {
@@ -28,28 +31,21 @@ public class AirdV3Try2 {
         System.out.println("Aird中ms1块-mz大小：" + index.getMzs().stream().mapToInt(Integer::intValue).sum() / 1024 / 1024 + "MB");
         System.out.println("Aird中ms1块-intensity大小：" + index.getInts().stream().mapToInt(Integer::intValue).sum() / 1024 / 1024 + "MB");
 
-        for (int i = 0; i < ms1List.size(); i++) {
-            HashMap<Integer, ArrayList<Double>> bucketMap = groupArray(ms1List.get(i).getSpectrum().getMzs(), ms1List.get(i).getSpectrum().getInts());
-            bucketMap.forEach((key, value) -> {
-                ArrayList<Integer> bucket = buckets[key];
-                ArrayList<Integer> mz = bpMz(value, 10);
-                if (bucket == null) {
-                    bucket = mz;
-                } else {
-                    bucket.addAll(mz);
-                }
-                buckets[key] = bucket;
-            });
-        }
+        System.out.println();
+//        System.out.println(JSON.toJSON(index.getInts().subList(0,1000)));
+
 
         long totalSize = 0l;
-        for (int i = 0; i < buckets.length; i++) {
-            ArrayList<Integer> bucket = buckets[i];
-            if (bucket == null) {
-                continue;
-            }
-            int[] intArray = bucket.stream().mapToInt(Integer::intValue).toArray();
-            totalSize += new ZstdWrapper().encode(ByteTrans.intToByte(new VarByteWrapper().encode(intArray))).length;
+        for (int i = 0; i < ms1List.size(); i++) {
+//            int[] intArray = convertDoubleToInt(ms1List.get(i).getSpectrum().getInts());
+            double[] encodedInts = WaveCompressor.encode(ms1List.get(i).getSpectrum().getInts());
+//            int[] encodedInts2 = AdaptiveIntegerCompressor.encode(encodedInts);
+//            int[] encodedInts3 = QuadraticPredictioinIntegerCompressor.encode(intArray);
+        int[] intArray = convertDoubleToInt(encodedInts);
+
+
+            System.out.println(JSON.toJSON(encodedInts));
+            totalSize += new ZstdWrapper().encode(ByteTrans.intToByte(new BinPackingWrapper().encode(intArray))).length;
         }
         System.out.println("压缩后大小：" + totalSize / 1024 / 1024 + "MB");
     }
@@ -86,6 +82,14 @@ public class AirdV3Try2 {
         }
 
         return result;
+    }
+
+    public static int[] convertDoubleToInt(double[] doubleArray) {
+        int[] intArray = new int[doubleArray.length];
+        for (int i = 0; i < doubleArray.length; i++) {
+            intArray[i] = (int) (doubleArray[i] * 10);
+        }
+        return intArray;
     }
 
     public ArrayList<Integer> bpMz(ArrayList<Double> array, int precision) {
