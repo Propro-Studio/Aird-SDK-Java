@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import net.csibio.aird.bean.BlockIndex;
 import net.csibio.aird.bean.DDAMs;
 import net.csibio.aird.bean.DDAPasefMs;
+import net.csibio.aird.bean.common.Spectrum;
 import net.csibio.aird.compressor.ByteTrans;
 import net.csibio.aird.compressor.bytecomp.ZstdWrapper;
 import net.csibio.aird.compressor.intcomp.BinPackingWrapper;
@@ -14,10 +15,7 @@ import net.csibio.aird.parser.DDAParser;
 import net.csibio.aird.parser.DDAPasefParser;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class MS1DFforIm {
 
@@ -30,7 +28,8 @@ public class MS1DFforIm {
     @Test
     public void test() throws Exception {
         DDAPasefParser parser = new DDAPasefParser(indexPath);
-        List<DDAPasefMs> ms1List = parser.getSpectraByRtRange(0,10,false);
+//        TreeMap<Double, Spectrum> spectraMap = parser.getMobiSpectraByRtRange(parser.getMs1Index(),10,12);
+        TreeMap<Double, Spectrum> spectraMap = new TreeMap<>();
 
         BlockIndex index = parser.getAirdInfo().getIndexList().get(0);
         System.out.println("Aird中ms1块-mz大小：" + index.getMzs().stream().mapToInt(Integer::intValue).sum() / 1024 / 1024 + "MB");
@@ -54,18 +53,18 @@ public class MS1DFforIm {
 
         ArrayList<Integer> indexList = new ArrayList<>();
         ArrayList<Integer> pointList = new ArrayList<>();
-
-        for (int i = 0; i < ms1List.size(); i++) {
+        List<Spectrum> spectra = new ArrayList<>(spectraMap.values());
+        for (int i = 0; i < spectra.size(); i++) {
             indexList.add(i);
-            pointList.add(ms1List.get(i).getSpectrum().getMzs().length);
+            pointList.add(spectra.get(i).getMzs().length);
         }
         System.out.println(JSON.toJSON(indexList));
         System.out.println(JSON.toJSON(pointList));
         int k = 0;
-        System.out.println("共有质谱图"+ms1List.size()+"张");
-        double[] lastMzArray = ms1List.get(0).getSpectrum().getMzs();
-        int[] lastIntArray = convertInt(ms1List.get(0).getSpectrum().getInts());
-        for (int i = 0; i < ms1List.size(); i++) {
+        System.out.println("共有质谱图"+spectra.size()+"张");
+        double[] lastMzArray = spectra.get(0).getMzs();
+        int[] lastIntArray = convertInt(spectra.get(0).getInts());
+        for (int i = 0; i < spectra.size(); i++) {
 //            double[] curMz = ms1List.get(i).getSpectrum().getMzs();
 //            double[] curInt = ms1List.get(i).getSpectrum().getInts();
 //            double[] mzArray = ms1List.get(i).getSpectrum().getMzs();
@@ -74,11 +73,11 @@ public class MS1DFforIm {
 //            changeOrder(curMz,curInt,mzArray,intensityArray);
 
 
-            double[] curMz = ms1List.get(i).getSpectrum().getMzs();
-            double[] curInt = ms1List.get(i).getSpectrum().getInts();
+            double[] curMz = spectra.get(i).getMzs();
+            double[] curInt = spectra.get(i).getInts();
             int[] curInt10 = convertInt(curInt);
-            double[] mzArray = ms1List.get(i).getSpectrum().getMzs();
-            int[] intensityArray = convertInt(ms1List.get(i).getSpectrum().getInts());
+            double[] mzArray = spectra.get(i).getMzs();
+            int[] intensityArray = convertInt(spectra.get(i).getInts());
 
             //计算差值
             if (i>0 && i % 2 != 0) {

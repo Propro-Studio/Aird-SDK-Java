@@ -74,6 +74,19 @@ public class DDAPasefParser extends BaseParser {
     }
 
     /**
+     * key为parentNum
+     *
+     * @return the ms2 index,key is the num, value is the index instance
+     */
+    public Map<Integer, BlockIndex> getMs2IndexMap() {
+        if (airdInfo != null && airdInfo.getIndexList() != null && airdInfo.getIndexList().size() > 0) {
+            List<BlockIndex> ms2IndexList = airdInfo.getIndexList().subList(1, airdInfo.getIndexList().size());
+            return ms2IndexList.stream().collect(Collectors.toMap(BlockIndex::getParentNum, Function.identity()));
+        }
+        return null;
+    }
+
+    /**
      * DDA文件采用一次性读入内存的策略 DDA reader using the strategy of loading all the information into the memory
      *
      * @return DDA文件中的所有信息, 以MsCycle的模型进行存储 the mz-intensity pairs read from the aird. And store as
@@ -112,7 +125,6 @@ public class DDAPasefParser extends BaseParser {
         return ms1List;
     }
 
-
     /**
      * @param rtStart the start of the retention time
      * @param rtEnd   the end of the retention time
@@ -140,22 +152,53 @@ public class DDAPasefParser extends BaseParser {
             ms1Map.put(rts[i], getSpectrumByIndex(ms1Index, i));
         }
 
-        List<DDAPasefMs> ms1List = buildDDAMsList(ms1Index.getRts(), start, end+1, ms1Index, ms1Map, includeMS2);
+        List<DDAPasefMs> ms1List = buildDDAPasefMsList(ms1Index.getRts(), start, end+1, ms1Index, ms1Map, includeMS2);
         return ms1List;
     }
 
     /**
-     * key为parentNum
-     *
-     * @return the ms2 index,key is the num, value is the index instance
+     * @param blockIndex 块索引
+     * @param index      块内索引值
+     * @return 对应光谱数据
      */
-    public Map<Integer, BlockIndex> getMs2IndexMap() {
-        if (airdInfo != null && airdInfo.getIndexList() != null && airdInfo.getIndexList().size() > 0) {
-            List<BlockIndex> ms2IndexList = airdInfo.getIndexList().subList(1, airdInfo.getIndexList().size());
-            return ms2IndexList.stream().collect(Collectors.toMap(BlockIndex::getParentNum, Function.identity()));
+    public Spectrum getSpectrumByIndex(BlockIndex blockIndex, int index) {
+        return getSpectrumByIndex(blockIndex.getStartPtr(), blockIndex.getMzs(), blockIndex.getInts(), blockIndex.getMobilities(), index);
+    }
+
+    /**
+     * 从aird文件中获取某一条记录 查询条件: 1.起始坐标 2.mz块体积列表 3.intensity块大小列表 4.光谱在块中的索引位置
+     * <p>
+     * Read a spectrum from aird with multiple query criteria. Query Criteria: 1.Start Point 2.mz
+     * block size list 3.intensity block size list  4.spectrum index in the block
+     *
+     * @param startPtr   起始位置 the start point of the target spectrum
+     * @param mzOffsets  mz数组长度列表 mz size block list
+     * @param intOffsets int数组长度列表 intensity size block list
+     * @param index      光谱在block块中的索引位置 the spectrum index in the block
+     * @return 某个时刻的光谱信息 the spectrum of the target retention time
+     */
+    public Spectrum getSpectrumByIndex(long startPtr, List<Integer> mzOffsets, List<Integer> intOffsets, List<Integer> mobiOffsets, int index) {
+        long start = startPtr;
+
+        for (int i = 0; i < index; i++) {
+            start += mzOffsets.get(i);
+            start += intOffsets.get(i);
+            start += mobiOffsets.get(i);
         }
+
+        try {
+            raf.seek(start);
+            byte[] reader = new byte[mzOffsets.get(index) + intOffsets.get(index) + mobiOffsets.get(index)];
+            raf.read(reader);
+            return getSpectrum(reader, 0, mzOffsets.get(index), intOffsets.get(index), mobiOffsets.get(index));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
+
 
     /**
      * @param rtList     the target rt list
@@ -166,13 +209,13 @@ public class DDAPasefParser extends BaseParser {
      * @param includeMS2 if including the ms2 spectra
      * @return the search DDAMs results
      */
-    private List<DDAPasefMs> buildDDAMsList(List<Double> rtList, int start, int end, BlockIndex ms1Index, TreeMap<Double, Spectrum> ms1Map, boolean includeMS2) {
+    private List<DDAPasefMs> buildDDAPasefMsList(List<Double> rtList, int start, int end, BlockIndex ms1Index, TreeMap<Double, Spectrum> ms1Map, boolean includeMS2) {
         List<DDAPasefMs> ms1List = new ArrayList<>();
         Map<Integer, BlockIndex> ms2IndexMap = null;
         if (includeMS2) {
             ms2IndexMap = getMs2IndexMap();
         }
-         for (int i = start; i < end; i++) {
+        for (int i = start; i < end; i++) {
             DDAPasefMs ms1 = new DDAPasefMs(rtList.get(i), ms1Map.get(rtList.get(i)));
             DDAUtil.initFromIndex(airdInfo, ms1, ms1Index, i);
             if (includeMS2) {

@@ -1,20 +1,23 @@
 package net.csibio.aird.test.AirdV3Try;
 
 import com.alibaba.fastjson2.JSON;
+import net.csibio.aird.bean.AirdInfo;
+import net.csibio.aird.bean.BlockIndex;
 import net.csibio.aird.bean.DDAMs;
+import net.csibio.aird.bean.DDAPasefMs;
 import net.csibio.aird.compressor.ByteTrans;
-import net.csibio.aird.compressor.bytecomp.BrotliWrapper;
 import net.csibio.aird.compressor.bytecomp.ZstdWrapper;
 import net.csibio.aird.compressor.intcomp.BinPackingWrapper;
 import net.csibio.aird.compressor.sortedintcomp.DeltaWrapper;
 import net.csibio.aird.compressor.sortedintcomp.IntegratedBinPackingWrapper;
 import net.csibio.aird.parser.DDAParser;
-import net.csibio.aird.util.AirdMathUtil;
+import net.csibio.aird.parser.DDAPasefParser;
 import net.csibio.aird.util.ArrayUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class AirdV3Try {
 
@@ -22,6 +25,15 @@ public class AirdV3Try {
 //    static String indexPath = "E:\\ComboCompTest\\Aird\\DDA-Sciex-MTBLS733-SampleA_1.json";
     static int MB = 1024 * 1024;
     static int KB = 1024;
+
+    static String pasefIndexPath = "D:\\Aird2.0\\37.json";
+
+    @Test
+    public void test2() throws Exception {
+        DDAPasefParser parser = new DDAPasefParser(pasefIndexPath);
+        List<DDAPasefMs> allSpectra = parser.getSpectraByRtRange(0,10, false);
+        System.out.println(allSpectra.size());
+    }
 
     @Test
     public void test() throws Exception {

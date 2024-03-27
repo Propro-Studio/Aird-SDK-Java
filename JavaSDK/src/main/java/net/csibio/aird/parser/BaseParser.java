@@ -207,9 +207,8 @@ public abstract class BaseParser {
 
     public void parseIndexList() throws IOException {
         if (airdInfo != null && airdInfo.getIndexList() == null) {
-            var delta = (int)(airdInfo.getIndexEndPtr() - airdInfo.getIndexStartPtr());
-            if (delta > 0)
-            {
+            var delta = (int) (airdInfo.getIndexEndPtr() - airdInfo.getIndexStartPtr());
+            if (delta > 0) {
                 raf.seek(airdInfo.getIndexStartPtr());
                 byte[] result = new byte[delta];
                 raf.read(result);
@@ -483,48 +482,6 @@ public abstract class BaseParser {
     }
 
     /**
-     * 根据RT范围解码光谱图
-     *
-     * @param startPtr   起始位置 the start point of the target spectrum
-     * @param endPtr     结束位置 The end point of the target spectrum
-     * @param rtList     the list of search retention time
-     * @param mzOffsets  mz数组长度列表 mz size block list
-     * @param intOffsets int数组长度列表 intensity size block list
-     * @param rtStart    the start of retention time
-     * @param rtEnd      the end of retention time
-     * @return spectrum map for the search result
-     */
-    public TreeMap<Double, Spectrum> getSpectraByRtRange(long startPtr, long endPtr, List<Double> rtList, List<Integer> mzOffsets, List<Integer> intOffsets, double rtStart, double rtEnd) {
-        double[] rts = ArrayUtil.toDoublePrimitive(rtList);
-        //如果范围不在已有的rt数组范围内,则直接返回empty map
-        if (rtStart > rts[rts.length - 1] || rtEnd < rts[0]) {
-            return null;
-        }
-
-        int start = Arrays.binarySearch(rts, rtStart);
-        if (start < 0) {
-            start = -start - 1;
-        }
-        int end = Arrays.binarySearch(rts, rtEnd);
-        if (end < 0) {
-            end = -end - 2;
-        }
-        return getSpectra(startPtr, endPtr, rtList.subList(start, end + 1), mzOffsets, intOffsets);
-    }
-
-    /**
-     * 根据RT范围解码光谱图
-     *
-     * @param index   the index of the target block
-     * @param rtStart the start of the retention time
-     * @param rtEnd   tje end of the retention time
-     * @return spectrum map for the search result
-     */
-    public TreeMap<Double, Spectrum> getSpectraByRtRange(BlockIndex index, double rtStart, double rtEnd) {
-        return getSpectraByRtRange(index.getStartPtr(), index.getEndPtr(), index.getRts(), index.getMzs(), index.getInts(), rtStart, rtEnd);
-    }
-
-    /**
      * 根据索引解码整个索引块内所有的光谱图
      *
      * @param index the index of the target block
@@ -577,16 +534,15 @@ public abstract class BaseParser {
      * will not close the RAF object directly after using it. Users need to close the object manually
      * after using the diaparser object
      *
-     * @param start      起始指针位置 start point
-     * @param end        结束指针位置 end point
-     * @param rtList     rt列表,包含所有的光谱产出时刻 the retention time list
-     * @param mzOffsets  mz块的大小列表 the mz block size list
-     * @param intOffsets intensity块的大小列表 the intensity block size list
+     * @param start       起始指针位置 start point
+     * @param end         结束指针位置 end point
+     * @param rtList      rt列表,包含所有的光谱产出时刻 the retention time list
+     * @param mzOffsets   mz块的大小列表 the mz block size list
+     * @param intOffsets  intensity块的大小列表 the intensity block size list
      * @param mobiOffsets mobiOffsets块的大小列表 the mobility block size list
      * @return 每一个时刻对应的光谱信息 the spectrum of the target retention time
      */
     public TreeMap<Double, Spectrum> getSpectra(long start, long end, List<Double> rtList, List<Integer> mzOffsets, List<Integer> intOffsets, List<Integer> mobiOffsets) {
-
         TreeMap<Double, Spectrum> map = new TreeMap<>();
         try {
             //首先计算压缩块的总大小
@@ -598,30 +554,31 @@ public abstract class BaseParser {
                 byte[] result = new byte[MAX_READ_SIZE];//读取一个最大块,其中的有效数据应该是小于该块的大小的
                 raf.read(result);
                 int iter = 0;//迭代指针,在处理每一个分段的时候都会归零
-                while (rtIndex < rtList.size()) {
-                    //判断本轮已经处理的数据是否会超出分段大小MAX_READ_SIZE的范围,如果超过则结束for循环,如果未超过则进行解码
-                    if ((iter + mzOffsets.get(rtIndex) + intOffsets.get(rtIndex) + mobiOffsets.get(rtIndex)) > MAX_READ_SIZE) {
-                        //分段数据处理完毕, 移动指针至下一个分段的位置
-                        delta = delta - iter;
-                        start = start + iter;
-                        break;
-                    }
+                if (rtIndex == rtList.size()) {
+                    break;
+                }
+                int nextLength = mzOffsets.get(rtIndex) + intOffsets.get(rtIndex) + mobiOffsets.get(rtIndex);
+                while (rtIndex < rtList.size() && (iter+nextLength) <= MAX_READ_SIZE) {
+                    map.put(rtList.get(rtIndex), getSpectrum(result, iter, mzOffsets.get(rtIndex), intOffsets.get(rtIndex), mobiOffsets.get(rtIndex)));
+                    iter += nextLength;
+                    rtIndex++;
+                }
+                delta = delta - iter;
+                start = start + iter;
+            }
 
+            if (delta > 0){
+                raf.seek(start);
+                byte[] result = new byte[(int) delta];
+                raf.read(result);
+                int iter = 0;
+                while (rtIndex < rtList.size()) {
                     map.put(rtList.get(rtIndex), getSpectrum(result, iter, mzOffsets.get(rtIndex), intOffsets.get(rtIndex), mobiOffsets.get(rtIndex)));
                     iter = iter + mzOffsets.get(rtIndex) + intOffsets.get(rtIndex) + mobiOffsets.get(rtIndex);
-
                     rtIndex++;
                 }
             }
-            raf.seek(start);
-            byte[] result = new byte[(int) delta];
-            raf.read(result);
-            int iter = 0;
-            while (rtIndex < rtList.size()) {
-                map.put(rtList.get(rtIndex), getSpectrum(result, iter, mzOffsets.get(rtIndex), intOffsets.get(rtIndex), mobiOffsets.get(rtIndex)));
-                iter = iter + mzOffsets.get(rtIndex) + intOffsets.get(rtIndex) + mobiOffsets.get(rtIndex);
-                rtIndex++;
-            }
+
             return map;
         } catch (Exception e) {
             e.printStackTrace();
@@ -764,7 +721,7 @@ public abstract class BaseParser {
      */
     public double[] getMzs(byte[] value, int offset, int length) {
         try {
-            if (value.length == 0){
+            if (value.length == 0) {
                 return new double[0];
             }
             ByteBuffer byteBuffer = ByteBuffer.wrap(mzByteComp.decode(value, offset, length));
@@ -807,7 +764,7 @@ public abstract class BaseParser {
      * @return 解压缩后的数组
      */
     public int[] getMzsAsInteger(byte[] value, int offset, int length) {
-        if (value.length == 0){
+        if (value.length == 0) {
             return new int[0];
         }
         ByteBuffer byteBuffer = ByteBuffer.wrap(mzByteComp.decode(value, offset, length));
@@ -841,7 +798,7 @@ public abstract class BaseParser {
      * @return the decompression intensity array
      */
     public double[] getInts(byte[] value, int start, int length) {
-        if (value.length == 0){
+        if (value.length == 0) {
             return new double[0];
         }
         ByteBuffer byteBuffer = ByteBuffer.wrap(intByteComp.decode(value, start, length));
@@ -878,7 +835,7 @@ public abstract class BaseParser {
     public double[] getMobilities(byte[] value, int start, int length) {
 
         try {
-            if (value.length == 0){
+            if (value.length == 0) {
                 return new double[0];
             }
             ByteBuffer byteBuffer = ByteBuffer.wrap(mobiByteComp.decode(value, start, length));
@@ -958,17 +915,18 @@ public abstract class BaseParser {
         return tags;
     }
 
-    public Xic calcXic(TreeMap<Double, Spectrum> map, double mzStart, double mzEnd){
+    public Xic calcXic(TreeMap<Double, Spectrum> map, double mzStart, double mzEnd) {
         double[] rts = new double[map.size()];
         double[] intensities = new double[map.size()];
         int iter = 0;
-        map.forEach((rt, spectrum)->{
+        map.forEach((rt, spectrum) -> {
             rts[iter] = rt;
             intensities[iter] = Extractor.accumulation(spectrum, mzStart, mzEnd);
         });
         Xic xic = new Xic(rts, intensities);
         return xic;
     }
+
     /**
      * @return the airdinfo
      */
