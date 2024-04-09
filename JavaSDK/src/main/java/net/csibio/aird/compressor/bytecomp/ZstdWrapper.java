@@ -31,8 +31,9 @@ public class ZstdWrapper implements ByteComp {
 
     @Override
     public byte[] decode(byte[] input) {
-        int size = (int) Zstd.decompressedSize(input);
+        int size = (int) Zstd.getFrameContentSize(input);
         byte[] array = new byte[size];
+
         try {
             Zstd.decompress(array, input);
         } catch (Exception e) {
@@ -56,7 +57,7 @@ public class ZstdWrapper implements ByteComp {
     }
 
     public byte[] decode(byte[] input, byte[] dict) {
-        int size = (int) Zstd.decompressedSize(input);
+        int size = (int) Zstd.getFrameContentSize(input);
         return Zstd.decompress(input, new ZstdDictDecompress(dict), size);
     }
 

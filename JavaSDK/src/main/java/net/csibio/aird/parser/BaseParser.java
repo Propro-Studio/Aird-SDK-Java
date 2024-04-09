@@ -10,7 +10,6 @@
 
 package net.csibio.aird.parser;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import lombok.Data;
 import net.csibio.aird.bean.AirdInfo;
@@ -25,12 +24,14 @@ import net.csibio.aird.compressor.intcomp.BinPackingWrapper;
 import net.csibio.aird.compressor.intcomp.Empty;
 import net.csibio.aird.compressor.intcomp.IntComp;
 import net.csibio.aird.compressor.intcomp.VarByteWrapper;
-import net.csibio.aird.compressor.sortedintcomp.*;
+import net.csibio.aird.compressor.sortedintcomp.DeltaWrapper;
+import net.csibio.aird.compressor.sortedintcomp.IntegratedBinPackingWrapper;
+import net.csibio.aird.compressor.sortedintcomp.IntegratedVarByteWrapper;
+import net.csibio.aird.compressor.sortedintcomp.SortedIntComp;
 import net.csibio.aird.eic.Extractor;
 import net.csibio.aird.enums.*;
 import net.csibio.aird.exception.ScanException;
 import net.csibio.aird.util.AirdScanUtil;
-import net.csibio.aird.util.ArrayUtil;
 import net.csibio.aird.util.FileUtil;
 
 import java.io.File;
@@ -39,7 +40,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -558,7 +558,7 @@ public abstract class BaseParser {
                     break;
                 }
                 int nextLength = mzOffsets.get(rtIndex) + intOffsets.get(rtIndex) + mobiOffsets.get(rtIndex);
-                while (rtIndex < rtList.size() && (iter+nextLength) <= MAX_READ_SIZE) {
+                while (rtIndex < rtList.size() && (iter + nextLength) <= MAX_READ_SIZE) {
                     map.put(rtList.get(rtIndex), getSpectrum(result, iter, mzOffsets.get(rtIndex), intOffsets.get(rtIndex), mobiOffsets.get(rtIndex)));
                     iter += nextLength;
                     rtIndex++;
@@ -567,7 +567,7 @@ public abstract class BaseParser {
                 start = start + iter;
             }
 
-            if (delta > 0){
+            if (delta > 0) {
                 raf.seek(start);
                 byte[] result = new byte[(int) delta];
                 raf.read(result);
@@ -720,29 +720,24 @@ public abstract class BaseParser {
      * @return 解压缩后的数组
      */
     public double[] getMzs(byte[] value, int offset, int length) {
-        try {
-            if (value.length == 0) {
-                return new double[0];
-            }
-            ByteBuffer byteBuffer = ByteBuffer.wrap(mzByteComp.decode(value, offset, length));
-            byteBuffer.order(mzCompressor.fetchByteOrder());
-
-            IntBuffer ints = byteBuffer.asIntBuffer();
-            int[] intValues = new int[ints.capacity()];
-            for (int i = 0; i < ints.capacity(); i++) {
-                intValues[i] = ints.get(i);
-            }
-            intValues = mzIntComp.decode(intValues);
-            double[] doubleValues = new double[intValues.length];
-            for (int index = 0; index < intValues.length; index++) {
-                doubleValues[index] = intValues[index] / mzPrecision;
-            }
-            byteBuffer.clear();
-            return doubleValues;
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (value.length == 0) {
+            return new double[0];
         }
-        return new double[0];
+        ByteBuffer byteBuffer = ByteBuffer.wrap(mzByteComp.decode(value, offset, length));
+        byteBuffer.order(mzCompressor.fetchByteOrder());
+
+        IntBuffer ints = byteBuffer.asIntBuffer();
+        int[] intValues = new int[ints.capacity()];
+        for (int i = 0; i < ints.capacity(); i++) {
+            intValues[i] = ints.get(i);
+        }
+        intValues = mzIntComp.decode(intValues);
+        double[] doubleValues = new double[intValues.length];
+        for (int index = 0; index < intValues.length; index++) {
+            doubleValues[index] = intValues[index] / mzPrecision;
+        }
+        byteBuffer.clear();
+        return doubleValues;
     }
 
     /**
@@ -833,30 +828,23 @@ public abstract class BaseParser {
      * @return the decompression intensity array
      */
     public double[] getMobilities(byte[] value, int start, int length) {
-
-        try {
-            if (value.length == 0) {
-                return new double[0];
-            }
-            ByteBuffer byteBuffer = ByteBuffer.wrap(mobiByteComp.decode(value, start, length));
-            byteBuffer.order(mobiCompressor.fetchByteOrder());
-
-            IntBuffer ints = byteBuffer.asIntBuffer();
-            int[] intValues = new int[ints.capacity()];
-            for (int i = 0; i < ints.capacity(); i++) {
-                intValues[i] = ints.get(i);
-            }
-            intValues = mobiIntComp.decode(intValues);
-            double[] mobilities = new double[intValues.length];
-            for (int i = 0; i < intValues.length; i++) {
-                mobilities[i] = mobiDict[intValues[i]];
-            }
-            return mobilities;
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (value.length == 0) {
+            return new double[0];
         }
+        ByteBuffer byteBuffer = ByteBuffer.wrap(mobiByteComp.decode(value, start, length));
+        byteBuffer.order(mobiCompressor.fetchByteOrder());
 
-        return null;
+        IntBuffer ints = byteBuffer.asIntBuffer();
+        int[] intValues = new int[ints.capacity()];
+        for (int i = 0; i < ints.capacity(); i++) {
+            intValues[i] = ints.get(i);
+        }
+        intValues = mobiIntComp.decode(intValues);
+        double[] mobilities = new double[intValues.length];
+        for (int i = 0; i < intValues.length; i++) {
+            mobilities[i] = mobiDict[intValues[i]];
+        }
+        return mobilities;
     }
 
     /**

@@ -29,6 +29,13 @@ public enum IntCompType {
      * Variable Byte
      */
     VB(3, "VB"),
+
+    /**
+     * Delta Zigzag Variable Byte
+     */
+    DZVB(4, "DZVB"),
+
+
     ;
 
     /**

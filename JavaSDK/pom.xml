@@ -30,7 +30,6 @@
         </license>
     </licenses>
     <dependencies>
-
         <dependency>
             <artifactId>lombok</artifactId>
             <groupId>org.projectlombok</groupId>
@@ -85,7 +84,7 @@
         <dependency>
             <artifactId>zstd-jni</artifactId>
             <groupId>com.github.luben</groupId>
-            <version>1.5.4-2</version>
+            <version>1.5.6-2</version>
         </dependency>
         <dependency>
             <artifactId>commons-io</artifactId>

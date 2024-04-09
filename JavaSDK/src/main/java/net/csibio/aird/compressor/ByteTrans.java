@@ -10,8 +10,12 @@
 
 package net.csibio.aird.compressor;
 
+import me.lemire.integercompression.DeltaZigzagEncoding;
+import me.lemire.integercompression.DeltaZigzagVariableByte;
+
 import java.nio.*;
 import java.util.List;
+import java.util.Map;
 
 /**
  * type trans for different types
@@ -268,5 +272,13 @@ public class ByteTrans {
 
         byteBuffer.clear();
         return shortValues;
+    }
+
+    public static int[] mobiToInt(double[] mobi, Map<Double, Integer> dict){
+        int[] mobiInts = new int[mobi.length];
+        for (int i = 0; i < mobi.length; i++) {
+            mobiInts[i] = dict.get(mobi[i]);
+        }
+        return mobiInts;
     }
 }
