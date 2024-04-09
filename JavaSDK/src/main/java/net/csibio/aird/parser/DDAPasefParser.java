@@ -147,12 +147,27 @@ public class DDAPasefParser extends BaseParser {
         if (end < 0) {
             end = -end - 2;
         }
-        TreeMap<Double, Spectrum> ms1Map = new TreeMap<>();
+
+        long startPtr = ms1Index.getStartPtr();
+        for (int i = 0; i < start; i++) {
+            startPtr += ms1Index.getMzs().get(i);
+            startPtr += ms1Index.getInts().get(i);
+            startPtr += ms1Index.getMobilities().get(i);
+        }
+        long endPtr = startPtr;
         for (int i = start; i <= end; i++) {
-            ms1Map.put(rts[i], getSpectrumByIndex(ms1Index, i));
+            endPtr += ms1Index.getMzs().get(i);
+            endPtr += ms1Index.getInts().get(i);
+            endPtr += ms1Index.getMobilities().get(i);
         }
 
-        List<DDAPasefMs> ms1List = buildDDAPasefMsList(ms1Index.getRts(), start, end+1, ms1Index, ms1Map, includeMS2);
+        List<Double> subRts = ms1Index.getRts().subList(start, end+1);
+        List<Integer> mzs = ms1Index.getMzs().subList(start, end+1);
+        List<Integer> ints = ms1Index.getInts().subList(start, end+1);;
+        List<Integer> mobilities = ms1Index.getMobilities().subList(start, end+1);;
+        TreeMap<Double, Spectrum> ms1Map = getSpectra(startPtr, endPtr, subRts, mzs, ints, mobilities);
+
+        List<DDAPasefMs> ms1List = buildDDAPasefMsList(ms1Index.getRts(), start, end + 1, ms1Index, ms1Map, includeMS2);
         return ms1List;
     }
 
@@ -198,7 +213,6 @@ public class DDAPasefParser extends BaseParser {
 
         return null;
     }
-
 
     /**
      * @param rtList     the target rt list

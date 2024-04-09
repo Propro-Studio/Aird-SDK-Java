@@ -1,8 +1,6 @@
 package net.csibio.aird.test.AirdV3Try;
 
 import com.alibaba.fastjson2.JSON;
-import net.csibio.aird.bean.AirdInfo;
-import net.csibio.aird.bean.BlockIndex;
 import net.csibio.aird.bean.DDAMs;
 import net.csibio.aird.bean.DDAPasefMs;
 import net.csibio.aird.compressor.ByteTrans;
@@ -17,25 +15,33 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 public class AirdV3Try {
 
 //    static String indexPath = "E:\\MzmineTest\\PXD033904_PASEF\\Aird\\20220302_tims1_nElute_8cm_DOl_Phospho_7min_rep1_Slot1-94_1_1811.json";
-//    static String indexPath = "E:\\ComboCompTest\\Aird\\DDA-Sciex-MTBLS733-SampleA_1.json";
+    static String indexPath = "E:\\ComboCompTest\\Aird\\DDA-Sciex-MTBLS733-SampleA_1.json";
 
-    static String indexPath = "E:\\msfile_converted\\Aird2Ex\\37.json";
+//    static String indexPath = "F:\\37-test.json";
 
     static int MB = 1024 * 1024;
     static int KB = 1024;
 
-    static String pasefIndexPath = "D:\\Aird2.0\\37.json";
-
     @Test
     public void test2() throws Exception {
         DDAPasefParser parser = new DDAPasefParser(indexPath);
-        List<DDAPasefMs> allSpectra = parser.getSpectraByRtRange(0,10, false);
+        long start = System.currentTimeMillis();
+        List<DDAPasefMs> allSpectra = parser.getSpectraByRtRange(0,1000, false);
         System.out.println(allSpectra.size());
+        System.out.println("耗时："+(System.currentTimeMillis() - start));
+    }
+
+    @Test
+    public void test3() throws Exception {
+        DDAParser parser = new DDAParser(indexPath);
+        long start = System.currentTimeMillis();
+        List<DDAMs> allSpectra = parser.getSpectraByRtRange(0,1000, false);
+        System.out.println(allSpectra.size());
+        System.out.println("耗时："+(System.currentTimeMillis() - start));
     }
 
     @Test

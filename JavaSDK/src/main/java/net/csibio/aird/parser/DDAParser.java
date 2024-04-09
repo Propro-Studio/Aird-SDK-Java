@@ -132,10 +132,22 @@ public class DDAParser extends BaseParser {
         if (end < 0) {
             end = -end - 2;
         }
-        TreeMap<Double, Spectrum> ms1Map = new TreeMap<>();
-        for (int i = start; i <= end; i++) {
-            ms1Map.put(rts[i], getSpectrumByIndex(ms1Index, i));
+
+        long startPtr = ms1Index.getStartPtr();
+        for (int i = 0; i < start; i++) {
+            startPtr += ms1Index.getMzs().get(i);
+            startPtr += ms1Index.getInts().get(i);
         }
+        long endPtr = startPtr;
+        for (int i = start; i <= end; i++) {
+            endPtr += ms1Index.getMzs().get(i);
+            endPtr += ms1Index.getInts().get(i);
+        }
+
+        List<Double> subRts = ms1Index.getRts().subList(start, end+1);
+        List<Integer> mzs = ms1Index.getMzs().subList(start, end+1);
+        List<Integer> ints = ms1Index.getInts().subList(start, end+1);;
+        TreeMap<Double, Spectrum> ms1Map = getSpectra(startPtr, endPtr, subRts, mzs, ints);
 
         List<DDAMs> ms1List = buildDDAMsList(ms1Index.getRts(), start, end+1, ms1Index, ms1Map, includeMS2);
         return ms1List;

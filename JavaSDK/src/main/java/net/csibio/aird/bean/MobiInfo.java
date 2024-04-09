@@ -31,6 +31,11 @@ public class MobiInfo {
     String unit;
 
     /**
+     * ion mobility value
+     */
+    Double value;
+
+    /**
      * ion mobility type, see MobilityType
      */
     String type;
