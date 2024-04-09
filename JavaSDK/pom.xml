@@ -30,11 +30,7 @@
         </license>
     </licenses>
     <dependencies>
-        <dependency>
-            <groupId>de.sciss</groupId>
-            <artifactId>jwave</artifactId>
-            <version>1.0.3</version>
-        </dependency>
+
         <dependency>
             <artifactId>lombok</artifactId>
             <groupId>org.projectlombok</groupId>
@@ -148,7 +144,12 @@
             <scope>test</scope>
             <version>2.6.10</version>
         </dependency>
-
+        <dependency>
+            <groupId>de.sciss</groupId>
+            <artifactId>jwave</artifactId>
+            <version>1.0.3</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <developers>
