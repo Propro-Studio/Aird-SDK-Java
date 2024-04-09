@@ -14,7 +14,8 @@ namespace AirdSDK.Beans
     {
         public long dictStart; // start position in the aird for mobi array
         public long dictEnd; //end position in the aird for mobi array
-        public string unit; //ion mobility unit 
+        public string unit; //ion mobility unit
+        public double value; //ion mobility value
         public string type; //ion mobility type, see MobilityType
     }
 }
