@@ -21,8 +21,11 @@ import java.util.TreeMap;
 
 public class AirdV3Try {
 
-    static String indexPath = "E:\\MzmineTest\\PXD033904_PASEF\\Aird\\20220302_tims1_nElute_8cm_DOl_Phospho_7min_rep1_Slot1-94_1_1811.json";
+//    static String indexPath = "E:\\MzmineTest\\PXD033904_PASEF\\Aird\\20220302_tims1_nElute_8cm_DOl_Phospho_7min_rep1_Slot1-94_1_1811.json";
 //    static String indexPath = "E:\\ComboCompTest\\Aird\\DDA-Sciex-MTBLS733-SampleA_1.json";
+
+    static String indexPath = "E:\\msfile_converted\\Aird2Ex\\37.json";
+
     static int MB = 1024 * 1024;
     static int KB = 1024;
 
@@ -30,7 +33,7 @@ public class AirdV3Try {
 
     @Test
     public void test2() throws Exception {
-        DDAPasefParser parser = new DDAPasefParser(pasefIndexPath);
+        DDAPasefParser parser = new DDAPasefParser(indexPath);
         List<DDAPasefMs> allSpectra = parser.getSpectraByRtRange(0,10, false);
         System.out.println(allSpectra.size());
     }
