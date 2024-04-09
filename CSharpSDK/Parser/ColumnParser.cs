@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using AirdSDK.Beans;
 using AirdSDK.Beans.Common;
 using AirdSDK.Compressor;
 using AirdSDK.Enums;

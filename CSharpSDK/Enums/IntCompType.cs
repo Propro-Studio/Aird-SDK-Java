@@ -15,5 +15,6 @@ namespace AirdSDK.Enums
         Empty = -1, //Empty, No Compressor
         VB = 2, //Variable Byte
         BP = 3, //Binary Packing
+        DZVB = 4, //Delta Zigzag Variable Byte
     }
 }

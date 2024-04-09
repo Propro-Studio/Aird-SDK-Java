@@ -663,6 +663,33 @@ public abstract class BaseParser
         fs.Read(reader, 0, reader.Length);
         return getSpectrum(reader, 0, mzOffsets[index], intOffsets[index]);
     }
+    
+    /**
+    * 从aird文件中获取某一条记录 查询条件: 1.起始坐标 2.mz块体积列表 3.intensity块大小列表 4.光谱在块中的索引位置
+    * <p>
+    * Read a spectrum from aird with multiple query criteria. Query Criteria: 1.Start Point 2.mz
+    * block size list 3.intensity block size list  4.spectrum index in the block
+    *
+    * @param startPtr   起始位置 the start point of the target spectrum
+    * @param mzOffsets  mz数组长度列表 mz size block list
+    * @param intOffsets int数组长度列表 intensity size block list
+    * @param index      光谱在block块中的索引位置 the spectrum index in the block
+    * @return 某个时刻的光谱信息 the spectrum of the target retention time
+    */
+    public Spectrum getSpectrumByIndex(long startPtr, List<int> mzOffsets, List<int> intOffsets, List<int> mobiOffsets, int index) 
+    {
+        long start = startPtr;
+        for (int i = 0; i < index; i++) {
+            start += mzOffsets[i];
+            start += intOffsets[i];
+            start += mobiOffsets[i];
+        }
+        
+        fs.Seek(start, SeekOrigin.Begin);
+        byte[] reader = new byte[mzOffsets[index] + intOffsets[index] + mobiOffsets[index]];
+        fs.Read(reader, 0, reader.Length);
+        return getSpectrum(reader, 0, mzOffsets[index], intOffsets[index], mobiOffsets[index]);
+    }
 
     /**
     * get mz values only for aird file 默认从Aird文件中读取,编码Order为LITTLE_ENDIAN,精度为小数点后三位
