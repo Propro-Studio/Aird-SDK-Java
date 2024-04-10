@@ -72,6 +72,11 @@ public abstract class BaseParser
     public Beans.Compressor mzCompressor;
 
     /**
+     * the rt compressor
+     */
+    public Beans.Compressor rtCompressor;
+
+    /**
      * 使用的压缩内核
      */
     public SortedIntComp mzIntComp;
@@ -81,8 +86,6 @@ public abstract class BaseParser
 
     public SortedIntComp rtIntComp4Chroma = new IntegratedVarByteWrapper();
     public ByteComp rtByteComp4Chroma = new ZstdWrapper();
-    public IntComp intIntComp4Chroma = new VarByteWrapper();
-    public ByteComp intByteComp4Chroma = new ZstdWrapper();
 
     public BaseParser()
     {
@@ -301,6 +304,9 @@ public abstract class BaseParser
                     break;
                 case "BP":
                     intIntComp = new BinPackingWrapper();
+                    break;  
+                case "DZVB":
+                    intIntComp = new DeltaZigzagVBWrapper();
                     break;
                 case "Empty":
                     intIntComp = new Empty();
@@ -337,6 +343,9 @@ public abstract class BaseParser
                     case "BP":
                         mobiIntComp = new BinPackingWrapper();
                         break;
+                    case "DZVB":
+                        intIntComp = new DeltaZigzagVBWrapper();
+                        break;
                     case "Empty":
                         mobiIntComp = new Empty();
                         break;
@@ -355,6 +364,42 @@ public abstract class BaseParser
                         break;
                     case "Zstd":
                         mobiByteComp = new ZstdWrapper();
+                        break;
+                }
+            }
+        }
+        
+        if (rtCompressor != null)
+        {
+            var rtMethods = rtCompressor.methods;
+            if (rtMethods.Count == 2)
+            {
+                switch (rtMethods[0])
+                {
+                    case "IBP":
+                        rtIntComp4Chroma = new IntegratedBinPackingWrapper(); //IBP
+                        break;
+                    case "IVB":
+                        rtIntComp4Chroma = new IntegratedVarByteWrapper(); //IVB
+                        break;
+                    case "Delta":
+                        rtIntComp4Chroma = new DeltaWrapper(); //Delta
+                        break;
+                }
+
+                switch (mzMethods[1])
+                {
+                    case "Zlib":
+                        rtByteComp4Chroma = new ZlibWrapper();
+                        break;
+                    case "Brotli":
+                        rtByteComp4Chroma = new BrotliWrapper();
+                        break;
+                    case "Snappy":
+                        rtByteComp4Chroma = new SnappyWrapper();
+                        break;
+                    case "Zstd":
+                        rtByteComp4Chroma = new ZstdWrapper();
                         break;
                 }
             }
@@ -813,36 +858,36 @@ public abstract class BaseParser
         return mobilities;
     }
 
-    /**
-   * get tag values only for aird file 默认从Aird文件中读取,编码Order为LITTLE_ENDIAN,精度为小数点后三位
-   *
-   * @param value 压缩后的数组
-   * @return 解压缩后的数组
-   */
-    public int[] getTags(byte[] value)
-    {
-        byte[] decodedData = new ZlibWrapper().decode(value);
-        byte[] byteValue = new byte[decodedData.Length * 8];
-        for (int i = 0; i < decodedData.Length; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                byteValue[8 * i + j] = (byte) (((decodedData[i] & 0xff) >> j) & 1);
-            }
-        }
-
-        int digit = mzCompressor.digit;
-        int[] tags = new int[byteValue.Length / digit];
-        for (int i = 0; i < tags.Length; i++)
-        {
-            for (int j = 0; j < digit; j++)
-            {
-                tags[i] += byteValue[digit * i + j] << j;
-            }
-        }
-
-        return tags;
-    }
+   //  /**
+   // * get tag values only for aird file 默认从Aird文件中读取,编码Order为LITTLE_ENDIAN,精度为小数点后三位
+   // *
+   // * @param value 压缩后的数组
+   // * @return 解压缩后的数组
+   // */
+   //  public int[] getTags(byte[] value)
+   //  {
+   //      byte[] decodedData = new ZlibWrapper().decode(value);
+   //      byte[] byteValue = new byte[decodedData.Length * 8];
+   //      for (int i = 0; i < decodedData.Length; i++)
+   //      {
+   //          for (int j = 0; j < 8; j++)
+   //          {
+   //              byteValue[8 * i + j] = (byte) (((decodedData[i] & 0xff) >> j) & 1);
+   //          }
+   //      }
+   //
+   //      int digit = mzCompressor.digit;
+   //      int[] tags = new int[byteValue.Length / digit];
+   //      for (int i = 0; i < tags.Length; i++)
+   //      {
+   //          for (int j = 0; j < digit; j++)
+   //          {
+   //              tags[i] += byteValue[digit * i + j] << j;
+   //          }
+   //      }
+   //
+   //      return tags;
+   //  }
 
     /**
      * get tag values only for aird file 默认从Aird文件中读取,编码Order为LITTLE_ENDIAN,精度为小数点后三位
@@ -852,32 +897,32 @@ public abstract class BaseParser
      * @param length 读取长度
      * @return 解压缩后的数组
      */
-    public int[] getTags(byte[] value, int start, int length)
-    {
-        byte[] tagShift = new ZlibWrapper().decode(value, start, length);
-        //        byteBuffer.order(mzCompressor.getByteOrder());
-
-        byte[] byteValue = new byte[tagShift.Length * 8];
-        for (int i = 0; i < tagShift.Length; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                byteValue[8 * i + j] = (byte) (((tagShift[i] & 0xff) >> j) & 1);
-            }
-        }
-
-        int digit = mzCompressor.digit;
-        int[] tags = new int[byteValue.Length / digit];
-        for (int i = 0; i < tags.Length; i++)
-        {
-            for (int j = 0; j < digit; j++)
-            {
-                tags[i] += byteValue[digit * i + j] << j;
-            }
-        }
-
-        return tags;
-    }
+    // public int[] getTags(byte[] value, int start, int length)
+    // {
+    //     byte[] tagShift = new ZlibWrapper().decode(value, start, length);
+    //     //        byteBuffer.order(mzCompressor.getByteOrder());
+    //
+    //     byte[] byteValue = new byte[tagShift.Length * 8];
+    //     for (int i = 0; i < tagShift.Length; i++)
+    //     {
+    //         for (int j = 0; j < 8; j++)
+    //         {
+    //             byteValue[8 * i + j] = (byte) (((tagShift[i] & 0xff) >> j) & 1);
+    //         }
+    //     }
+    //
+    //     int digit = mzCompressor.digit;
+    //     int[] tags = new int[byteValue.Length / digit];
+    //     for (int i = 0; i < tags.Length; i++)
+    //     {
+    //         for (int j = 0; j < digit; j++)
+    //         {
+    //             tags[i] += byteValue[digit * i + j] << j;
+    //         }
+    //     }
+    //
+    //     return tags;
+    // }
 
     public String getType()
     {

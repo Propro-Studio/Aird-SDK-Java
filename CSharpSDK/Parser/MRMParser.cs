@@ -1,10 +1,10 @@
 ﻿/*
  * Copyright (c) 2020 CSi Studio
  * AirdSDK and AirdPro are licensed under Mulan PSL v2.
- * You can use this software according to the terms and conditions of the Mulan PSL v2. 
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
- *          http://license.coscl.org.cn/MulanPSL2 
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.  
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
 
@@ -59,6 +59,7 @@ public class MRMParser : DDAParser
                 pair.rts = dict[pair.id].rts;
                 pair.ints = dict[pair.id].ints;
             }
+
             pairs.Add(pair);
         }
 
@@ -114,7 +115,8 @@ public class MRMParser : DDAParser
         var intValues = ByteTrans.byteToInt(decodedData);
         intValues = rtIntComp4Chroma.decode(intValues);
         var doubleValues = new double[intValues.Length];
-        for (var index = 0; index < intValues.Length; index++) doubleValues[index] = intValues[index] / 100000d;
+        for (var index = 0; index < intValues.Length; index++)
+            doubleValues[index] = intValues[index] / rtCompressor.precision;
 
         return doubleValues;
     }
@@ -129,14 +131,14 @@ public class MRMParser : DDAParser
     */
     public double[] getInts4Chroma(byte[] value, int start, int length)
     {
-        var decodedData = intByteComp4Chroma.decode(value, start, length);
+        var decodedData = intByteComp.decode(value, start, length);
         var intValues = ByteTrans.byteToInt(decodedData);
-        intValues = intIntComp4Chroma.decode(intValues);
+        intValues = intIntComp.decode(intValues);
 
         var intensityValues = new double[intValues.Length];
         for (var i = 0; i < intValues.Length; i++)
         {
-            double intensity = intValues[i];
+            double intensity = intValues[i] / intCompressor.precision;
             if (intensity < 0) intensity = Math.Pow(2, -intensity / 100000d);
 
             intensityValues[i] = intensity / 1;

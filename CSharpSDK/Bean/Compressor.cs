@@ -44,12 +44,6 @@ namespace AirdSDK.Beans
         public int precision;
 
         /**
-         * 2^digit = layers
-         * if layers = 256, then digit=8
-         */
-        public int digit;
-
-        /**
          * ByteOrder,Aird格式的默认ByteOrder为LITTLE_ENDIAN,此项为扩展项,目前仅支持默认值LITTLE_ENDIAN ByteOrder
          */
         public string byteOrder;
