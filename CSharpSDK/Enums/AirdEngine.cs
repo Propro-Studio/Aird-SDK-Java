@@ -10,11 +10,9 @@
 
 namespace AirdSDK.Enums
 {
-   
-    public static class Scene
+    public enum AirdEngine
     {
-        public const string Computation = "Computation";
-        public const string Storage = "Storage";
-        public const string Search = "Search";
+        RowCompression = 0,
+        ColumnCompression = 1
     }
 }

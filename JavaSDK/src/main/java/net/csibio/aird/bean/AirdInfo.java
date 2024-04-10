@@ -12,6 +12,7 @@ package net.csibio.aird.bean;
 
 import lombok.Data;
 import net.csibio.aird.constant.Features;
+import net.csibio.aird.enums.AirdEngine;
 import net.csibio.aird.enums.AirdType;
 import net.csibio.aird.enums.MsLevel;
 
@@ -28,12 +29,18 @@ public class AirdInfo {
     /**
      * Format Version 应用版本号
      */
-    String version = "2.2.0";
+    String version = "2.4.0";
 
     /**
      * Version Code. Integer code from 1 to N 应用版本编码,从1开始计数的整型编码
      */
-    Integer versionCode = 6;
+    Integer versionCode = 8;
+
+    /**
+     * 压缩内核
+     * 分为行式压缩与列式压缩,具体见AirdEngine类
+     */
+    Integer engine = AirdEngine.RowCompression.getCode();
 
     /**
      * [核心字段] 数组压缩策略 [Core Field] Data Compression Strategies

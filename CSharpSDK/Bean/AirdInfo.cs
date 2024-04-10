@@ -20,26 +20,27 @@ namespace AirdSDK.Beans
         * Aird version
         * Aird的版本号
         */
-        public string version = "2.3.0";
+        public string version = "2.4.0";
 
         /**
          * Aird Code
          * Aird的版本编码
          */
-        public int versionCode = 7;
+        public int versionCode = 8;
 
         /**
-       * [Core Field]
-       * The array compressor strategy
-       * [核心字段]
-       * 数组压缩策略
-       */
-        public List<Beans.Compressor> compressors;
-
-        /**
-         * 格式类型,见Scene
+         * 压缩内核
+         * 分为行式压缩与列式压缩,具体见AirdEngine类
          */
-        public string scene = Scene.Computation;
+        public int engine = 0;
+        
+        /**
+         * [Core Field]
+         * The array compressor strategy
+         * [核心字段]
+         * 数组压缩策略
+         */
+        public List<Beans.Compressor> compressors;
 
         /**
          * Instrument information list
