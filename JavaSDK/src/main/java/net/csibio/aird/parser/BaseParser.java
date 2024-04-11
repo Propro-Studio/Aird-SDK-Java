@@ -408,7 +408,7 @@ public abstract class BaseParser {
                 switch (IntCompType.getByName(mobiMethods.get(0))) {
                     case VB -> mobiIntComp = new VarByteWrapper();
                     case BP -> mobiIntComp = new BinPackingWrapper();
-                    case DZVB -> intIntComp = new DeltaZigzagVBWrapper();
+                    case DZVB -> mobiIntComp = new DeltaZigzagVBWrapper();
                     case Empty -> mobiIntComp = new Empty();
                     default -> throw new Exception("Unknown mobi integer compressor");
                 }
