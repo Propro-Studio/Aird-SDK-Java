@@ -23,7 +23,7 @@ public class MRMTest {
     @Test
     public void testMRM() throws Exception {
 //        MRMParser parser = new MRMParser("D:\\TestMRM\\CDCA-STD-20230512-BLKIS.json");
-        MRMParser parser = new MRMParser("D:\\TestMRM\\CDCA-STD-20230512-BLK (2).json");
+        MRMParser parser = new MRMParser("F:\\RCC240118_plasma_POS_NEG-POS_BK-6.json");
         ChromatogramIndex index = parser.getChromatogramIndex();
         List<MrmPair> pairs = parser.getAllMrmPairs();
         System.out.println(toJSONString(pairs.get(50).getRts()));

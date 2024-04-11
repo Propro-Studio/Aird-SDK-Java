@@ -64,7 +64,7 @@ public class MRMParser extends DDAParser {
             pair.setPolarity(index.getPolarities().get(i));
             pair.setActivator(index.getActivators().get(i));
             pair.setEnergy(index.getEnergies().get(i));
-            pair.setCvList(index.getCvs().get(i));
+//            pair.setCvList(index.getCvs().get(i));
             pair.setPrecursor(index.getPrecursors().get(i));
             pair.setProduct(index.getProducts().get(i));
             pair.setKey(pair.getPrecursor().getMz() + "-" + pair.getProduct().getMz());
@@ -129,7 +129,7 @@ public class MRMParser extends DDAParser {
         intValues = rtIntComp4Chroma.decode(intValues);
         var doubleValues = new double[intValues.length];
         for (var index = 0; index < intValues.length; index++)
-            doubleValues[index] = intValues[index] / rtPrecision;
+            doubleValues[index] = intValues[index] * 1.0 / rtPrecision;
 
         return doubleValues;
     }
@@ -151,7 +151,7 @@ public class MRMParser extends DDAParser {
         var intensityValues = new double[intValues.length];
         for (var i = 0; i < intValues.length; i++)
         {
-            double intensity = intValues[i] / rtPrecision;
+            double intensity = intValues[i] * 1.0 / rtPrecision;
             if (intensity < 0) intensity = Math.pow(2, -intensity / 100000d);
 
             intensityValues[i] = intensity;

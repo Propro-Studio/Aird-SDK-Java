@@ -359,7 +359,10 @@ public abstract class BaseParser {
         mzPrecision = mzCompressor.getPrecision();
         intPrecision = intCompressor.getPrecision();
         mobiPrecision = mobiCompressor.getPrecision();
-        rtPrecision = rtCompressor.getPrecision();
+        if (rtCompressor != null) {
+            rtPrecision = rtCompressor.getPrecision();
+        }
+
     }
 
     /**
