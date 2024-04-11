@@ -151,7 +151,7 @@ public class MRMParser extends DDAParser {
         var intensityValues = new double[intValues.length];
         for (var i = 0; i < intValues.length; i++)
         {
-            double intensity = intValues[i] * 1.0 / rtPrecision;
+            double intensity = intValues[i] * 1.0 / intPrecision;
             if (intensity < 0) intensity = Math.pow(2, -intensity / 100000d);
 
             intensityValues[i] = intensity;
