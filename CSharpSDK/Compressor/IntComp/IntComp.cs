@@ -22,6 +22,8 @@ namespace AirdSDK.Compressor
                     return new VarByteWrapper();
                 case IntCompType.BP:
                     return new BinPackingWrapper();
+                case IntCompType.DZVB:
+                    return new DeltaZigzagVBWrapper();
                 case IntCompType.Empty:
                     return new Empty();
                 default: throw new System.Exception("No Implementation for " + type);
@@ -36,6 +38,8 @@ namespace AirdSDK.Compressor
                     return IntCompType.VB;
                 case "BP":
                     return IntCompType.BP;
+                case "DZVB":
+                    return IntCompType.DZVB;
                 case "Empty":
                     return IntCompType.Empty;
                 default: throw new System.Exception("No Implementation for " + type);

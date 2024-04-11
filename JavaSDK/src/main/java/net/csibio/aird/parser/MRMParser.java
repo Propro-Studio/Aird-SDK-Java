@@ -128,7 +128,8 @@ public class MRMParser extends DDAParser {
         var intValues = ByteTrans.byteToInt(decodedData);
         intValues = rtIntComp4Chroma.decode(intValues);
         var doubleValues = new double[intValues.length];
-        for (var index = 0; index < intValues.length; index++) doubleValues[index] = intValues[index] / 100000d;
+        for (var index = 0; index < intValues.length; index++)
+            doubleValues[index] = intValues[index] / rtPrecision;
 
         return doubleValues;
     }
@@ -143,14 +144,14 @@ public class MRMParser extends DDAParser {
      */
     public double[] getInts4Chroma(byte[] value, int start, int length)
     {
-        var decodedData = intByteComp4Chroma.decode(value, start, length);
+        var decodedData = intByteComp.decode(value, start, length);
         var intValues = ByteTrans.byteToInt(decodedData);
-        intValues = intIntComp4Chroma.decode(intValues);
+        intValues = intIntComp.decode(intValues);
 
         var intensityValues = new double[intValues.length];
         for (var i = 0; i < intValues.length; i++)
         {
-            double intensity = intValues[i];
+            double intensity = intValues[i] / rtPrecision;
             if (intensity < 0) intensity = Math.pow(2, -intensity / 100000d);
 
             intensityValues[i] = intensity;

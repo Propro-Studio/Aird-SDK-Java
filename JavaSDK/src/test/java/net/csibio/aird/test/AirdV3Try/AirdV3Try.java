@@ -34,7 +34,9 @@ public class AirdV3Try {
         DDAPasefParser parser = new DDAPasefParser(indexPath);
         double rtStart = 2000;
         double rtEnd = 4000;
+        long startTime = System.currentTimeMillis();
         List<DDAPasefMs> allSpectra = parser.getSpectraByRtRange(rtStart, rtEnd, false);
+        System.out.println("读取耗时："+(System.currentTimeMillis() - startTime));
         BlockIndex ms1Index = parser.getMs1Index();
         Double[] rts = new Double[ms1Index.getRts().size()];
         ms1Index.getRts().toArray(rts);

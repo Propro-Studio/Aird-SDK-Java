@@ -37,6 +37,11 @@ public class Compressor {
     public static String TARGET_MOBILITY = "mobility";
 
     /**
+     * 压缩策略的指向对象, rt对象
+     */
+    public static String TARGET_RT = "rt";
+
+    /**
      * 压缩对象,支持mz和intensity两种 Compression Target. Support for mz array and intensity array
      */
     String target;
@@ -54,7 +59,7 @@ public class Compressor {
     /**
      * Use for Stack-ZDPD algorithm 2^digit = layers
      */
-    Integer digit;
+//    Integer digit;
 
     /**
      * ByteOrder,Aird格式的默认ByteOrder为LITTLE_ENDIAN,此项为扩展项,目前仅支持默认值LITTLE_ENDIAN ByteOrder

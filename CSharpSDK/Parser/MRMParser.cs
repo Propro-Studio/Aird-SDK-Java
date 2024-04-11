@@ -116,7 +116,7 @@ public class MRMParser : DDAParser
         intValues = rtIntComp4Chroma.decode(intValues);
         var doubleValues = new double[intValues.Length];
         for (var index = 0; index < intValues.Length; index++)
-            doubleValues[index] = intValues[index] / rtCompressor.precision;
+            doubleValues[index] = intValues[index] * 1.0 / rtPrecision;
 
         return doubleValues;
     }
@@ -138,7 +138,7 @@ public class MRMParser : DDAParser
         var intensityValues = new double[intValues.Length];
         for (var i = 0; i < intValues.Length; i++)
         {
-            double intensity = intValues[i] / intCompressor.precision;
+            double intensity = intValues[i] * 1.0 / intPrecision;
             if (intensity < 0) intensity = Math.Pow(2, -intensity / 100000d);
 
             intensityValues[i] = intensity / 1;

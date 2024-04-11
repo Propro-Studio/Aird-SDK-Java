@@ -75,7 +75,8 @@ public abstract class BaseParser
      * the rt compressor
      */
     public Beans.Compressor rtCompressor;
-
+    public double rtPrecision;
+    
     /**
      * 使用的压缩内核
      */
@@ -233,9 +234,11 @@ public abstract class BaseParser
         mzCompressor = fetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_MZ);
         intCompressor = fetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_INTENSITY);
         mobiCompressor = fetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_MOBILITY);
+        rtCompressor = fetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_RT);
         mzPrecision = mzCompressor.precision;
         intPrecision = intCompressor.precision;
         mobiPrecision = mobiCompressor.precision;
+        rtPrecision = rtCompressor.precision;
     }
 
     /**

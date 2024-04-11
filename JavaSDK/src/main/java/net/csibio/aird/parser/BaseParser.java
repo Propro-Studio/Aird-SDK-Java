@@ -20,10 +20,7 @@ import net.csibio.aird.bean.common.Spectrum;
 import net.csibio.aird.bean.common.Xic;
 import net.csibio.aird.compressor.ByteTrans;
 import net.csibio.aird.compressor.bytecomp.*;
-import net.csibio.aird.compressor.intcomp.BinPackingWrapper;
-import net.csibio.aird.compressor.intcomp.Empty;
-import net.csibio.aird.compressor.intcomp.IntComp;
-import net.csibio.aird.compressor.intcomp.VarByteWrapper;
+import net.csibio.aird.compressor.intcomp.*;
 import net.csibio.aird.compressor.sortedintcomp.DeltaWrapper;
 import net.csibio.aird.compressor.sortedintcomp.IntegratedBinPackingWrapper;
 import net.csibio.aird.compressor.sortedintcomp.IntegratedVarByteWrapper;
@@ -84,6 +81,11 @@ public abstract class BaseParser {
     public Compressor mobiCompressor;
 
     /**
+     * 用于MRM中RT的压缩内核
+     */
+    public Compressor rtCompressor;
+
+    /**
      * mz precision
      */
     public double mzPrecision;
@@ -97,6 +99,11 @@ public abstract class BaseParser {
      * mobility precision
      */
     public double mobiPrecision;
+
+    /**
+     * rt precision
+     */
+    public double rtPrecision;
 
     /**
      * integer compressor for mz
@@ -138,15 +145,15 @@ public abstract class BaseParser {
      */
     public double[] mobiDict;
 
+    /**
+     * integer compressor for rt
+     */
     public SortedIntComp rtIntComp4Chroma = new IntegratedVarByteWrapper();
-    public ByteComp rtByteComp4Chroma = new ZstdWrapper();
-    public IntComp intIntComp4Chroma = new VarByteWrapper();
-    public ByteComp intByteComp4Chroma = new ZstdWrapper();
 
-//    public SortedIntComp rtIntComp4Chroma = new SortIntEmptyWrapper();
-//    public ByteComp rtByteComp4Chroma = new ZlibWrapper();
-//    public IntComp intIntComp4Chroma = new Empty();
-//    public ByteComp intByteComp4Chroma = new ZlibWrapper();
+    /**
+     * byte compressor for rt
+     */
+    public ByteComp rtByteComp4Chroma = new ZstdWrapper();
 
     /**
      * 构造函数
@@ -348,9 +355,11 @@ public abstract class BaseParser {
         mzCompressor = fetchTargetCompressor(airdInfo.getCompressors(), Compressor.TARGET_MZ);
         intCompressor = fetchTargetCompressor(airdInfo.getCompressors(), Compressor.TARGET_INTENSITY);
         mobiCompressor = fetchTargetCompressor(airdInfo.getCompressors(), Compressor.TARGET_MOBILITY);
+        rtCompressor = fetchTargetCompressor(airdInfo.getCompressors(), Compressor.TARGET_RT);
         mzPrecision = mzCompressor.getPrecision();
         intPrecision = intCompressor.getPrecision();
         mobiPrecision = mobiCompressor.getPrecision();
+        rtPrecision = rtCompressor.getPrecision();
     }
 
     /**
@@ -380,6 +389,7 @@ public abstract class BaseParser {
             switch (IntCompType.getByName(intMethods.get(0))) {
                 case VB -> intIntComp = new VarByteWrapper();
                 case BP -> intIntComp = new BinPackingWrapper();
+                case DZVB -> intIntComp = new DeltaZigzagVBWrapper();
                 case Empty -> intIntComp = new Empty();
                 default -> throw new Exception("Unknown intensity integer compressor");
             }
@@ -398,6 +408,7 @@ public abstract class BaseParser {
                 switch (IntCompType.getByName(mobiMethods.get(0))) {
                     case VB -> mobiIntComp = new VarByteWrapper();
                     case BP -> mobiIntComp = new BinPackingWrapper();
+                    case DZVB -> intIntComp = new DeltaZigzagVBWrapper();
                     case Empty -> mobiIntComp = new Empty();
                     default -> throw new Exception("Unknown mobi integer compressor");
                 }
@@ -408,6 +419,25 @@ public abstract class BaseParser {
                     case Snappy -> mobiByteComp = new SnappyWrapper();
                     case Zstd -> mobiByteComp = new ZstdWrapper();
                     default -> throw new Exception("Unknown mobi byte compressor");
+                }
+            }
+        }
+
+        if (rtCompressor != null) {
+            List<String> rtMethods = rtCompressor.getMethods();
+            if (rtMethods.size() == 2) {
+                switch (SortedIntCompType.getByName(rtMethods.get(0))) {
+                    case IBP -> rtIntComp4Chroma = new IntegratedBinPackingWrapper();
+                    case IVB -> rtIntComp4Chroma = new IntegratedVarByteWrapper();
+                    case Delta -> rtIntComp4Chroma = new DeltaWrapper();
+                    default -> throw new Exception("Unknown rt integer compressor");
+                }
+                switch (ByteCompType.getByName(rtMethods.get(1))) {
+                    case Zlib -> rtByteComp4Chroma = new ZlibWrapper();
+                    case Brotli -> rtByteComp4Chroma = new BrotliWrapper();
+                    case Snappy -> rtByteComp4Chroma = new SnappyWrapper();
+                    case Zstd -> rtByteComp4Chroma = new ZstdWrapper();
+                    default -> throw new Exception("Unknown rt byte compressor");
                 }
             }
         }
@@ -847,61 +877,61 @@ public abstract class BaseParser {
         return mobilities;
     }
 
-    /**
-     * get tag values only for aird file 默认从Aird文件中读取,编码Order为LITTLE_ENDIAN,精度为小数点后三位
-     *
-     * @param value 压缩后的数组
-     * @return 解压缩后的数组
-     */
-    public int[] getTags(byte[] value) {
-        ByteBuffer byteBuffer = ByteBuffer.wrap(new ZlibWrapper().decode(value));
-        byteBuffer.order(mzCompressor.fetchByteOrder());
+//    /**
+//     * get tag values only for aird file 默认从Aird文件中读取,编码Order为LITTLE_ENDIAN,精度为小数点后三位
+//     *
+//     * @param value 压缩后的数组
+//     * @return 解压缩后的数组
+//     */
+//    public int[] getTags(byte[] value) {
+//        ByteBuffer byteBuffer = ByteBuffer.wrap(new ZlibWrapper().decode(value));
+//        byteBuffer.order(mzCompressor.fetchByteOrder());
+//
+//        byte[] byteValue = new byte[byteBuffer.capacity() * 8];
+//        for (int i = 0; i < byteBuffer.capacity(); i++) {
+//            for (int j = 0; j < 8; j++) {
+//                byteValue[8 * i + j] = (byte) (((byteBuffer.get(i) & 0xff) >> j) & 1);
+//            }
+//        }
+//        int digit = mzCompressor.getDigit();
+//        int[] tags = new int[byteValue.length / digit];
+//        for (int i = 0; i < tags.length; i++) {
+//            for (int j = 0; j < digit; j++) {
+//                tags[i] += byteValue[digit * i + j] << j;
+//            }
+//        }
+//        byteBuffer.clear();
+//        return tags;
+//    }
 
-        byte[] byteValue = new byte[byteBuffer.capacity() * 8];
-        for (int i = 0; i < byteBuffer.capacity(); i++) {
-            for (int j = 0; j < 8; j++) {
-                byteValue[8 * i + j] = (byte) (((byteBuffer.get(i) & 0xff) >> j) & 1);
-            }
-        }
-        int digit = mzCompressor.getDigit();
-        int[] tags = new int[byteValue.length / digit];
-        for (int i = 0; i < tags.length; i++) {
-            for (int j = 0; j < digit; j++) {
-                tags[i] += byteValue[digit * i + j] << j;
-            }
-        }
-        byteBuffer.clear();
-        return tags;
-    }
-
-    /**
-     * get tag values only for aird file 默认从Aird文件中读取,编码Order为LITTLE_ENDIAN,精度为小数点后三位
-     *
-     * @param value  压缩后的数组
-     * @param start  起始位置
-     * @param length 读取长度
-     * @return 解压缩后的数组
-     */
-    public int[] getTags(byte[] value, int start, int length) {
-        byte[] tagShift = new ZlibWrapper().decode(value, start, length);
-//        byteBuffer.order(mzCompressor.getByteOrder());
-
-        byte[] byteValue = new byte[tagShift.length * 8];
-        for (int i = 0; i < tagShift.length; i++) {
-            for (int j = 0; j < 8; j++) {
-                byteValue[8 * i + j] = (byte) (((tagShift[i] & 0xff) >> j) & 1);
-            }
-        }
-
-        int digit = mzCompressor.getDigit();
-        int[] tags = new int[byteValue.length / digit];
-        for (int i = 0; i < tags.length; i++) {
-            for (int j = 0; j < digit; j++) {
-                tags[i] += byteValue[digit * i + j] << j;
-            }
-        }
-        return tags;
-    }
+//    /**
+//     * get tag values only for aird file 默认从Aird文件中读取,编码Order为LITTLE_ENDIAN,精度为小数点后三位
+//     *
+//     * @param value  压缩后的数组
+//     * @param start  起始位置
+//     * @param length 读取长度
+//     * @return 解压缩后的数组
+//     */
+//    public int[] getTags(byte[] value, int start, int length) {
+//        byte[] tagShift = new ZlibWrapper().decode(value, start, length);
+////        byteBuffer.order(mzCompressor.getByteOrder());
+//
+//        byte[] byteValue = new byte[tagShift.length * 8];
+//        for (int i = 0; i < tagShift.length; i++) {
+//            for (int j = 0; j < 8; j++) {
+//                byteValue[8 * i + j] = (byte) (((tagShift[i] & 0xff) >> j) & 1);
+//            }
+//        }
+//
+//        int digit = mzCompressor.getDigit();
+//        int[] tags = new int[byteValue.length / digit];
+//        for (int i = 0; i < tags.length; i++) {
+//            for (int j = 0; j < digit; j++) {
+//                tags[i] += byteValue[digit * i + j] << j;
+//            }
+//        }
+//        return tags;
+//    }
 
     public Xic calcXic(TreeMap<Double, Spectrum> map, double mzStart, double mzEnd) {
         double[] rts = new double[map.size()];
