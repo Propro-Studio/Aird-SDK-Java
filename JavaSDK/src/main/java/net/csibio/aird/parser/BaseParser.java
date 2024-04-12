@@ -590,10 +590,9 @@ public abstract class BaseParser {
                 if (rtIndex == rtList.size()) {
                     break;
                 }
-                int nextLength = mzOffsets.get(rtIndex) + intOffsets.get(rtIndex) + mobiOffsets.get(rtIndex);
-                while (rtIndex < rtList.size() && (iter + nextLength) <= MAX_READ_SIZE) {
+                while (rtIndex < rtList.size() && (iter + mzOffsets.get(rtIndex) + intOffsets.get(rtIndex) + mobiOffsets.get(rtIndex)) <= MAX_READ_SIZE) {
                     map.put(rtList.get(rtIndex), getSpectrum(result, iter, mzOffsets.get(rtIndex), intOffsets.get(rtIndex), mobiOffsets.get(rtIndex)));
-                    iter += nextLength;
+                    iter += mzOffsets.get(rtIndex) + intOffsets.get(rtIndex) + mobiOffsets.get(rtIndex);
                     rtIndex++;
                 }
                 delta = delta - iter;

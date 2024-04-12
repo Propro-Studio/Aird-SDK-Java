@@ -13,7 +13,10 @@ package net.csibio.aird.util;
 import net.csibio.aird.bean.Layers;
 import net.csibio.aird.compressor.ByteTrans;
 import net.csibio.aird.compressor.bytecomp.ZlibWrapper;
+import net.csibio.aird.compressor.bytecomp.ZstdWrapper;
+import net.csibio.aird.compressor.intcomp.DeltaZigzagVBWrapper;
 import net.csibio.aird.compressor.sortedintcomp.IntegratedBinPackingWrapper;
+import net.csibio.aird.compressor.sortedintcomp.IntegratedVarByteWrapper;
 import org.apache.commons.math3.util.FastMath;
 
 import java.util.*;
@@ -74,10 +77,10 @@ public class StackCompressUtil {
                 indexShift[i] = (byte) temp;
             }
         }
-        //数组用fastPFor压缩，index用zlib压缩，并记录层数
+        //数组用variable byte压缩，index用zstd压缩，并记录层数
         Layers layers = new Layers();
-        layers.setMzArray(ByteTrans.intToByte(new IntegratedBinPackingWrapper().encode(stackArr)));
-        layers.setTagArray(new ZlibWrapper().encode(indexShift));
+        layers.setMzArray(new ZstdWrapper().encode(ByteTrans.intToByte(new IntegratedVarByteWrapper().encode(stackArr))));
+        layers.setTagArray(new ZstdWrapper().encode(indexShift));
         layers.setDigit(digit);
         return layers;
     }
