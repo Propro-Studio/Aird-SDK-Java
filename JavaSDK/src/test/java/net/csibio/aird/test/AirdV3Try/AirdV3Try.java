@@ -38,15 +38,9 @@ public class AirdV3Try {
     static int KB = 1024;
 
     @Test
-    public void testReadAll() throws Exception {
-        DDAPasefParser parser = new DDAPasefParser(indexPath);
-        parser.readAllToMemory();
-    }
-
-    @Test
     public void test0() throws Exception {
         DDAPasefParser parser = new DDAPasefParser(indexPath);
-        double rtStart = 3500;
+        double rtStart = 0;
         double rtEnd = 4000;
         long startTime = System.currentTimeMillis();
         List<DDAPasefMs> allSpectra = parser.getSpectraByRtRange(rtStart, rtEnd, false);
@@ -99,9 +93,9 @@ public class AirdV3Try {
             int[] mobiI = ByteTrans.mobiToInt(mobiD, dict);
 //            List<MobiPoint> points = new ArrayList<>();
             MobiPoint[] points = new MobiPoint[mzsI.length];
-//            for (int i = 0; i < mzsI.length; i++) {
-//                points.add(new MobiPoint(mzsI[i], insI[i], mobiI[i]));
-//            }
+            for (int i = 0; i < mzsI.length; i++) {
+                points[i] = new MobiPoint(mzsI[i], insI[i], mobiI[i]);
+            }
             Arrays.sort(points, Comparator
                             .comparingInt(MobiPoint::mz)
                             .thenComparingInt(MobiPoint::mobi));
@@ -122,7 +116,6 @@ public class AirdV3Try {
         System.out.println("新Aird压缩后mz大小" + FileSizeUtil.getSizeLabel(compressedMzs));
         System.out.println("新Aird压缩后Intensity大小" + FileSizeUtil.getSizeLabel(compressedInts));
         System.out.println("新Aird压缩后Mobility大小" + FileSizeUtil.getSizeLabel(compressedMobilities));
-        System.out.println("新Aird压缩后Mobility1大小" + FileSizeUtil.getSizeLabel(compressedMobilities1));
         System.out.println("新Aird压缩后总大小" + FileSizeUtil.getSizeLabel(compressedMzs + compressedInts + compressedMobilities));
     }
 
