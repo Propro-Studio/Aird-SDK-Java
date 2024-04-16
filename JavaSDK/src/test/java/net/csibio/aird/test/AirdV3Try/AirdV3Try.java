@@ -1,6 +1,8 @@
 package net.csibio.aird.test.AirdV3Try;
 
 import com.alibaba.fastjson2.JSON;
+import me.lemire.integercompression.BinaryPacking;
+import me.lemire.integercompression.VariableByte;
 import net.csibio.aird.bean.BlockIndex;
 import net.csibio.aird.bean.DDAMs;
 import net.csibio.aird.bean.DDAPasefMs;
@@ -10,6 +12,9 @@ import net.csibio.aird.bean.common.Spectrum;
 import net.csibio.aird.compressor.ByteTrans;
 import net.csibio.aird.compressor.Delta;
 import net.csibio.aird.compressor.Zigzag;
+import net.csibio.aird.compressor.bytecomp.BrotliWrapper;
+import net.csibio.aird.compressor.bytecomp.SnappyWrapper;
+import net.csibio.aird.compressor.bytecomp.ZlibWrapper;
 import net.csibio.aird.compressor.bytecomp.ZstdWrapper;
 import net.csibio.aird.compressor.intcomp.BinPackingWrapper;
 import net.csibio.aird.compressor.intcomp.DeltaZigzagVBWrapper;
@@ -19,6 +24,7 @@ import net.csibio.aird.compressor.sortedintcomp.IntegratedBinPackingWrapper;
 import net.csibio.aird.compressor.sortedintcomp.IntegratedVarByteWrapper;
 import net.csibio.aird.parser.DDAParser;
 import net.csibio.aird.parser.DDAPasefParser;
+import net.csibio.aird.parser.DIAPasefParser;
 import net.csibio.aird.util.ArrayUtil;
 import net.csibio.aird.util.FileSizeUtil;
 import net.csibio.aird.util.StackCompressUtil;
@@ -32,10 +38,98 @@ public class AirdV3Try {
 //    static String indexPath = "E:\\MzmineTest\\PXD033904_PASEF\\Aird\\20220302_tims1_nElute_8cm_DOl_Phospho_7min_rep1_Slot1-94_1_1811.json";
 //    static String indexPath = "E:\\ComboCompTest\\Aird\\DDA-Sciex-MTBLS733-SampleA_1.json";
 
-    static String indexPath = "F:\\37-test-combination.json";
+//    static String indexPath = "F:\\37-test-combination.json";
+    static String indexPath = "F:\\43.json";
 
     static int MB = 1024 * 1024;
     static int KB = 1024;
+
+    @Test
+    public void testDIA() throws Exception {
+        DIAPasefParser parser = new DIAPasefParser(indexPath);
+        System.out.println("总计窗口："+parser.getAirdInfo().getIndexList().size()+"个");
+        HashSet<Double> mzsSet = new HashSet<>();
+        for (int k = 0; k < parser.getAirdInfo().getIndexList().size(); k++) {
+            BlockIndex index = parser.getAirdInfo().getIndexList().get(k);
+            List<Spectrum> spectra =  new ArrayList<>(parser.getSpectra(index).values());
+            for (Spectrum spectrum : spectra) {
+                mzsSet.addAll(Arrays.stream(spectrum.getMzs()).boxed().toList());
+            }
+        }
+        System.out.println("总计差异mz"+mzsSet+"个");
+        TreeSet<Double> mzsTreeSet = new TreeSet<Double>(mzsSet);
+        HashMap<Double, Integer> mzMap = new HashMap<>();
+        int tt = 0;
+        for (Double d : mzsTreeSet) {
+            mzMap.put(d, tt);
+            tt++;
+        }
+        double[] mobi = parser.getMobiDict();
+        HashMap<Double, Integer> dict = new HashMap<>();
+        for (int d = 0; d < mobi.length; d++) {
+            dict.put(mobi[d], d);
+        }
+
+        for (int k = 0; k < parser.getAirdInfo().getIndexList().size(); k++) {
+            BlockIndex index = parser.getAirdInfo().getIndexList().get(k);
+            long compressedMzs = 0;
+            long compressedInts = 0;
+            long compressedMobilities = 0;
+            for (int t = 0; t < index.getMzs().size(); t++) {
+                compressedMzs += index.getMzs().get(t);
+                compressedInts += index.getInts().get(t);
+                compressedMobilities += index.getMobilities().get(t);
+            }
+
+            System.out.println("总计质谱图" + index.getRts().size());
+            System.out.println("Aird压缩后mz大小" + FileSizeUtil.getSizeLabel(compressedMzs));
+            System.out.println("Aird压缩后Intensity大小" + FileSizeUtil.getSizeLabel(compressedInts));
+            System.out.println("Aird压缩后Mobility大小" + FileSizeUtil.getSizeLabel(compressedMobilities));
+            System.out.println("Aird压缩后总大小" + FileSizeUtil.getSizeLabel(compressedMzs + compressedInts + compressedMobilities));
+
+            List<Spectrum> spectra =  new ArrayList<>(parser.getSpectra(index).values());
+            compressedMzs = 0;
+            compressedInts = 0;
+            compressedMobilities = 0;
+
+            for (Spectrum spectrum : spectra) {
+                double[] mzsD = spectrum.getMzs();
+                double[] intsD = spectrum.getInts();
+                double[] mobiD = spectrum.getMobilities();
+                int[] mzsI = ByteTrans.doubleToInt(mzsD, mzMap);
+                int[] insI = ByteTrans.doubleToInt(intsD, parser.getIntCompressor().getPrecision());
+                int[] mobiI = ByteTrans.mobiToInt(mobiD, dict);
+//            List<MobiPoint> points = new ArrayList<>();
+                MobiPoint[] points = new MobiPoint[mzsI.length];
+
+                for (int i = 0; i < mzsI.length; i++) {
+                    points[i] = new MobiPoint(mzsI[i], insI[i], mobiI[i]);
+                }
+                Arrays.sort(points, Comparator
+                    .comparingInt(MobiPoint::mz)
+                    .thenComparingInt(MobiPoint::mobi));
+                int[] newMzs = new int[mzsI.length];
+
+                int[] newInts = new int[insI.length];
+                int[] newMobis = new int[mobiI.length];
+                for (int i = 0; i < points.length; i++) {
+                    newMzs[i] = points[i].mz();
+                    newInts[i] = points[i].intensity();
+                    newMobis[i] = points[i].mobi();
+                }
+
+                compressedMzs += new ZstdWrapper().encode(ByteTrans.intToByte(new IntegratedVarByteWrapper().encode(newMzs))).length;
+                compressedInts += new ZstdWrapper().encode(ByteTrans.intToByte(new VarByteWrapper().encode(newInts))).length;
+                compressedMobilities += new ZstdWrapper().encode(ByteTrans.intToByte(new DeltaZigzagVBWrapper().encode(newMobis))).length;
+            }
+
+            System.out.println("不同的mz有"+mzsSet.size()+"个");
+            System.out.println("新Aird压缩后mz大小" + FileSizeUtil.getSizeLabel(compressedMzs));
+            System.out.println("新Aird压缩后Intensity大小" + FileSizeUtil.getSizeLabel(compressedInts));
+            System.out.println("新Aird压缩后Mobility大小" + FileSizeUtil.getSizeLabel(compressedMobilities));
+            System.out.println("新Aird压缩后总大小" + FileSizeUtil.getSizeLabel(compressedMzs + compressedInts + compressedMobilities));
+        }
+    }
 
     @Test
     public void test0() throws Exception {
@@ -83,6 +177,7 @@ public class AirdV3Try {
         for (int i = 0; i < mobi.length; i++) {
             dict.put(mobi[i], i);
         }
+        HashSet mzsSet = new HashSet<>();
         for (DDAPasefMs ddaPasefMs : allSpectra) {
             Spectrum spectrum = ddaPasefMs.getSpectrum();
             double[] mzsD = spectrum.getMzs();
@@ -95,6 +190,7 @@ public class AirdV3Try {
             MobiPoint[] points = new MobiPoint[mzsI.length];
             for (int i = 0; i < mzsI.length; i++) {
                 points[i] = new MobiPoint(mzsI[i], insI[i], mobiI[i]);
+                mzsSet.add(mzsI[i]);
             }
             Arrays.sort(points, Comparator
                             .comparingInt(MobiPoint::mz)
@@ -113,6 +209,7 @@ public class AirdV3Try {
             compressedMobilities += new ZstdWrapper().encode(ByteTrans.intToByte(new DeltaZigzagVBWrapper().encode(newMobis))).length;
         }
 
+        System.out.println("mzs" + mzsSet.size()+"个");
         System.out.println("新Aird压缩后mz大小" + FileSizeUtil.getSizeLabel(compressedMzs));
         System.out.println("新Aird压缩后Intensity大小" + FileSizeUtil.getSizeLabel(compressedInts));
         System.out.println("新Aird压缩后Mobility大小" + FileSizeUtil.getSizeLabel(compressedMobilities));
@@ -198,7 +295,6 @@ public class AirdV3Try {
             for (int i = 0; i < mzsI.length; i++) {
                 points.add(new MobiPoint(mzsI[i], insI[i], mobiI[i]));
             }
-
 
             Map<Integer, List<MobiPoint>> pointMap = points.stream().collect(
                     Collectors.groupingBy(MobiPoint::mobi,

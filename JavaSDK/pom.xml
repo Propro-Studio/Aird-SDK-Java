@@ -126,12 +126,6 @@
             <version>3.25.3</version>
         </dependency>
         <dependency>
-            <artifactId>msdk-io-mzml</artifactId>
-            <groupId>io.github.msdk</groupId>
-            <scope>test</scope>
-            <version>0.0.27</version>
-        </dependency>
-        <dependency>
             <artifactId>opencsv</artifactId>
             <groupId>com.opencsv</groupId>
             <scope>test</scope>
@@ -155,21 +149,6 @@
         <developer>
             <email>csi@csibio.net</email>
             <name>MiaoShan Lu</name>
-            <organization>csi biotech</organization>
-        </developer>
-        <developer>
-            <email>a@csibio.net</email>
-            <name>Shaowei An</name>
-            <organization>csi biotech</organization>
-        </developer>
-        <developer>
-            <email>wrm@csibio.net</email>
-            <name>Ruimin Wang</name>
-            <organization>csi biotech</organization>
-        </developer>
-        <developer>
-            <email>wjy@csibio.net</email>
-            <name>Jinyin Wang</name>
             <organization>csi biotech</organization>
         </developer>
     </developers>
@@ -243,6 +222,11 @@
                 </executions>
                 <groupId>org.apache.maven.plugins</groupId>
                 <version>2.2.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.4.0</version>
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>

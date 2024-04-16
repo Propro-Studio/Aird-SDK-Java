@@ -10,6 +10,8 @@
 
 package net.csibio.aird.compressor;
 
+import java.util.HashMap;
+import java.util.TreeMap;
 import me.lemire.integercompression.DeltaZigzagEncoding;
 import me.lemire.integercompression.DeltaZigzagVariableByte;
 
@@ -120,6 +122,19 @@ public class ByteTrans {
         int[] newArray = new int[doubles.length];
         for (int i = 0; i < newArray.length; i++) {
             newArray[i] = (int) Math.round(doubles[i] * precision);
+        }
+        return newArray;
+    }
+    /**
+     * double to int conversion
+     *
+     * @param doubles the doubles array to convert
+     * @return the converted data
+     */
+    public static int[] doubleToInt(double[] doubles, HashMap<Double, Integer> mzMap) {
+        int[] newArray = new int[doubles.length];
+        for (int i = 0; i < newArray.length; i++) {
+            newArray[i] = mzMap.get(doubles[i]);
         }
         return newArray;
     }

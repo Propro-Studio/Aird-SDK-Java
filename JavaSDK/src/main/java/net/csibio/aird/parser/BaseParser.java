@@ -301,7 +301,7 @@ public abstract class BaseParser {
                 case DDA -> new DDAParser(indexFile.getAbsolutePath(), airdInfo);
                 case DIA -> new DIAParser(indexFile.getAbsolutePath(), airdInfo);
                 case PRM -> new PRMParser(indexFile.getAbsolutePath(), airdInfo);
-                case COMMON -> new CommonParser(indexFile.getAbsolutePath(), airdInfo);
+                case MRM -> new MRMParser(indexFile.getAbsolutePath(), airdInfo);
                 default -> throw new IllegalStateException("Unexpected value: " + AirdType.getType(airdInfo.getType()));
             };
         }

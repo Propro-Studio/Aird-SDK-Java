@@ -16,11 +16,6 @@ package net.csibio.aird.enums;
 public enum AirdType {
 
     /**
-     * RT Indexing
-     */
-    COMMON("COMMON", 0),
-
-    /**
      * Precursor-mz -> MS2 Group
      */
     DIA("DIA", 1),
@@ -54,6 +49,11 @@ public enum AirdType {
      * PASEF for PRM,Not Support now
      */
     PRM_PASEF("PRM_PASEF", 7),
+
+    /**
+     * MRM parser
+     */
+    MRM("MRM", 8),
     ;
 
     /**

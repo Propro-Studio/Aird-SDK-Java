@@ -26,7 +26,7 @@ import java.util.List;
  * @see MRMParser for SRM/MRM acquisition method
  * for chromatograms and spectra storage.
  */
-public class MRMParser extends DDAParser {
+public class MRMParser extends BaseParser {
 
     /**
      * 构造函数
@@ -51,8 +51,9 @@ public class MRMParser extends DDAParser {
 
     public List<MrmPair> getAllMrmPairs() throws IOException {
         var index = getChromatogramIndex();
-        if (index == null || index.getPrecursors() == null || index.getProducts() == null || index.getPrecursors().size() == 0 ||
-                index.getProducts().size() == 0) return null;
+        if (index == null || index.getPrecursors() == null || index.getProducts() == null || index.getPrecursors()
+            .isEmpty() || index.getProducts()
+            .isEmpty()) return null;
 
         ArrayList<MrmPair> pairs = new ArrayList<>();
         HashMap<String, Xic> dict = getChromatograms(index.getStartPtr(), index.getEndPtr(), index.getIds(), index.getRts(), index.getInts());
