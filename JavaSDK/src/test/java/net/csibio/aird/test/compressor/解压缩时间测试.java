@@ -48,7 +48,7 @@ public class 解压缩时间测试 {
             if (file.getName().equals("File10.json")) {
                 long start = System.currentTimeMillis();
                 DDAPasefParser parser = new DDAPasefParser(file.getAbsolutePath());
-                parser.readAllToMemory();
+                parser.readAllToMemory(true);
                 System.out.println(file.getName() + ":" + (System.currentTimeMillis() - start));
             }
         }
@@ -79,7 +79,7 @@ public class 解压缩时间测试 {
             if (file.getName().equals("File10.json")) {
                 long start = System.currentTimeMillis();
                 DDAPasefParser parser = new DDAPasefParser(file.getAbsolutePath());
-                List<DDAPasefMs> msList = parser.readAllToMemory();
+                List<DDAPasefMs> msList = parser.readAllToMemory(true);
                 System.out.println(file.getName() + ":" + (System.currentTimeMillis() - start));
             }
         }

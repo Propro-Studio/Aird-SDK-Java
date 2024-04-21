@@ -93,12 +93,16 @@ public class DDAPasefParser extends BaseParser {
      * MsCycle in the memory
      * @throws Exception exception when reading the file
      */
-    public List<DDAPasefMs> readAllToMemory() throws Exception {
+    public List<DDAPasefMs> readAllToMemory(boolean includeBinaryData) throws Exception {
         List<DDAPasefMs> ms1List = new ArrayList<>();
         BlockIndex ms1Index = getMs1Index();//所有的ms1谱图都在第一个index中
         List<BlockIndex> ms2IndexList = getAllMs2Index();
-        TreeMap<Double, Spectrum> ms1Map = getSpectra(ms1Index.getStartPtr(), ms1Index.getEndPtr(), ms1Index.getRts(), ms1Index.getMzs(), ms1Index.getInts(), ms1Index.getMobilities());
-        List<Double> ms1RtList = new ArrayList<>(ms1Map.keySet());
+        TreeMap<Double, Spectrum> ms1Map = new TreeMap<>();
+        if (includeBinaryData){
+            ms1Map = getSpectra(ms1Index.getStartPtr(), ms1Index.getEndPtr(), ms1Index.getRts(), ms1Index.getMzs(), ms1Index.getInts(), ms1Index.getMobilities());
+        }
+
+        List<Double> ms1RtList = new ArrayList<>(ms1Index.getRts());
 
         for (int i = 0; i < ms1RtList.size(); i++) {
             DDAPasefMs ms1 = new DDAPasefMs(ms1RtList.get(i), ms1Map.get(ms1RtList.get(i)));
@@ -107,8 +111,12 @@ public class DDAPasefParser extends BaseParser {
             if (ms2IndexRes.isPresent()) {
                 BlockIndex ms2Index = ms2IndexRes.get();
                 try {
-                    TreeMap<Double, Spectrum> ms2Map = getSpectra(ms2Index.getStartPtr(), ms2Index.getEndPtr(), ms2Index.getRts(), ms2Index.getMzs(), ms2Index.getInts(), ms2Index.getMobilities());
-                    List<Double> ms2RtList = new ArrayList<>(ms2Map.keySet());
+                    TreeMap<Double, Spectrum> ms2Map = new TreeMap<>();
+                    if(includeBinaryData){
+                        ms2Map = getSpectra(ms2Index.getStartPtr(), ms2Index.getEndPtr(), ms2Index.getRts(), ms2Index.getMzs(), ms2Index.getInts(), ms2Index.getMobilities());
+                    }
+
+                    List<Double> ms2RtList = new ArrayList<>(ms2Index.getRts());
                     List<DDAPasefMs> ms2List = new ArrayList<>();
                     for (int j = 0; j < ms2RtList.size(); j++) {
                         DDAPasefMs ms2 = new DDAPasefMs(ms2RtList.get(j), ms2Map.get(ms2RtList.get(j)));
@@ -221,7 +229,7 @@ public class DDAPasefParser extends BaseParser {
                 BlockIndex ms2Index = ms2IndexMap.get(ms1.getNum());
                 if (ms2Index != null) {
                     TreeMap<Double, Spectrum> ms2Map = getSpectra(ms2Index.getStartPtr(), ms2Index.getEndPtr(),
-                            ms2Index.getRts(), ms2Index.getMzs(), ms2Index.getInts());
+                        ms2Index.getRts(), ms2Index.getMzs(), ms2Index.getInts());
                     List<Double> ms2RtList = new ArrayList<>(ms2Map.keySet());
                     List<DDAPasefMs> ms2List = new ArrayList<>();
                     for (int j = 0; j < ms2RtList.size(); j++) {

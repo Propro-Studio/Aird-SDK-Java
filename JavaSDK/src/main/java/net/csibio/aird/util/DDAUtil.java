@@ -83,47 +83,47 @@ public class DDAUtil {
      * @param loc   index location
      */
     public static void initFromIndex(AirdInfo airdInfo, DDAPasefMs ms, BlockIndex index, Integer loc) {
-        if (index.getNums() != null && index.getNums().size() > 0) {
+        if (index.getNums() != null && !index.getNums().isEmpty()) {
             ms.setNum(index.getNums().get(loc));
         }
-        if (index.getCvList() != null && index.getCvList().size() > 0) {
+        if (index.getCvList() != null && !index.getCvList().isEmpty()) {
             ms.setCvList(index.getCvList().get(loc));
         }
-        if (index.getTics() != null && index.getTics().size() > 0) {
+        if (index.getTics() != null && !index.getTics().isEmpty()) {
             ms.setTic(index.getTics().get(loc));
         }
-        if (index.getRangeList() != null && index.getRangeList().size() > 0) {
+        if (index.getRangeList() != null && !index.getRangeList().isEmpty()) {
             ms.setRange(index.getRangeList().get(loc));
         }
-        if (index.getInjectionTimes() != null && index.getInjectionTimes().size() > 0) {
+        if (index.getInjectionTimes() != null && !index.getInjectionTimes().isEmpty()) {
             ms.setInjectionTime(index.getInjectionTimes().get(loc));
         }
 
-        if (index.getPolarities() != null && index.getPolarities().size() > 0) {
+        if (index.getPolarities() != null && !index.getPolarities().isEmpty()) {
             ms.setPolarity(index.getPolarities().get(loc));
         } else {
             ms.setPolarity(airdInfo.getPolarity());
         }
 
-        if (index.getFilterStrings() != null && index.getFilterStrings().size() > 0) {
+        if (index.getFilterStrings() != null && !index.getFilterStrings().isEmpty()) {
             ms.setFilterString(index.getFilterStrings().get(loc));
         } else {
             ms.setFilterString(airdInfo.getFilterString());
         }
 
-        if (index.getActivators() != null && index.getActivators().size() > 0) {
+        if (index.getActivators() != null && !index.getActivators().isEmpty()) {
             ms.setActivator(index.getActivators().get(loc));
         } else {
             ms.setActivator(airdInfo.getActivator());
         }
 
-        if (index.getEnergies() != null && index.getEnergies().size() > 0) {
+        if (index.getEnergies() != null && !index.getEnergies().isEmpty()) {
             ms.setEnergy(index.getEnergies().get(loc));
         } else {
             ms.setEnergy(airdInfo.getEnergy());
         }
 
-        if (index.getMsTypes() != null && index.getMsTypes().size() > 0) {
+        if (index.getMsTypes() != null && !index.getMsTypes().isEmpty()) {
             ms.setMsType(index.getMsTypes().get(loc));
         } else {
             ms.setMsType(airdInfo.getMsType());
