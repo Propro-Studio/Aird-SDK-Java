@@ -24,7 +24,7 @@ public class ColumnParser
     /**
      * the airdInfo from the index file.
      */
-    public AirdSDK.Beans.ColumnInfo columnInfo;
+    public Beans.ColumnInfo columnInfo;
 
     /**
      * mz precision

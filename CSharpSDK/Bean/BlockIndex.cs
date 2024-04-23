@@ -1,14 +1,15 @@
 ﻿/*
  * Copyright (c) 2020 CSi Studio
  * AirdSDK and AirdPro are licensed under Mulan PSL v2.
- * You can use this software according to the terms and conditions of the Mulan PSL v2. 
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
- *          http://license.coscl.org.cn/MulanPSL2 
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.  
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AirdSDK.Beans;
 
@@ -118,7 +119,7 @@ public class BlockIndex
     public List<int> mzs = new();
 
     /**
-        * Only using Stack ZDPD. The compressed list for tags of every mz. 
+        * Only using Stack ZDPD. The compressed list for tags of every mz.
         * 一个块中所有子谱图的mz原层码的压缩后的数组大小列表
         */
     public List<int> tags = new();
@@ -135,12 +136,6 @@ public class BlockIndex
          * 一个块中所有子谱图的mobility的压缩后的大小列表
          */
     public List<int> mobilities = new();
-
-    /**
-         * PSI CV
-         * PSI可控词汇表
-         */
-    public List<List<CV>> cvList = new();
 
     /**
          * Features of every block index
@@ -176,5 +171,35 @@ public class BlockIndex
         if (level.Equals(2))
             return num;
         return -1;
+    }
+
+    public BlockIndexProto ToProto()
+    {
+        BlockIndexProto proto = new BlockIndexProto()
+        {
+            Level = this.level,
+            StartPtr = this.startPtr,
+            EndPtr = this.endPtr,
+            Num = this.num,
+            // 假设 WindowRange 类也有一个 ToProto 方法
+            RangeList = { this.rangeList.Select(wr => wr.ToProto()) },
+            Nums = { this.nums },
+            Rts = { this.rts },
+            Tics = { this.tics },
+            BasePeakIntensities = { this.basePeakIntensities },
+            InjectionTimes = { this.injectionTimes },
+            BasePeakMzs = { this.basePeakMzs },
+            FilterStrings = { this.filterStrings },
+            Activators = { this.activators },
+            Energies = { this.energies },
+            Polarities = { this.polarities },
+            MsTypes = { this.msTypes },
+            Mzs = { this.mzs },
+            Tags = { this.tags },
+            Ints = { this.ints },
+            Mobilities = { this.mobilities },
+            Features = this.features
+        };
+        return proto;
     }
 }

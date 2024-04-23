@@ -1,4 +1,5 @@
 ﻿syntax = "proto3";
+import "WindowRange.proto";
 
 message ColumnInfoProto {
   repeated ColumnIndexProto indexList = 1;
@@ -26,12 +27,4 @@ message ColumnIndexProto {
   repeated int32 spectraIds = 15;
   repeated int32 intensities = 16;
   repeated int64 anchors = 17;
-}
-
-message WindowRangeProto {
-  double start = 1;
-  double end = 2;
-  double mz = 3;
-  int32 charge = 4;
-  string features = 5;
 }

@@ -20,11 +20,6 @@ public class DDAUtil
             ms.num = index.nums[loc];
         }
 
-        if (index.cvList != null && index.cvList.Count > 0)
-        {
-            ms.cvList = index.cvList[loc];
-        }
-
         if (index.tics != null && index.tics.Count > 0)
         {
             ms.tic = index.tics[loc];
@@ -91,11 +86,6 @@ public class DDAUtil
         if (index.nums != null && index.nums.Count > 0)
         {
             ms.num = index.nums[loc];
-        }
-
-        if (index.cvList != null && index.cvList.Count > 0)
-        {
-            ms.cvList = index.cvList[loc];
         }
 
         if (index.tics != null && index.tics.Count > 0)

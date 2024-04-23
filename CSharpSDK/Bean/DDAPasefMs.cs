@@ -62,11 +62,6 @@ public class DDAPasefMs
     public float injectionTime;
 
     /**
-     * cvList for current scan
-     */
-    public List<CV> cvList;
-
-    /**
      * the window range for current scan
      */
     public WindowRange range;

@@ -50,7 +50,6 @@ public class MRMParser : DDAParser
             pair.polarity = index.polarities[i];
             pair.activator = index.activators[i];
             pair.energy = index.energies[i];
-            pair.cvList = index.cvs[i];
             pair.precursor = index.precursors[i];
             pair.product = index.products[i];
             pair.key = pair.precursor.mz + "-" + pair.product.mz;

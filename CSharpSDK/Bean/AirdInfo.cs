@@ -1,16 +1,15 @@
 ﻿/*
  * Copyright (c) 2020 CSi Studio
  * AirdSDK and AirdPro are licensed under Mulan PSL v2.
- * You can use this software according to the terms and conditions of the Mulan PSL v2. 
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
- *          http://license.coscl.org.cn/MulanPSL2 
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.  
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
 
-using System;
 using System.Collections.Generic;
-using AirdSDK.Enums;
+using System.Linq;
 
 namespace AirdSDK.Beans
 {
@@ -40,7 +39,7 @@ namespace AirdSDK.Beans
          * [核心字段]
          * 数组压缩策略
          */
-        public List<Beans.Compressor> compressors;
+        public List<Compressor> compressors;
 
         /**
          * Instrument information list
@@ -202,5 +201,44 @@ namespace AirdSDK.Beans
         * 文件的创建日期
         */
         public string createDate;
+        
+        public AirdInfoProto ToProto()
+        {
+            AirdInfoProto proto = new AirdInfoProto
+            {
+                Version = this.version,
+                VersionCode = this.versionCode,
+                Engine = this.engine,
+                // 假设所有复杂类型（如 Compressor, Instrument, DataProcessing, Software, ParentFile, WindowRange, BlockIndex, ChromatogramIndex, MobiInfo）都有相应的 ToProto 方法
+                Compressors = { this.compressors.Select(c => c.ToProto()) },
+                Instruments = { this.instruments.Select(i => i.ToProto()) },
+                DataProcessings = { this.dataProcessings.Select(dp => dp.ToProto()) },
+                Softwares = { this.softwares.Select(s => s.ToProto()) },
+                ParentFiles = { this.parentFiles.Select(pf => pf.ToProto()) },
+                RangeList = { this.rangeList.Select(wr => wr.ToProto()) },
+                IndexList = { this.indexList.Select(idx => idx.ToProto()) },
+                IndexStartPtr = this.indexStartPtr,
+                IndexEndPtr = this.indexEndPtr,
+                ChromatogramIndex = this.chromatogramIndex?.ToProto(),
+                Type = this.type,
+                FileSize = this.fileSize,
+                TotalCount = this.totalCount,
+                AirdPath = this.airdPath,
+                Activator = this.activator,
+                Energy = this.energy,
+                MsType = this.msType,
+                RtUnit = this.rtUnit,
+                Polarity = this.polarity,
+                FilterString = this.filterString,
+                IgnoreZeroIntensityPoint = this.ignoreZeroIntensityPoint,
+                MobiInfo = this.mobiInfo?.ToProto(),
+                Creator = this.creator,
+                Features = this.features,
+                StartTimeStamp = this.startTimeStamp,
+                CreateDate = this.createDate
+            };
+
+            return proto;
+        }
     }
 }

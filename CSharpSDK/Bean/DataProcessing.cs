@@ -31,5 +31,14 @@ namespace AirdSDK.Beans
 
             processingOperations.Add(processingOperation);
         }
+        
+        public DataProcessingProto ToProto()
+        {
+            DataProcessingProto proto = new DataProcessingProto()
+            {
+                ProcessingOperations = { this.processingOperations },
+            };
+            return proto;
+        }
     }
 }

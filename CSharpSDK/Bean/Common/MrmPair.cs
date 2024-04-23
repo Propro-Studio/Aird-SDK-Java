@@ -24,11 +24,6 @@ namespace AirdSDK.Beans.Common
 
         public float energy;
 
-        /**
-         * cvList for current scan
-         */
-        public List<CV> cvList;
-
         public double[] rts;
         public double[] ints;
     }

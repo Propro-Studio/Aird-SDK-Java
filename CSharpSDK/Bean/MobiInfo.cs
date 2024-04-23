@@ -17,5 +17,18 @@ namespace AirdSDK.Beans
         public string unit; //ion mobility unit
         public double value; //ion mobility value
         public string type; //ion mobility type, see MobilityType
+        
+        public MobiInfoProto ToProto()
+        {
+            MobiInfoProto proto = new MobiInfoProto()
+            {
+                DictStart = this.dictStart,
+                DictEnd = this.dictEnd,
+                Unit = this.unit,
+                Value = this.value,
+                Type = this.type
+            };
+            return proto;
+        }
     }
 }

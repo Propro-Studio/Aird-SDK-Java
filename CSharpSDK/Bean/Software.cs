@@ -20,5 +20,16 @@ namespace AirdSDK.Beans
 
         //软件版本号
         public string version;
+
+        public SoftwareProto ToProto()
+        {
+            SoftwareProto proto = new SoftwareProto()
+            {
+                Name = this.name,
+                Type = this.type,
+                Version = this.version
+            };
+            return proto;
+        }
     }
 }

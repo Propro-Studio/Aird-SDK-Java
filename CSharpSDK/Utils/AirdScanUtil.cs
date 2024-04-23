@@ -74,7 +74,7 @@ public class AirdScanUtil
      */
     public static AirdSDK.Beans.ColumnInfo loadColumnInfo(FileInfo indexFile) {
         String content = FileUtil.readFile(indexFile);
-        AirdSDK.Beans.ColumnInfo columnInfo = JsonConvert.DeserializeObject<AirdSDK.Beans.ColumnInfo>(content);
+        ColumnInfo columnInfo = JsonConvert.DeserializeObject<ColumnInfo>(content);
         return columnInfo;
     }
     
