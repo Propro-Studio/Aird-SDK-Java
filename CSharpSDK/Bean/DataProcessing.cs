@@ -34,10 +34,12 @@ namespace AirdSDK.Beans
         
         public DataProcessingProto ToProto()
         {
-            DataProcessingProto proto = new DataProcessingProto()
+            DataProcessingProto proto = new DataProcessingProto();
+            if (processingOperations != null)
             {
-                ProcessingOperations = { this.processingOperations },
-            };
+                processingOperations = new List<string>();
+                processingOperations.AddRange(processingOperations);
+            }
             return proto;
         }
     }

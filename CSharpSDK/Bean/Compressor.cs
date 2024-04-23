@@ -72,11 +72,17 @@ namespace AirdSDK.Beans
         {
             CompressorProto proto = new CompressorProto()
             {
-                Target = this.target,
-                Methods = {this.methods},
-                Precision = this.precision,
-                ByteOrder = this.byteOrder
+                Target = target,
+                Precision = precision
             };
+            if (methods != null)
+            {
+                proto.Methods.AddRange(methods);
+            }
+            if (byteOrder != null)
+            {
+                proto.ByteOrder = byteOrder;
+            }
             return proto;
         }
     }

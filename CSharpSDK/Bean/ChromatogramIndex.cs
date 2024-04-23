@@ -108,7 +108,6 @@ namespace AirdSDK.Beans
             ChromatogramIndexProto proto = new ChromatogramIndexProto
             {
                 TotalCount = this.totalCount,
-                Type = this.type,
                 Ids = { this.ids },
                 Compounds = { this.compounds },
                 StartPtr = this.startPtr,
@@ -121,10 +120,17 @@ namespace AirdSDK.Beans
                 Ints = { this.ints },
                 Activators = { this.activators },
                 Energies = { this.energies },
-                Polarities = { this.polarities },
-                Features = this.features
+                Polarities = { this.polarities }
             };
 
+            if (type != null)
+            {
+                proto.Type = type;
+            }  
+            if (features != null)
+            {
+                proto.Features = features;
+            }
             return proto;
         }
     }

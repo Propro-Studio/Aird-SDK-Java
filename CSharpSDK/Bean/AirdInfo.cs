@@ -39,29 +39,29 @@ namespace AirdSDK.Beans
          * [核心字段]
          * 数组压缩策略
          */
-        public List<Compressor> compressors;
+        public List<Compressor> compressors = new();
 
         /**
          * Instrument information list
          */
-        public List<Instrument> instruments;
+        public List<Instrument> instruments = new();
 
         /**
          * dataProcessing information list
          */
-        public List<DataProcessing> dataProcessings;
+        public List<DataProcessing> dataProcessings = new();
 
         /**
          * The processed software information
          * 处理的软件信息
          */
-        public List<Software> softwares;
+        public List<Software> softwares = new();
 
         /**
          * The file information before converting
          * 处理前的文件信息
          */
-        public List<ParentFile> parentFiles;
+        public List<ParentFile> parentFiles = new();
 
         /**
          * [Core Field]
@@ -69,7 +69,7 @@ namespace AirdSDK.Beans
          * [核心字段]
          * 存储SWATH窗口信息
          */
-        public List<WindowRange> rangeList;
+        public List<WindowRange> rangeList = new();
 
         /**
          * [Core Field]
@@ -80,7 +80,7 @@ namespace AirdSDK.Beans
          * 用于存储Block的索引（适用于PRM/DIA/ScanningSwath/DDA）
          * 当存储SWATH窗口信息,窗口已经根据overlap进行过调整
          */
-        public List<BlockIndex> indexList;
+        public List<BlockIndex> indexList = new();
 
         /**
          * [Core Field]
@@ -209,35 +209,141 @@ namespace AirdSDK.Beans
                 Version = this.version,
                 VersionCode = this.versionCode,
                 Engine = this.engine,
-                // 假设所有复杂类型（如 Compressor, Instrument, DataProcessing, Software, ParentFile, WindowRange, BlockIndex, ChromatogramIndex, MobiInfo）都有相应的 ToProto 方法
-                Compressors = { this.compressors.Select(c => c.ToProto()) },
-                Instruments = { this.instruments.Select(i => i.ToProto()) },
-                DataProcessings = { this.dataProcessings.Select(dp => dp.ToProto()) },
-                Softwares = { this.softwares.Select(s => s.ToProto()) },
-                ParentFiles = { this.parentFiles.Select(pf => pf.ToProto()) },
-                RangeList = { this.rangeList.Select(wr => wr.ToProto()) },
-                IndexList = { this.indexList.Select(idx => idx.ToProto()) },
+                // Compressors = { this.compressors.Select(c => c.ToProto()) },
+                // Instruments = { this.instruments.Select(i => i.ToProto()) },
+                // DataProcessings = { this.dataProcessings.Select(dp => dp.ToProto()) },
+                // Softwares = { this.softwares.Select(s => s.ToProto()) },
+                // ParentFiles = { this.parentFiles.Select(pf => pf.ToProto()) },
+                // RangeList = { this.rangeList.Select(wr => wr.ToProto()) },
+                // IndexList = { this.indexList.Select(idx => idx.ToProto()) },
                 IndexStartPtr = this.indexStartPtr,
                 IndexEndPtr = this.indexEndPtr,
-                ChromatogramIndex = this.chromatogramIndex?.ToProto(),
-                Type = this.type,
                 FileSize = this.fileSize,
                 TotalCount = this.totalCount,
-                AirdPath = this.airdPath,
-                Activator = this.activator,
                 Energy = this.energy,
-                MsType = this.msType,
                 RtUnit = this.rtUnit,
-                Polarity = this.polarity,
-                FilterString = this.filterString,
                 IgnoreZeroIntensityPoint = this.ignoreZeroIntensityPoint,
-                MobiInfo = this.mobiInfo?.ToProto(),
-                Creator = this.creator,
-                Features = this.features,
-                StartTimeStamp = this.startTimeStamp,
-                CreateDate = this.createDate
+                MobiInfo = this.mobiInfo?.ToProto()
             };
 
+            if (this.compressors != null && this.compressors.Count > 0)
+            {
+                List<CompressorProto> protos = new List<CompressorProto>();
+                foreach (var compressor in this.compressors)
+                {
+                    protos.Add(compressor.ToProto());
+                }
+
+                proto.Compressors.AddRange(protos);
+            }
+            if (this.instruments != null && this.instruments.Count > 0)
+            {
+                List<InstrumentProto> protos = new List<InstrumentProto>();
+                foreach (var instrument in this.instruments)
+                {
+                    protos.Add(instrument.ToProto());
+                }
+
+                proto.Instruments.AddRange(protos);
+            }
+            if (this.dataProcessings != null && this.dataProcessings.Count > 0)
+            {
+                List<DataProcessingProto> protos = new List<DataProcessingProto>();
+                foreach (var dataProcessing in this.dataProcessings)
+                {
+                    protos.Add(dataProcessing.ToProto());
+                }
+
+                proto.DataProcessings.AddRange(protos);
+            } 
+            if (this.softwares != null && this.softwares.Count > 0)
+            {
+                List<SoftwareProto> protos = new List<SoftwareProto>();
+                foreach (var software in this.softwares)
+                {
+                    protos.Add(software.ToProto());
+                }
+
+                proto.Softwares.AddRange(protos);
+            } 
+            if (this.parentFiles != null && this.parentFiles.Count > 0)
+            {
+                List<ParentFileProto> protos = new List<ParentFileProto>();
+                foreach (var parent in this.parentFiles)
+                {
+                    protos.Add(parent.ToProto());
+                }
+
+                proto.ParentFiles.AddRange(protos);
+            }
+            if (this.rangeList != null && this.rangeList.Count > 0)
+            {
+                List<WindowRangeProto> protos = new List<WindowRangeProto>();
+                foreach (var range in this.rangeList)
+                {
+                    protos.Add(range.ToProto());
+                }
+
+                proto.RangeList.AddRange(protos);
+            }
+            if (this.indexList != null && this.indexList.Count > 0)
+            {
+                List<BlockIndexProto> protos = new List<BlockIndexProto>();
+                foreach (var blockIndex in this.indexList)
+                {
+                    protos.Add(blockIndex.ToProto());
+                }
+
+                proto.IndexList.AddRange(protos);
+            }
+
+            if (chromatogramIndex != null)
+            {
+                proto.ChromatogramIndex = this.chromatogramIndex.ToProto();
+            }
+
+            if (airdPath != null)
+            {
+                proto.AirdPath = this.airdPath;
+            }
+            
+            if (type != null)
+            {
+                proto.Type = this.type;
+            }
+            if (activator != null)
+            {
+                proto.Activator = this.activator;
+            }
+            if (msType != null)
+            {
+                proto.MsType = this.msType;
+            }
+            if (polarity != null)
+            {
+                proto.Polarity = this.polarity;
+            }
+            if (filterString != null)
+            {
+                proto.FilterString = this.filterString;
+            }
+            if (creator != null)
+            {
+                proto.Creator = this.creator;
+            }
+            if (features != null)
+            {
+                proto.Features = this.features;
+            }
+            if (startTimeStamp != null)
+            {
+                proto.StartTimeStamp = this.startTimeStamp;
+            }
+            if (createDate != null)
+            {
+                proto.CreateDate = this.createDate;
+            }
+            
             return proto;
         }
     }

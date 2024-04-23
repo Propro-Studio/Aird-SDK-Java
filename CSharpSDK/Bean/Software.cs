@@ -23,12 +23,20 @@ namespace AirdSDK.Beans
 
         public SoftwareProto ToProto()
         {
-            SoftwareProto proto = new SoftwareProto()
+            SoftwareProto proto = new SoftwareProto();
+            
+            if (name != null)
             {
-                Name = this.name,
-                Type = this.type,
-                Version = this.version
-            };
+                proto.Name = name;
+            } 
+            if (type != null)
+            {
+                proto.Type = type;
+            } 
+            if (version != null)
+            {
+                proto.Version = version;
+            }
             return proto;
         }
     }

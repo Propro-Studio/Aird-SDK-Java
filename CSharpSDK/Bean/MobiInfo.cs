@@ -24,10 +24,19 @@ namespace AirdSDK.Beans
             {
                 DictStart = this.dictStart,
                 DictEnd = this.dictEnd,
-                Unit = this.unit,
                 Value = this.value,
-                Type = this.type
             };
+
+            if (unit != null)
+            {
+                proto.Unit = unit;
+            }
+            if (type != null)
+            {
+                proto.Type = type;
+            }
+            
+            
             return proto;
         }
     }

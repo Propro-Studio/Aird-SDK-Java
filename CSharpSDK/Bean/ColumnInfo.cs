@@ -7,11 +7,11 @@ public class ColumnInfo
     public List<ColumnIndex> indexList;
 
     /**
-        * [Core Field]
-        * AcquisitionMethod, Support for DIA/SWATH, PRM, DDA, SRM/MRM, DDAPasef, DIAPasef
-        * [核心字段]
-        * Aird支持的采集模式的类型,目前支持SRM/MRM, DIA, PRM, DDA, DDAPasef, DIAPasef 6种
-        */
+     * [Core Field]
+     * AcquisitionMethod, Support for DIA/SWATH, PRM, DDA, SRM/MRM, DDAPasef, DIAPasef
+     * [核心字段]
+     * Aird支持的采集模式的类型,目前支持SRM/MRM, DIA, PRM, DDA, DDAPasef, DIAPasef 6种
+     */
     public string type;
 
     /**

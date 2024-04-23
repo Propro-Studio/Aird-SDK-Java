@@ -44,9 +44,16 @@ namespace AirdSDK.Beans
                 Start = this.start,
                 End = this.end,
                 Mz = this.mz,
-                Charge = this.charge ?? -1,
-                Features = this.features
             };
+            if (this.features != null)
+            {
+                proto.Features = features;
+            }
+
+            if (this.charge != null)
+            {
+                proto.Charge = this.charge.Value;
+            }
             return proto;
         }
     }

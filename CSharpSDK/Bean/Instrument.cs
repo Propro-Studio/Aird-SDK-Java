@@ -31,27 +31,50 @@ namespace AirdSDK.Beans
         public string model;
 
         //来源 source
-        public List<string> source = new List<string>();
+        public List<string> source = new();
 
         //分析方式
-        public List<string> analyzer = new List<string>();
+        public List<string> analyzer = new();
 
         //探测器
-        public List<string> detector = new List<string>();
+        public List<string> detector = new();
 
         public InstrumentProto ToProto()
         {
             InstrumentProto proto = new InstrumentProto()
             {
-                Manufacturer = this.manufacturer,
-                Ionisation = this.ionisation,
-                Resolution = this.resolution,
-                Model = this.model,
-                // 将 List<string> 转换为 repeated 字段
-                Source = { this.source },
-                Analyzer = { this.analyzer },
-                Detector = { this.detector }
+                Source = {this.source},
+                Analyzer = {this.analyzer},
+                Detector = {this.detector}
             };
+            if (this.manufacturer != null)
+            {
+                proto.Manufacturer = manufacturer;
+            }
+            if (this.ionisation != null)
+            {
+                proto.Ionisation = ionisation;
+            } 
+            if (this.resolution != null)
+            {
+                proto.Resolution = resolution;
+            }
+            if (this.model != null)
+            {
+                proto.Model = model;
+            }
+            // if (this.source != null)
+            // {
+            //     proto.Source.AddRange(this.source);
+            // }
+            // if (this.analyzer != null)
+            // {
+            //     proto.Analyzer.AddRange(this.analyzer);
+            // }
+            // if (this.detector != null)
+            // {
+            //     proto.Detector.AddRange(this.detector);
+            // }
             return proto;
         }
     }

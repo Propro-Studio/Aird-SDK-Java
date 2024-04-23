@@ -32,12 +32,20 @@ namespace AirdSDK.Beans
         
         public ParentFileProto ToProto()
         {
-            ParentFileProto proto = new ParentFileProto()
+            ParentFileProto proto = new ParentFileProto();
+            if (name != null)
             {
-                Name = this.name,
-                Location = this.location,
-                FormatType = this.formatType
-            };
+                proto.Name = name;
+            }
+            if (location != null)
+            {
+                proto.Location = location;
+            }
+            if (formatType != null)
+            {
+                proto.FormatType = formatType;
+            }
+            
             return proto;
         }
     }
