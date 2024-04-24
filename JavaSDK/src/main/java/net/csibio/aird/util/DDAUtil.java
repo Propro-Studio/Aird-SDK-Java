@@ -31,9 +31,6 @@ public class DDAUtil {
         if (index.getNums() != null && index.getNums().size() > 0) {
             ms.setNum(index.getNums().get(loc));
         }
-        if (index.getCvList() != null && index.getCvList().size() > 0) {
-            ms.setCvList(index.getCvList().get(loc));
-        }
         if (index.getTics() != null && index.getTics().size() > 0) {
             ms.setTic(index.getTics().get(loc));
         }
@@ -85,9 +82,6 @@ public class DDAUtil {
     public static void initFromIndex(AirdInfo airdInfo, DDAPasefMs ms, BlockIndex index, Integer loc) {
         if (index.getNums() != null && !index.getNums().isEmpty()) {
             ms.setNum(index.getNums().get(loc));
-        }
-        if (index.getCvList() != null && !index.getCvList().isEmpty()) {
-            ms.setCvList(index.getCvList().get(loc));
         }
         if (index.getTics() != null && !index.getTics().isEmpty()) {
             ms.setTic(index.getTics().get(loc));

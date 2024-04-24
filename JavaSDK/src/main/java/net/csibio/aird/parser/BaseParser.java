@@ -56,9 +56,14 @@ public abstract class BaseParser {
     public File airdFile;
 
     /**
-     * the aird index file. JSON format
+     * the aird index file path
      */
-    public File indexFile;
+    public String indexPath;
+
+    /**
+     * the aird index file. proto format
+     */
+    public File protoFile;
 
     /**
      * the airdInfo from the index file.
@@ -168,8 +173,7 @@ public abstract class BaseParser {
      * @throws Exception 扫描时的异常
      */
     public BaseParser(String indexPath) throws Exception {
-        this.indexFile = new File(indexPath);
-        airdInfo = AirdScanUtil.loadAirdInfo(indexFile);
+        airdInfo = AirdScanUtil.loadAirdInfo(indexPath);
         if (airdInfo == null) {
             throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
         }
@@ -238,8 +242,7 @@ public abstract class BaseParser {
      * @throws Exception 扫描异常
      */
     public BaseParser(String airdPath, Compressor mzCompressor, Compressor intCompressor, Compressor mobiCompressor, String airdType) throws Exception {
-        this.indexFile = new File(AirdScanUtil.getIndexPathByAirdPath(airdPath));
-
+        this.indexPath = AirdScanUtil.getIndexPathByAirdPath(airdPath);
         //不使用Index文件初始化的时候,会直接初始化一个空AirdInfo,用于存放传入的基础信息
         this.airdInfo = new AirdInfo();
         airdInfo.setType(airdType);
@@ -271,41 +274,26 @@ public abstract class BaseParser {
     }
 
     /**
-     * build parser function
-     *
-     * @param indexPath index file path
-     * @return the base parser
-     * @throws Exception exception
-     */
-    public static BaseParser buildParser(String indexPath) throws Exception {
-        File indexFile = new File(indexPath);
-        return buildParser(indexFile);
-    }
-
-    /**
      * 最基础的启动方法:使用Index文件扫描AirdInfo以后读取Aird文件,然后根据AirdInfo中的文件类型分别初始化不同的Parser
      *
-     * @param indexFile index file
+     * @param indexPath index file path
      * @return Base parser instance
      * @throws Exception exception
      */
-    public static BaseParser buildParser(File indexFile) throws Exception {
-        if (indexFile.exists() && indexFile.canRead()) {
-            AirdInfo airdInfo = AirdScanUtil.loadAirdInfo(indexFile);
-            if (airdInfo == null) {
-                throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
-            }
-            return switch (AirdType.getType(airdInfo.getType())) {
-                case DDA_PASEF -> new DDAPasefParser(indexFile.getAbsolutePath(), airdInfo);
-                case DIA_PASEF -> new DIAPasefParser(indexFile.getAbsolutePath(), airdInfo);
-                case DDA -> new DDAParser(indexFile.getAbsolutePath(), airdInfo);
-                case DIA -> new DIAParser(indexFile.getAbsolutePath(), airdInfo);
-                case PRM -> new PRMParser(indexFile.getAbsolutePath(), airdInfo);
-                case MRM -> new MRMParser(indexFile.getAbsolutePath(), airdInfo);
-                default -> throw new IllegalStateException("Unexpected value: " + AirdType.getType(airdInfo.getType()));
-            };
+    public static BaseParser buildParser(String indexPath) throws Exception {
+        AirdInfo airdInfo = AirdScanUtil.loadAirdInfo(indexPath);
+        if (airdInfo == null) {
+            throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
         }
-        throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
+        return switch (AirdType.getType(airdInfo.getType())) {
+            case DDA_PASEF -> new DDAPasefParser(indexPath, airdInfo);
+            case DIA_PASEF -> new DIAPasefParser(indexPath, airdInfo);
+            case DDA -> new DDAParser(indexPath, airdInfo);
+            case DIA -> new DIAParser(indexPath, airdInfo);
+            case PRM -> new PRMParser(indexPath, airdInfo);
+            case MRM -> new MRMParser(indexPath, airdInfo);
+            default -> throw new IllegalStateException("Unexpected value: " + AirdType.getType(airdInfo.getType()));
+        };
     }
 
     /**

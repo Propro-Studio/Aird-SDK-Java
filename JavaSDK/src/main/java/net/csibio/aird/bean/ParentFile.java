@@ -11,6 +11,7 @@
 package net.csibio.aird.bean;
 
 import lombok.Data;
+import net.csibio.aird.bean.proto.AirdInfo;
 
 @Data
 public class ParentFile {
@@ -28,5 +29,18 @@ public class ParentFile {
     /**
      * 文件类型 The parent file type. Usually refers to the suffix of the file
      */
-    String type;
+    String formatType;
+
+    public static ParentFile fromProto(AirdInfo.ParentFileProto proto) {
+        if (proto == null) {
+            return null;
+        }
+
+        ParentFile parentFile = new ParentFile();
+        parentFile.setName(proto.getName());
+        parentFile.setLocation(proto.getLocation());
+        parentFile.setFormatType(proto.getFormatType());
+
+        return parentFile;
+    }
 }

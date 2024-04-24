@@ -11,6 +11,12 @@
 package net.csibio.aird.util;
 
 import com.alibaba.fastjson2.JSON;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import net.csibio.aird.bean.AirdInfo;
 import net.csibio.aird.bean.ColumnIndex;
 import net.csibio.aird.bean.ColumnInfo;
@@ -18,13 +24,6 @@ import net.csibio.aird.constant.SuffixConst;
 import net.csibio.aird.constant.SymbolConst;
 import net.csibio.aird.enums.ResultCodeEnum;
 import net.csibio.aird.exception.ScanException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Aird Scan Util for scanning the aird files quickly
@@ -42,7 +41,6 @@ public class AirdScanUtil {
      * @return 该文件夹下所有的文件列表
      */
     public static List<File> scanIndexFiles(String directoryPath) {
-
         //Check and filter for effective aird files
         File directory = new File(directoryPath);
         if (!directory.isDirectory()) {
@@ -57,11 +55,18 @@ public class AirdScanUtil {
         if (fileList == null) {
             return null;
         }
-
+        HashSet<String> fileNameSet = new HashSet<>();
+        HashMap<String, File> indexFileMap = new HashMap<>();
         //返回所有JSON文件的数组
         for (File file : fileList) {
             if (file.isFile() && file.getName().toLowerCase().endsWith(SuffixConst.JSON)) {
-                indexFileList.add(file);
+                indexFileMap.put(file.getName().toLowerCase(), file);
+            }
+        }
+        //再扫描一遍后缀为.index的索引文件,如果检测到有.index格式的索引文件,则优先使用该索引文件
+        for (File file : fileList) {
+            if (file.isFile() && file.getName().toLowerCase().endsWith(SuffixConst.INDEX)) {
+                indexFileMap.put(file.getName().toLowerCase(), file);
             }
         }
 
@@ -74,15 +79,30 @@ public class AirdScanUtil {
      * @param indexFile 索引文件
      * @return 该索引文件内的JSON信息, 即AirdInfo信息
      */
-    public static AirdInfo loadAirdInfo(File indexFile) {
-        String content = FileUtil.readFile(indexFile);
-        AirdInfo airdInfo = null;
+    public static AirdInfo loadAirdInfo(String indexFile) {
+        AirdInfo airdInfo = new AirdInfo();
+        if (indexFile.toLowerCase().endsWith(SuffixConst.JSON)){
+            File file = new File(indexFile);
+            if (file.exists() && file.canRead()) {
+                String content = FileUtil.readFile(indexFile);
+                try {
+                    airdInfo = JSON.parseObject(content, AirdInfo.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw e;
+                }
 
-        try {
-            airdInfo = JSON.parseObject(content, AirdInfo.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+                return airdInfo;
+            }
+        } else if (indexFile.toLowerCase().endsWith(SuffixConst.INDEX)) {
+            try{
+                FileInputStream fis = new FileInputStream(indexFile);
+                net.csibio.aird.bean.proto.AirdInfo.AirdInfoProto proto = net.csibio.aird.bean.proto.AirdInfo.AirdInfoProto.parseFrom(fis);
+                airdInfo = AirdInfo.fromProto(proto);
+            }catch (Exception e){
+                e.printStackTrace();
+                return null;
+            }
         }
 
         return airdInfo;
@@ -94,87 +114,25 @@ public class AirdScanUtil {
      * @param indexFile 索引文件
      * @return 该索引文件内的JSON信息, 即ColumnInfo信息
      */
-    public static ColumnInfo loadColumnInfo(File indexFile) {
-        String content = FileUtil.readFile(indexFile);
-        ColumnInfo columnInfo = null;
-
-        try {
-            columnInfo = JSON.parseObject(content, ColumnInfo.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-
-        return columnInfo;
-    }
-
-    public static ColumnInfo loadFromProto(String indexPath) {
+    public static ColumnInfo loadColumnInfo(String indexFile) {
         ColumnInfo columnInfo = new ColumnInfo();
-        try {
-            FileInputStream fis = new FileInputStream(indexPath);
-            net.csibio.aird.bean.proto.ColumnInfo.ColumnInfoProto proto = net.csibio.aird.bean.proto.ColumnInfo.ColumnInfoProto.parseFrom(fis);
-            columnInfo.setType(proto.getType());
-            columnInfo.setAirdPath(proto.getAirdPath());
-            columnInfo.setIntPrecision(proto.getIntPrecision());
-            columnInfo.setMzPrecision(proto.getMzPrecision());
-            if (proto.getIndexListCount() > 0) {
-                List<ColumnIndex> indexList = new ArrayList<ColumnIndex>();
-                for (int i = 0; i < proto.getIndexListCount(); i++) {
-                    ColumnIndex index = new ColumnIndex();
-                    net.csibio.aird.bean.proto.ColumnInfo.ColumnIndexProto indexProto = proto.getIndexList(i);
-                    index.setLevel(indexProto.getLevel());
-                    index.setStartPtr(indexProto.getStartPtr());
-                    index.setEndPtr(indexProto.getEndPtr());
-                    index.setStartMzListPtr(indexProto.getStartMzListPtr());
-                    index.setEndMzListPtr(indexProto.getEndMzListPtr());
-                    index.setStartRtListPtr(indexProto.getStartRtListPtr());
-                    index.setEndRtListPtr(indexProto.getEndRtListPtr());
-                    index.setStartSpectraIdListPtr(indexProto.getStartSpectraIdListPtr());
-                    index.setEndSpectraIdListPtr(indexProto.getEndSpectraIdListPtr());
-                    index.setStartIntensityListPtr(indexProto.getStartIntensityListPtr());
-                    index.setEndIntensityListPtr(indexProto.getEndIntensityListPtr());
-                    if (indexProto.getMzsCount() > 0) {
-                        int[] mzs = new int[indexProto.getMzsCount()];
-                        for (int j = 0; j < indexProto.getMzsCount(); j++) {
-                            mzs[j] = indexProto.getMzs(j);
-                        }
-                        index.setMzs(mzs);
-                    }
-                    if (indexProto.getRtsCount() > 0) {
-                        int[] rts = new int[indexProto.getRtsCount()];
-                        for (int j = 0; j < indexProto.getRtsCount(); j++) {
-                            rts[j] = indexProto.getRts(j);
-                        }
-                        index.setRts(rts);
-                    }
-                    if (indexProto.getSpectraIdsCount() > 0) {
-                        int[] spectraIds = new int[indexProto.getSpectraIdsCount()];
-                        for (int j = 0; j < indexProto.getSpectraIdsCount(); j++) {
-                            spectraIds[j] = indexProto.getSpectraIds(j);
-                        }
-                        index.setSpectraIds(spectraIds);
-                    }
-                    if (indexProto.getIntensitiesCount() > 0) {
-                        int[] intensities = new int[indexProto.getIntensitiesCount()];
-                        for (int j = 0; j < indexProto.getIntensitiesCount(); j++) {
-                            intensities[j] = indexProto.getIntensities(j);
-                        }
-                        index.setIntensities(intensities);
-                    }
-                    if (indexProto.getAnchorsCount() > 0) {
-                        long[] anchors = new long[indexProto.getAnchorsCount()];
-                        for (int j = 0; j < indexProto.getAnchorsCount(); j++) {
-                            anchors[j] = indexProto.getAnchors(j);
-                        }
-                        index.setAnchors(anchors);
-                    }
-                    indexList.add(index);
-                }
-                columnInfo.setIndexList(indexList);
+        if (indexFile.toLowerCase().endsWith(SuffixConst.CJSON)) {
+            String content = FileUtil.readFile(indexFile);
+            try {
+                columnInfo = JSON.parseObject(content, ColumnInfo.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        } else if (indexFile.toLowerCase().endsWith(SuffixConst.CINDEX)) {
+            try {
+                FileInputStream fis = new FileInputStream(indexFile);
+                net.csibio.aird.bean.proto.ColumnInfo.ColumnInfoProto proto = net.csibio.aird.bean.proto.ColumnInfo.ColumnInfoProto.parseFrom(fis);
+                columnInfo = ColumnInfo.fromProto(proto);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
         return columnInfo;
@@ -189,7 +147,7 @@ public class AirdScanUtil {
     public static List<AirdInfo> loadAirdInfoList(List<File> indexFiles) {
         List<AirdInfo> airdInfos = new ArrayList<AirdInfo>();
         for (File file : indexFiles) {
-            AirdInfo airdInfo = loadAirdInfo(file);
+            AirdInfo airdInfo = loadAirdInfo(file.getAbsolutePath());
             if (airdInfo != null) {
                 airdInfos.add(airdInfo);
             } else {
@@ -210,7 +168,7 @@ public class AirdScanUtil {
     public static HashMap<String, AirdInfo> loadAirdInfoMap(List<File> indexFiles) {
         HashMap<String, AirdInfo> airdInfoMap = new HashMap<String, AirdInfo>();
         for (File file : indexFiles) {
-            AirdInfo airdInfo = loadAirdInfo(file);
+            AirdInfo airdInfo = loadAirdInfo(file.getAbsolutePath());
             if (airdInfo != null) {
                 airdInfoMap.put(file.getAbsolutePath(), airdInfo);
             } else {
@@ -245,27 +203,15 @@ public class AirdScanUtil {
     /**
      * 根据索引文件路径获取aird文件路径
      *
-     * @param indexPath 索引文件路径
-     * @return aird文件路径
-     */
-    public static String getAirdPathByIndexPath(String indexPath) {
-        if (indexPath == null || !indexPath.contains(SymbolConst.DOT) || !indexPath.endsWith(SuffixConst.JSON)) {
-            return null;
-        }
-        return indexPath.substring(0, indexPath.lastIndexOf(SymbolConst.DOT)) + SuffixConst.AIRD;
-    }
-
-    /**
-     * 根据索引文件路径获取aird文件路径
-     *
      * @param protoPath 索引文件路径
      * @return aird文件路径
      */
-    public static String getAirdPathByColumnIndexPath(String protoPath) {
-        if (protoPath == null || !protoPath.contains(SymbolConst.DOT) || !protoPath.endsWith(SuffixConst.INDEX)) {
-            return null;
+    public static String getAirdPathByIndexPath(String protoPath) {
+        if (protoPath!= null && (protoPath.toLowerCase().endsWith(SuffixConst.CINDEX) || protoPath.toLowerCase().endsWith(SuffixConst.CJSON) ||
+            protoPath.toLowerCase().endsWith(SuffixConst.INDEX)  || protoPath.toLowerCase().endsWith(SuffixConst.JSON))) {
+            return protoPath.substring(0, protoPath.lastIndexOf(SymbolConst.DOT)) + SuffixConst.AIRD;
         }
-        return protoPath.substring(0, protoPath.lastIndexOf(SymbolConst.DOT)) + SuffixConst.AIRD;
+        return null;
     }
 
     /**

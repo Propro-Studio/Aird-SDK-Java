@@ -11,6 +11,8 @@
 package net.csibio.aird.bean;
 
 import lombok.Data;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -93,14 +95,57 @@ public class ChromatogramIndex {
     List<Integer> ints;
 
     /**
-     * PSI CV
-     * PSI可控词汇表
-     */
-    List<List<CV>> cvs;
-
-    /**
      * Features of every index
      * 用于存储KV键值对
      */
     String features;
+
+    public static ChromatogramIndex fromProto(net.csibio.aird.bean.proto.AirdInfo.ChromatogramIndexProto proto) {
+        if (proto == null) {
+            return null;
+        }
+
+        ChromatogramIndex index = new ChromatogramIndex();
+        index.setTotalCount(proto.getTotalCount());
+        index.setType(proto.getType());
+
+        // 处理 ids 列表
+        List<String> ids = new ArrayList<>();
+        ids.addAll(proto.getIdsList());
+        index.setIds(ids);
+
+        // 处理 compounds 列表
+        List<String> compounds = new ArrayList<>();
+        compounds.addAll(proto.getCompoundsList());
+        index.setCompounds(compounds);
+
+        // ... 以此类推，处理其他列表字段 ...
+
+        // 处理 precursors 列表
+        List<WindowRange> precursors = new ArrayList<>();
+        for (net.csibio.aird.bean.proto.WindowRange.WindowRangeProto protoPrecursor : proto.getPrecursorsList()) {
+            precursors.add(WindowRange.fromProto(protoPrecursor));
+        }
+        index.setPrecursors(precursors);
+
+        // 处理 products 列表
+        List<WindowRange> products = new ArrayList<>();
+        for (net.csibio.aird.bean.proto.WindowRange.WindowRangeProto protoProduct : proto.getProductsList()) {
+            products.add(WindowRange.fromProto(protoProduct));
+        }
+        index.setProducts(products);
+
+        // 设置其他字段
+        index.setStartPtr(proto.getStartPtr());
+        index.setEndPtr(proto.getEndPtr());
+        index.setActivators(new ArrayList<>(proto.getActivatorsList()));
+        index.setEnergies(new ArrayList<>(proto.getEnergiesList()));
+        index.setPolarities(new ArrayList<>(proto.getPolaritiesList()));
+        index.setNums(new ArrayList<>(proto.getNumsList()));
+        index.setRts(new ArrayList<>(proto.getRtsList()));
+        index.setInts(new ArrayList<>(proto.getIntsList()));
+        index.setFeatures(proto.getFeatures());
+
+        return index;
+    }
 }

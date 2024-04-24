@@ -11,6 +11,7 @@
 package net.csibio.aird.bean;
 
 import lombok.Data;
+import net.csibio.aird.bean.proto.AirdInfo;
 import net.csibio.aird.enums.MsLevel;
 
 import java.util.ArrayList;
@@ -130,11 +131,6 @@ public class BlockIndex {
     List<Integer> mobilities;
 
     /**
-     * PSI Controlled Vocabulary PSI可控词汇表
-     */
-    List<List<CV>> cvList;
-
-    /**
      * 用于存储KV键值对 Pairs with key/value for extension features
      */
     String features;
@@ -169,5 +165,80 @@ public class BlockIndex {
         } else {
             return null;
         }
+    }
+
+    public static BlockIndex fromProto(AirdInfo.BlockIndexProto indexProto){
+        BlockIndex index = new BlockIndex();
+        index.setLevel(indexProto.getLevel());
+        index.setStartPtr(indexProto.getStartPtr());
+        index.setEndPtr(indexProto.getEndPtr());
+        index.setNum(indexProto.getNum());
+
+        if (indexProto.getRangeListCount() > 0) {
+            List<WindowRange> rangeList = new ArrayList<>();
+            for (net.csibio.aird.bean.proto.WindowRange.WindowRangeProto windowRangeProto : indexProto.getRangeListList()) {
+                rangeList.add(WindowRange.fromProto(windowRangeProto));
+            }
+            index.setRangeList(rangeList);
+        }
+
+        if (indexProto.getNumsCount() > 0) {
+            index.setNums(new ArrayList<>(indexProto.getNumsList()));
+        }
+
+        if (indexProto.getRtsCount() > 0) {
+            index.setRts(new ArrayList<>(indexProto.getRtsList()));
+        }
+
+        if (indexProto.getTicsCount() > 0) {
+            index.setTics(new ArrayList<>(indexProto.getTicsList()));
+        }
+
+        if (indexProto.getInjectionTimesCount() > 0) {
+            index.setInjectionTimes(new ArrayList<>(indexProto.getInjectionTimesList()));
+        }
+
+        if (indexProto.getBasePeakIntensitiesCount() > 0) {
+            index.setBasePeakIntensities(new ArrayList<>(indexProto.getBasePeakIntensitiesList()));
+        }
+
+        if (indexProto.getBasePeakMzsCount() > 0) {
+            index.setBasePeakMzs(new ArrayList<>(indexProto.getBasePeakMzsList()));
+        }
+
+        if (indexProto.getFilterStringsCount() > 0) {
+            index.setFilterStrings(new ArrayList<>(indexProto.getFilterStringsList()));
+        }
+
+        if (indexProto.getActivatorsCount() > 0) {
+            index.setActivators(new ArrayList<>(indexProto.getActivatorsList()));
+        }
+
+        if (indexProto.getEnergiesCount() > 0) {
+            index.setEnergies(new ArrayList<>(indexProto.getEnergiesList()));
+        }
+
+        if (indexProto.getPolaritiesCount() > 0) {
+            index.setPolarities(new ArrayList<>(indexProto.getPolaritiesList()));
+        }
+
+        if (indexProto.getMsTypesCount() > 0) {
+            index.setMsTypes(new ArrayList<>(indexProto.getMsTypesList()));
+        }
+
+        if (indexProto.getMzsCount() > 0) {
+            index.setMzs(new ArrayList<>(indexProto.getMzsList()));
+        }
+
+        if (indexProto.getIntsCount() > 0) {
+            index.setInts(new ArrayList<>(indexProto.getIntsList()));
+        }
+
+        if (indexProto.getMobilitiesCount() > 0) {
+            index.setMobilities(new ArrayList<>(indexProto.getMobilitiesList()));
+        }
+
+        index.setFeatures(indexProto.getFeatures());
+        return index;
     }
 }

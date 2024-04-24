@@ -11,7 +11,9 @@
 package net.csibio.aird.bean;
 
 import lombok.Data;
+import net.csibio.aird.bean.proto.AirdInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -52,4 +54,29 @@ public class Instrument {
      */
     List<String> detector;
 
+    public static Instrument fromProto(AirdInfo.InstrumentProto proto) {
+        if (proto == null) {
+            return null;
+        }
+
+        Instrument instrument = new Instrument();
+        instrument.setManufacturer(proto.getManufacturer());
+        instrument.setIonisation(proto.getIonisation());
+        instrument.setResolution(proto.getResolution());
+        instrument.setModel(proto.getModel());
+
+        // 处理 source 列表
+        List<String> sourceList = new ArrayList<>(proto.getSourceList());
+        instrument.setSource(sourceList);
+
+        // 处理 analyzer 列表
+        List<String> analyzerList = new ArrayList<>(proto.getAnalyzerList());
+        instrument.setAnalyzer(analyzerList);
+
+        // 处理 detector 列表
+        List<String> detectorList = new ArrayList<>(proto.getDetectorList());
+        instrument.setDetector(detectorList);
+
+        return instrument;
+    }
 }

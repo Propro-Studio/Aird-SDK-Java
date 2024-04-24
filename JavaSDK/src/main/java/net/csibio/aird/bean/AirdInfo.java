@@ -16,9 +16,7 @@ import net.csibio.aird.enums.AirdEngine;
 import net.csibio.aird.enums.AirdType;
 import net.csibio.aird.enums.MsLevel;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * AirdInfo
@@ -81,11 +79,6 @@ public class AirdInfo {
      * [核心字段] 用于存储Block的索引 [Core Field] Store the Block Index
      */
     List<BlockIndex> indexList;
-
-    /**
-     * [核心字段] 用于列式存储的索引 [Core Field] Store the Column Index
-     */
-    List<ColumnIndex> columnIndexList;
 
     /**
      * BlockIndex经过压缩以后的二进制数据开始位置
@@ -226,5 +219,88 @@ public class AirdInfo {
             }
         });
         return map;
+    }
+
+    public static AirdInfo fromProto(net.csibio.aird.bean.proto.AirdInfo.AirdInfoProto proto) {
+        AirdInfo airdInfo = new AirdInfo();
+
+        // 设置基本字段
+        airdInfo.version = proto.getVersion();
+        airdInfo.versionCode = proto.getVersionCode();
+        airdInfo.engine = proto.getEngine();
+        airdInfo.type = proto.getType();
+        airdInfo.fileSize = proto.getFileSize();
+        airdInfo.totalCount = proto.getTotalCount();
+        airdInfo.airdPath = proto.getAirdPath();
+        airdInfo.activator = proto.getActivator();
+        airdInfo.energy = proto.getEnergy();
+        airdInfo.msType = proto.getMsType();
+        airdInfo.rtUnit = proto.getRtUnit();
+        airdInfo.polarity = proto.getPolarity();
+        airdInfo.filterString = proto.getFilterString();
+        airdInfo.ignoreZeroIntensityPoint = proto.getIgnoreZeroIntensityPoint();
+        airdInfo.creator = proto.getCreator();
+        airdInfo.features = proto.getFeatures();
+        airdInfo.createDate = proto.getCreateDate();
+        airdInfo.startTimeStamp = proto.getStartTimeStamp();
+
+        List<net.csibio.aird.bean.proto.AirdInfo.CompressorProto> compressorProtos = proto.getCompressorsList();
+        List<Compressor> compressors = new ArrayList<>();
+        for (net.csibio.aird.bean.proto.AirdInfo.CompressorProto compressorProto : compressorProtos) {
+            compressors.add(Compressor.fromProto(compressorProto));
+        }
+        airdInfo.compressors = compressors;
+
+        // 处理instruments列表字段
+        List<net.csibio.aird.bean.proto.AirdInfo.InstrumentProto> instrumentProtos = proto.getInstrumentsList();
+        List<Instrument> instruments = new ArrayList<>();
+        for (net.csibio.aird.bean.proto.AirdInfo.InstrumentProto instrumentProto : instrumentProtos) {
+            instruments.add(Instrument.fromProto(instrumentProto));
+        }
+        airdInfo.instruments = instruments;
+
+        // 处理dataProcessings列表字段
+        List<net.csibio.aird.bean.proto.AirdInfo.DataProcessingProto> dataProcessingProtos = proto.getDataProcessingsList();
+        List<DataProcessing> dataProcessings = new ArrayList<>();
+        for (net.csibio.aird.bean.proto.AirdInfo.DataProcessingProto dataProcessingProto : dataProcessingProtos) {
+            dataProcessings.add(DataProcessing.fromProto(dataProcessingProto));
+        }
+        airdInfo.dataProcessings = dataProcessings;
+
+        // 处理softwares列表字段
+        List<net.csibio.aird.bean.proto.AirdInfo.SoftwareProto> softwareProtos = proto.getSoftwaresList();
+        List<Software> softwares = new ArrayList<>();
+        for (net.csibio.aird.bean.proto.AirdInfo.SoftwareProto softwareProto : softwareProtos) {
+            softwares.add(Software.fromProto(softwareProto));
+        }
+        airdInfo.softwares = softwares;
+
+        // 处理parentFiles列表字段
+        List<net.csibio.aird.bean.proto.AirdInfo.ParentFileProto> parentFileProtos = proto.getParentFilesList();
+        List<ParentFile> parentFiles = new ArrayList<>();
+        for (net.csibio.aird.bean.proto.AirdInfo.ParentFileProto parentFileProto : parentFileProtos) {
+            parentFiles.add(ParentFile.fromProto(parentFileProto));
+        }
+        airdInfo.parentFiles = parentFiles;
+
+        // 处理rangeList列表字段
+        List<net.csibio.aird.bean.proto.WindowRange.WindowRangeProto> rangeProtos = proto.getRangeListList();
+        List<WindowRange> rangeList = new ArrayList<>();
+        for (net.csibio.aird.bean.proto.WindowRange.WindowRangeProto rangeProto : rangeProtos) {
+            rangeList.add(WindowRange.fromProto(rangeProto));
+        }
+        airdInfo.rangeList = rangeList;
+
+        // 处理indexList列表字段
+        List<net.csibio.aird.bean.proto.AirdInfo.BlockIndexProto> indexProtos = proto.getIndexListList();
+        List<BlockIndex> indexList = new ArrayList<>();
+        for (net.csibio.aird.bean.proto.AirdInfo.BlockIndexProto indexProto : indexProtos) {
+            indexList.add(BlockIndex.fromProto(indexProto));
+        }
+        airdInfo.indexList = indexList;
+
+        airdInfo.chromatogramIndex = ChromatogramIndex.fromProto(proto.getChromatogramIndex());
+        airdInfo.mobiInfo = MobiInfo.fromProto(proto.getMobiInfo());
+        return airdInfo;
     }
 }

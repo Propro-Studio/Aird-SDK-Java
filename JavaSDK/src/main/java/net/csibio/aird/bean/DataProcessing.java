@@ -11,6 +11,7 @@
 package net.csibio.aird.bean;
 
 import lombok.Data;
+import net.csibio.aird.bean.proto.AirdInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +27,18 @@ public class DataProcessing {
      */
     List<String> processingOperations;
 
-    /**
-     * Any additional manipulation not included elsewhere in the dataProcessing element.
-     *
-     * @param processingOperation processing operations name
-     */
-    public void addProcessingOperation(String processingOperation) {
-        if (processingOperations == null) {
-            processingOperations = new ArrayList<String>();
+    public static DataProcessing fromProto(AirdInfo.DataProcessingProto proto) {
+        if (proto == null) {
+            return null;
         }
-        processingOperations.add(processingOperation);
+
+        DataProcessing dataProcessing = new DataProcessing();
+
+        // 处理 processingOperations 列表
+        List<String> operationsList = new ArrayList<>();
+        operationsList.addAll(proto.getProcessingOperationsList());
+        dataProcessing.setProcessingOperations(operationsList);
+
+        return dataProcessing;
     }
 }

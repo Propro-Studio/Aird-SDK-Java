@@ -36,6 +36,7 @@ public class FileUtil {
         rawExtensions.add("mzmlb");
         rawExtensions.add("aird");
         rawExtensions.add("json");
+        rawExtensions.add("index");
     }
 
     /**
@@ -92,8 +93,8 @@ public class FileUtil {
     /**
      * 获取某个文件夹下所有文件的大小总和
      *
-     * @param folder
-     * @return
+     * @param folder 文件夹
+     * @return 文件夹大小
      */
     public static long getFolderSize(File folder) {
         long totalSize = 0;

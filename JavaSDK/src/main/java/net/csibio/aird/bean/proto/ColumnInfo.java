@@ -1266,11 +1266,11 @@ public final class ColumnInfo {
      * <code>.WindowRangeProto range = 4;</code>
      * @return The range.
      */
-    WindowRangeProto getRange();
+    WindowRange.WindowRangeProto getRange();
     /**
      * <code>.WindowRangeProto range = 4;</code>
      */
-    WindowRangeProtoOrBuilder getRangeOrBuilder();
+    WindowRange.WindowRangeProtoOrBuilder getRangeOrBuilder();
 
     /**
      * <code>int64 startMzListPtr = 5;</code>
@@ -1480,7 +1480,7 @@ public final class ColumnInfo {
     }
 
     public static final int RANGE_FIELD_NUMBER = 4;
-    private WindowRangeProto range_;
+    private WindowRange.WindowRangeProto range_;
     /**
      * <code>.WindowRangeProto range = 4;</code>
      * @return Whether the range field is set.
@@ -1494,15 +1494,15 @@ public final class ColumnInfo {
      * @return The range.
      */
     @Override
-    public WindowRangeProto getRange() {
-      return range_ == null ? WindowRangeProto.getDefaultInstance() : range_;
+    public WindowRange.WindowRangeProto getRange() {
+      return range_ == null ? WindowRange.WindowRangeProto.getDefaultInstance() : range_;
     }
     /**
      * <code>.WindowRangeProto range = 4;</code>
      */
     @Override
-    public WindowRangeProtoOrBuilder getRangeOrBuilder() {
-      return range_ == null ? WindowRangeProto.getDefaultInstance() : range_;
+    public WindowRange.WindowRangeProtoOrBuilder getRangeOrBuilder() {
+      return range_ == null ? WindowRange.WindowRangeProto.getDefaultInstance() : range_;
     }
 
     public static final int STARTMZLISTPTR_FIELD_NUMBER = 5;
@@ -2745,9 +2745,9 @@ public final class ColumnInfo {
         return this;
       }
 
-      private WindowRangeProto range_;
+      private WindowRange.WindowRangeProto range_;
       private com.google.protobuf.SingleFieldBuilderV3<
-          WindowRangeProto, WindowRangeProto.Builder, WindowRangeProtoOrBuilder> rangeBuilder_;
+          WindowRange.WindowRangeProto, WindowRange.WindowRangeProto.Builder, WindowRange.WindowRangeProtoOrBuilder> rangeBuilder_;
       /**
        * <code>.WindowRangeProto range = 4;</code>
        * @return Whether the range field is set.
@@ -2759,9 +2759,9 @@ public final class ColumnInfo {
        * <code>.WindowRangeProto range = 4;</code>
        * @return The range.
        */
-      public WindowRangeProto getRange() {
+      public WindowRange.WindowRangeProto getRange() {
         if (rangeBuilder_ == null) {
-          return range_ == null ? WindowRangeProto.getDefaultInstance() : range_;
+          return range_ == null ? WindowRange.WindowRangeProto.getDefaultInstance() : range_;
         } else {
           return rangeBuilder_.getMessage();
         }
@@ -2769,7 +2769,7 @@ public final class ColumnInfo {
       /**
        * <code>.WindowRangeProto range = 4;</code>
        */
-      public Builder setRange(WindowRangeProto value) {
+      public Builder setRange(WindowRange.WindowRangeProto value) {
         if (rangeBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2786,7 +2786,7 @@ public final class ColumnInfo {
        * <code>.WindowRangeProto range = 4;</code>
        */
       public Builder setRange(
-          WindowRangeProto.Builder builderForValue) {
+          WindowRange.WindowRangeProto.Builder builderForValue) {
         if (rangeBuilder_ == null) {
           range_ = builderForValue.build();
         } else {
@@ -2799,11 +2799,11 @@ public final class ColumnInfo {
       /**
        * <code>.WindowRangeProto range = 4;</code>
        */
-      public Builder mergeRange(WindowRangeProto value) {
+      public Builder mergeRange(WindowRange.WindowRangeProto value) {
         if (rangeBuilder_ == null) {
           if (((bitField0_ & 0x00000008) != 0) &&
             range_ != null &&
-            range_ != WindowRangeProto.getDefaultInstance()) {
+            range_ != WindowRange.WindowRangeProto.getDefaultInstance()) {
             getRangeBuilder().mergeFrom(value);
           } else {
             range_ = value;
@@ -2833,7 +2833,7 @@ public final class ColumnInfo {
       /**
        * <code>.WindowRangeProto range = 4;</code>
        */
-      public WindowRangeProto.Builder getRangeBuilder() {
+      public WindowRange.WindowRangeProto.Builder getRangeBuilder() {
         bitField0_ |= 0x00000008;
         onChanged();
         return getRangeFieldBuilder().getBuilder();
@@ -2841,23 +2841,23 @@ public final class ColumnInfo {
       /**
        * <code>.WindowRangeProto range = 4;</code>
        */
-      public WindowRangeProtoOrBuilder getRangeOrBuilder() {
+      public WindowRange.WindowRangeProtoOrBuilder getRangeOrBuilder() {
         if (rangeBuilder_ != null) {
           return rangeBuilder_.getMessageOrBuilder();
         } else {
           return range_ == null ?
-              WindowRangeProto.getDefaultInstance() : range_;
+              WindowRange.WindowRangeProto.getDefaultInstance() : range_;
         }
       }
       /**
        * <code>.WindowRangeProto range = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          WindowRangeProto, WindowRangeProto.Builder, WindowRangeProtoOrBuilder>
+          WindowRange.WindowRangeProto, WindowRange.WindowRangeProto.Builder, WindowRange.WindowRangeProtoOrBuilder> 
           getRangeFieldBuilder() {
         if (rangeBuilder_ == null) {
           rangeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              WindowRangeProto, WindowRangeProto.Builder, WindowRangeProtoOrBuilder>(
+              WindowRange.WindowRangeProto, WindowRange.WindowRangeProto.Builder, WindowRange.WindowRangeProtoOrBuilder>(
                   getRange(),
                   getParentForChildren(),
                   isClean());
@@ -3605,852 +3605,6 @@ public final class ColumnInfo {
 
   }
 
-  public interface WindowRangeProtoOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:WindowRangeProto)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>double start = 1;</code>
-     * @return The start.
-     */
-    double getStart();
-
-    /**
-     * <code>double end = 2;</code>
-     * @return The end.
-     */
-    double getEnd();
-
-    /**
-     * <code>double mz = 3;</code>
-     * @return The mz.
-     */
-    double getMz();
-
-    /**
-     * <code>int32 charge = 4;</code>
-     * @return The charge.
-     */
-    int getCharge();
-
-    /**
-     * <code>string features = 5;</code>
-     * @return The features.
-     */
-    String getFeatures();
-    /**
-     * <code>string features = 5;</code>
-     * @return The bytes for features.
-     */
-    com.google.protobuf.ByteString
-        getFeaturesBytes();
-  }
-  /**
-   * Protobuf type {@code WindowRangeProto}
-   */
-  public static final class WindowRangeProto extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:WindowRangeProto)
-      WindowRangeProtoOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use WindowRangeProto.newBuilder() to construct.
-    private WindowRangeProto(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private WindowRangeProto() {
-      features_ = "";
-    }
-
-    @Override
-    @SuppressWarnings({"unused"})
-    protected Object newInstance(
-        UnusedPrivateParameter unused) {
-      return new WindowRangeProto();
-    }
-
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return ColumnInfo.internal_static_WindowRangeProto_descriptor;
-    }
-
-    @Override
-    protected FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return ColumnInfo.internal_static_WindowRangeProto_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              WindowRangeProto.class, Builder.class);
-    }
-
-    public static final int START_FIELD_NUMBER = 1;
-    private double start_ = 0D;
-    /**
-     * <code>double start = 1;</code>
-     * @return The start.
-     */
-    @Override
-    public double getStart() {
-      return start_;
-    }
-
-    public static final int END_FIELD_NUMBER = 2;
-    private double end_ = 0D;
-    /**
-     * <code>double end = 2;</code>
-     * @return The end.
-     */
-    @Override
-    public double getEnd() {
-      return end_;
-    }
-
-    public static final int MZ_FIELD_NUMBER = 3;
-    private double mz_ = 0D;
-    /**
-     * <code>double mz = 3;</code>
-     * @return The mz.
-     */
-    @Override
-    public double getMz() {
-      return mz_;
-    }
-
-    public static final int CHARGE_FIELD_NUMBER = 4;
-    private int charge_ = 0;
-    /**
-     * <code>int32 charge = 4;</code>
-     * @return The charge.
-     */
-    @Override
-    public int getCharge() {
-      return charge_;
-    }
-
-    public static final int FEATURES_FIELD_NUMBER = 5;
-    @SuppressWarnings("serial")
-    private volatile Object features_ = "";
-    /**
-     * <code>string features = 5;</code>
-     * @return The features.
-     */
-    @Override
-    public String getFeatures() {
-      Object ref = features_;
-      if (ref instanceof String) {
-        return (String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        features_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string features = 5;</code>
-     * @return The bytes for features.
-     */
-    @Override
-    public com.google.protobuf.ByteString
-        getFeaturesBytes() {
-      Object ref = features_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (String) ref);
-        features_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (Double.doubleToRawLongBits(start_) != 0) {
-        output.writeDouble(1, start_);
-      }
-      if (Double.doubleToRawLongBits(end_) != 0) {
-        output.writeDouble(2, end_);
-      }
-      if (Double.doubleToRawLongBits(mz_) != 0) {
-        output.writeDouble(3, mz_);
-      }
-      if (charge_ != 0) {
-        output.writeInt32(4, charge_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(features_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, features_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (Double.doubleToRawLongBits(start_) != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(1, start_);
-      }
-      if (Double.doubleToRawLongBits(end_) != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(2, end_);
-      }
-      if (Double.doubleToRawLongBits(mz_) != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(3, mz_);
-      }
-      if (charge_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, charge_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(features_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, features_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof WindowRangeProto)) {
-        return super.equals(obj);
-      }
-      WindowRangeProto other = (WindowRangeProto) obj;
-
-      if (Double.doubleToLongBits(getStart())
-          != Double.doubleToLongBits(
-              other.getStart())) return false;
-      if (Double.doubleToLongBits(getEnd())
-          != Double.doubleToLongBits(
-              other.getEnd())) return false;
-      if (Double.doubleToLongBits(getMz())
-          != Double.doubleToLongBits(
-              other.getMz())) return false;
-      if (getCharge()
-          != other.getCharge()) return false;
-      if (!getFeatures()
-          .equals(other.getFeatures())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + START_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          Double.doubleToLongBits(getStart()));
-      hash = (37 * hash) + END_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          Double.doubleToLongBits(getEnd()));
-      hash = (37 * hash) + MZ_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          Double.doubleToLongBits(getMz()));
-      hash = (37 * hash) + CHARGE_FIELD_NUMBER;
-      hash = (53 * hash) + getCharge();
-      hash = (37 * hash) + FEATURES_FIELD_NUMBER;
-      hash = (53 * hash) + getFeatures().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static WindowRangeProto parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static WindowRangeProto parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static WindowRangeProto parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static WindowRangeProto parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static WindowRangeProto parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static WindowRangeProto parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static WindowRangeProto parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static WindowRangeProto parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public static WindowRangeProto parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-
-    public static WindowRangeProto parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static WindowRangeProto parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static WindowRangeProto parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(WindowRangeProto prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @Override
-    protected Builder newBuilderForType(
-        BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code WindowRangeProto}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:WindowRangeProto)
-        WindowRangeProtoOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return ColumnInfo.internal_static_WindowRangeProto_descriptor;
-      }
-
-      @Override
-      protected FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return ColumnInfo.internal_static_WindowRangeProto_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                WindowRangeProto.class, Builder.class);
-      }
-
-      // Construct using ColumnInfo.WindowRangeProto.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          BuilderParent parent) {
-        super(parent);
-
-      }
-      @Override
-      public Builder clear() {
-        super.clear();
-        bitField0_ = 0;
-        start_ = 0D;
-        end_ = 0D;
-        mz_ = 0D;
-        charge_ = 0;
-        features_ = "";
-        return this;
-      }
-
-      @Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return ColumnInfo.internal_static_WindowRangeProto_descriptor;
-      }
-
-      @Override
-      public WindowRangeProto getDefaultInstanceForType() {
-        return WindowRangeProto.getDefaultInstance();
-      }
-
-      @Override
-      public WindowRangeProto build() {
-        WindowRangeProto result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @Override
-      public WindowRangeProto buildPartial() {
-        WindowRangeProto result = new WindowRangeProto(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartial0(WindowRangeProto result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.start_ = start_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.end_ = end_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.mz_ = mz_;
-        }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
-          result.charge_ = charge_;
-        }
-        if (((from_bitField0_ & 0x00000010) != 0)) {
-          result.features_ = features_;
-        }
-      }
-
-      @Override
-      public Builder clone() {
-        return super.clone();
-      }
-      @Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return super.setField(field, value);
-      }
-      @Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return super.addRepeatedField(field, value);
-      }
-      @Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof WindowRangeProto) {
-          return mergeFrom((WindowRangeProto)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(WindowRangeProto other) {
-        if (other == WindowRangeProto.getDefaultInstance()) return this;
-        if (other.getStart() != 0D) {
-          setStart(other.getStart());
-        }
-        if (other.getEnd() != 0D) {
-          setEnd(other.getEnd());
-        }
-        if (other.getMz() != 0D) {
-          setMz(other.getMz());
-        }
-        if (other.getCharge() != 0) {
-          setCharge(other.getCharge());
-        }
-        if (!other.getFeatures().isEmpty()) {
-          features_ = other.features_;
-          bitField0_ |= 0x00000010;
-          onChanged();
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 9: {
-                start_ = input.readDouble();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 9
-              case 17: {
-                end_ = input.readDouble();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 17
-              case 25: {
-                mz_ = input.readDouble();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 25
-              case 32: {
-                charge_ = input.readInt32();
-                bitField0_ |= 0x00000008;
-                break;
-              } // case 32
-              case 42: {
-                features_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000010;
-                break;
-              } // case 42
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-      private int bitField0_;
-
-      private double start_ ;
-      /**
-       * <code>double start = 1;</code>
-       * @return The start.
-       */
-      @Override
-      public double getStart() {
-        return start_;
-      }
-      /**
-       * <code>double start = 1;</code>
-       * @param value The start to set.
-       * @return This builder for chaining.
-       */
-      public Builder setStart(double value) {
-
-        start_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>double start = 1;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearStart() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        start_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private double end_ ;
-      /**
-       * <code>double end = 2;</code>
-       * @return The end.
-       */
-      @Override
-      public double getEnd() {
-        return end_;
-      }
-      /**
-       * <code>double end = 2;</code>
-       * @param value The end to set.
-       * @return This builder for chaining.
-       */
-      public Builder setEnd(double value) {
-
-        end_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>double end = 2;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearEnd() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        end_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private double mz_ ;
-      /**
-       * <code>double mz = 3;</code>
-       * @return The mz.
-       */
-      @Override
-      public double getMz() {
-        return mz_;
-      }
-      /**
-       * <code>double mz = 3;</code>
-       * @param value The mz to set.
-       * @return This builder for chaining.
-       */
-      public Builder setMz(double value) {
-
-        mz_ = value;
-        bitField0_ |= 0x00000004;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>double mz = 3;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearMz() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        mz_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private int charge_ ;
-      /**
-       * <code>int32 charge = 4;</code>
-       * @return The charge.
-       */
-      @Override
-      public int getCharge() {
-        return charge_;
-      }
-      /**
-       * <code>int32 charge = 4;</code>
-       * @param value The charge to set.
-       * @return This builder for chaining.
-       */
-      public Builder setCharge(int value) {
-
-        charge_ = value;
-        bitField0_ |= 0x00000008;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 charge = 4;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearCharge() {
-        bitField0_ = (bitField0_ & ~0x00000008);
-        charge_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private Object features_ = "";
-      /**
-       * <code>string features = 5;</code>
-       * @return The features.
-       */
-      public String getFeatures() {
-        Object ref = features_;
-        if (!(ref instanceof String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
-          features_ = s;
-          return s;
-        } else {
-          return (String) ref;
-        }
-      }
-      /**
-       * <code>string features = 5;</code>
-       * @return The bytes for features.
-       */
-      public com.google.protobuf.ByteString
-          getFeaturesBytes() {
-        Object ref = features_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
-          features_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string features = 5;</code>
-       * @param value The features to set.
-       * @return This builder for chaining.
-       */
-      public Builder setFeatures(
-          String value) {
-        if (value == null) { throw new NullPointerException(); }
-        features_ = value;
-        bitField0_ |= 0x00000010;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string features = 5;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearFeatures() {
-        features_ = getDefaultInstance().getFeatures();
-        bitField0_ = (bitField0_ & ~0x00000010);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string features = 5;</code>
-       * @param value The bytes for features to set.
-       * @return This builder for chaining.
-       */
-      public Builder setFeaturesBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        features_ = value;
-        bitField0_ |= 0x00000010;
-        onChanged();
-        return this;
-      }
-      @Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      @Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:WindowRangeProto)
-    }
-
-    // @@protoc_insertion_point(class_scope:WindowRangeProto)
-    private static final WindowRangeProto DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new WindowRangeProto();
-    }
-
-    public static WindowRangeProto getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<WindowRangeProto>
-        PARSER = new com.google.protobuf.AbstractParser<WindowRangeProto>() {
-      @Override
-      public WindowRangeProto parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<WindowRangeProto> parser() {
-      return PARSER;
-    }
-
-    @Override
-    public com.google.protobuf.Parser<WindowRangeProto> getParserForType() {
-      return PARSER;
-    }
-
-    @Override
-    public WindowRangeProto getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_ColumnInfoProto_descriptor;
   private static final 
@@ -4461,11 +3615,6 @@ public final class ColumnInfo {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_ColumnIndexProto_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_WindowRangeProto_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_WindowRangeProto_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -4475,27 +3624,26 @@ public final class ColumnInfo {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\020ColumnInfo.proto\"\202\001\n\017ColumnInfoProto\022$" +
-      "\n\tindexList\030\001 \003(\0132\021.ColumnIndexProto\022\014\n\004" +
-      "type\030\002 \001(\t\022\020\n\010airdPath\030\003 \001(\t\022\023\n\013mzPrecis" +
-      "ion\030\004 \001(\005\022\024\n\014intPrecision\030\005 \001(\005\"\215\003\n\020Colu" +
-      "mnIndexProto\022\r\n\005level\030\001 \001(\005\022\020\n\010startPtr\030" +
-      "\002 \001(\003\022\016\n\006endPtr\030\003 \001(\003\022 \n\005range\030\004 \001(\0132\021.W" +
-      "indowRangeProto\022\026\n\016startMzListPtr\030\005 \001(\003\022" +
-      "\024\n\014endMzListPtr\030\006 \001(\003\022\026\n\016startRtListPtr\030" +
-      "\007 \001(\003\022\024\n\014endRtListPtr\030\010 \001(\003\022\035\n\025startSpec" +
-      "traIdListPtr\030\t \001(\003\022\033\n\023endSpectraIdListPt" +
-      "r\030\n \001(\003\022\035\n\025startIntensityListPtr\030\013 \001(\003\022\033" +
-      "\n\023endIntensityListPtr\030\014 \001(\003\022\013\n\003mzs\030\r \003(\005" +
-      "\022\013\n\003rts\030\016 \003(\005\022\022\n\nspectraIds\030\017 \003(\005\022\023\n\013int" +
-      "ensities\030\020 \003(\005\022\017\n\007anchors\030\021 \003(\003\"\\\n\020Windo" +
-      "wRangeProto\022\r\n\005start\030\001 \001(\001\022\013\n\003end\030\002 \001(\001\022" +
-      "\n\n\002mz\030\003 \001(\001\022\016\n\006charge\030\004 \001(\005\022\020\n\010features\030" +
-      "\005 \001(\tb\006proto3"
+      "\n\020ColumnInfo.proto\032\021WindowRange.proto\"\202\001" +
+      "\n\017ColumnInfoProto\022$\n\tindexList\030\001 \003(\0132\021.C" +
+      "olumnIndexProto\022\014\n\004type\030\002 \001(\t\022\020\n\010airdPat" +
+      "h\030\003 \001(\t\022\023\n\013mzPrecision\030\004 \001(\005\022\024\n\014intPreci" +
+      "sion\030\005 \001(\005\"\215\003\n\020ColumnIndexProto\022\r\n\005level" +
+      "\030\001 \001(\005\022\020\n\010startPtr\030\002 \001(\003\022\016\n\006endPtr\030\003 \001(\003" +
+      "\022 \n\005range\030\004 \001(\0132\021.WindowRangeProto\022\026\n\016st" +
+      "artMzListPtr\030\005 \001(\003\022\024\n\014endMzListPtr\030\006 \001(\003" +
+      "\022\026\n\016startRtListPtr\030\007 \001(\003\022\024\n\014endRtListPtr" +
+      "\030\010 \001(\003\022\035\n\025startSpectraIdListPtr\030\t \001(\003\022\033\n" +
+      "\023endSpectraIdListPtr\030\n \001(\003\022\035\n\025startInten" +
+      "sityListPtr\030\013 \001(\003\022\033\n\023endIntensityListPtr" +
+      "\030\014 \001(\003\022\013\n\003mzs\030\r \003(\005\022\013\n\003rts\030\016 \003(\005\022\022\n\nspec" +
+      "traIds\030\017 \003(\005\022\023\n\013intensities\030\020 \003(\005\022\017\n\007anc" +
+      "hors\030\021 \003(\003b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          WindowRange.getDescriptor(),
         });
     internal_static_ColumnInfoProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -4509,12 +3657,7 @@ public final class ColumnInfo {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ColumnIndexProto_descriptor,
         new String[] { "Level", "StartPtr", "EndPtr", "Range", "StartMzListPtr", "EndMzListPtr", "StartRtListPtr", "EndRtListPtr", "StartSpectraIdListPtr", "EndSpectraIdListPtr", "StartIntensityListPtr", "EndIntensityListPtr", "Mzs", "Rts", "SpectraIds", "Intensities", "Anchors", });
-    internal_static_WindowRangeProto_descriptor =
-      getDescriptor().getMessageTypes().get(2);
-    internal_static_WindowRangeProto_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_WindowRangeProto_descriptor,
-        new String[] { "Start", "End", "Mz", "Charge", "Features", });
+    WindowRange.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

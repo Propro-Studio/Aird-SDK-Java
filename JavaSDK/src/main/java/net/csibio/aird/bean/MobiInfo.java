@@ -11,6 +11,7 @@
 package net.csibio.aird.bean;
 
 import lombok.Data;
+import net.csibio.aird.bean.proto.AirdInfo;
 
 @Data
 public class MobiInfo {
@@ -39,4 +40,19 @@ public class MobiInfo {
      * ion mobility type, see MobilityType
      */
     String type;
+
+    public static MobiInfo fromProto(AirdInfo.MobiInfoProto proto) {
+        if (proto == null) {
+            return null;
+        }
+
+        MobiInfo mobiInfo = new MobiInfo();
+        mobiInfo.dictStart = proto.getDictStart();
+        mobiInfo.dictEnd = proto.getDictEnd();
+        mobiInfo.unit = proto.getUnit();
+        mobiInfo.value = proto.getValue();
+        mobiInfo.type = proto.getType();
+
+        return mobiInfo;
+    }
 }

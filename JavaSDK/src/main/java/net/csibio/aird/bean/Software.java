@@ -11,6 +11,7 @@
 package net.csibio.aird.bean;
 
 import lombok.Data;
+import net.csibio.aird.bean.proto.AirdInfo;
 
 @Data
 public class Software {
@@ -29,4 +30,17 @@ public class Software {
      * 软件类型 The software function type
      */
     String type;
+
+    public static Software fromProto(AirdInfo.SoftwareProto proto) {
+        if (proto == null) {
+            return null;
+        }
+
+        Software software = new Software();
+        software.setName(proto.getName());
+        software.setVersion(proto.getVersion());
+        software.setType(proto.getType());
+
+        return software;
+    }
 }

@@ -70,11 +70,6 @@ public class DDAPasefMs implements Serializable {
     Float injectionTime;
 
     /**
-     * cvList for current scan
-     */
-    List<CV> cvList;
-
-    /**
      * the window range for current scan
      */
     WindowRange range;

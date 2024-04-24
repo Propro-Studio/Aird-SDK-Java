@@ -11,8 +11,10 @@
 package net.csibio.aird.bean;
 
 import lombok.Data;
+import net.csibio.aird.bean.proto.AirdInfo;
 
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,4 +88,24 @@ public class Compressor {
     public ByteOrder fetchByteOrder() {
         return ByteOrder.LITTLE_ENDIAN;
     }
+
+    public static Compressor fromProto(AirdInfo.CompressorProto proto) {
+        if (proto == null) {
+            return null;
+        }
+
+        Compressor compressor = new Compressor();
+        compressor.setTarget(proto.getTarget());
+
+        // 处理 methods 列表
+        List<String> methodsList = new ArrayList<>();
+        methodsList.addAll(proto.getMethodsList());
+        compressor.setMethods(methodsList);
+
+        compressor.setPrecision(proto.getPrecision());
+        compressor.setByteOrder(proto.getByteOrder());
+
+        return compressor;
+    }
+
 }

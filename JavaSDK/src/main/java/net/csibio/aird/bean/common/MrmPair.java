@@ -1,10 +1,7 @@
 package net.csibio.aird.bean.common;
 
 import lombok.Data;
-import net.csibio.aird.bean.CV;
 import net.csibio.aird.bean.WindowRange;
-
-import java.util.List;
 
 @Data
 public class MrmPair {
@@ -23,11 +20,6 @@ public class MrmPair {
     String polarity;
     String activator;
     Float energy;
-
-    /**
-     * cvList for current scan
-     */
-    List<CV> cvList;
 
     double[] rts;
     double[] ints;

@@ -1,26 +1,25 @@
 package net.csibio.aird.parser;
 
-import me.lemire.integercompression.differential.IntegratedBinaryPacking;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import net.csibio.aird.bean.ColumnIndex;
 import net.csibio.aird.bean.ColumnInfo;
 import net.csibio.aird.bean.common.IntPair;
 import net.csibio.aird.bean.common.Xic;
 import net.csibio.aird.compressor.ByteTrans;
-import net.csibio.aird.compressor.bytecomp.ZstdWrapper;
-import net.csibio.aird.compressor.intcomp.BinPackingWrapper;
 import net.csibio.aird.compressor.intcomp.VarByteWrapper;
-import net.csibio.aird.compressor.sortedintcomp.IntegratedBinPackingWrapper;
 import net.csibio.aird.compressor.sortedintcomp.IntegratedVarByteWrapper;
+import net.csibio.aird.constant.SuffixConst;
 import net.csibio.aird.enums.ResultCodeEnum;
 import net.csibio.aird.exception.ScanException;
 import net.csibio.aird.util.AirdMathUtil;
 import net.csibio.aird.util.AirdScanUtil;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.*;
 
 public class ColumnParser {
 
@@ -28,11 +27,6 @@ public class ColumnParser {
      * the aird file
      */
     public File airdFile;
-
-    /**
-     * the column index file. JSON format,with cjson
-     */
-    public File indexFile;
 
     /**
      * the airdInfo from the index file.
@@ -54,13 +48,12 @@ public class ColumnParser {
      */
     public RandomAccessFile raf;
 
-    public ColumnParser(String protoPath) throws IOException {
-        columnInfo = AirdScanUtil.loadFromProto(protoPath);
+    public ColumnParser(String indexPath) throws IOException {
+        columnInfo = AirdScanUtil.loadColumnInfo(indexPath);
         if (columnInfo == null) {
-            throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
+            throw new ScanException(ResultCodeEnum.AIRD_COLUMN_INDEX_FILE_PARSE_ERROR);
         }
-
-        this.airdFile = new File(AirdScanUtil.getAirdPathByColumnIndexPath(protoPath));
+        this.airdFile = new File(AirdScanUtil.getAirdPathByIndexPath(indexPath));
         try {
             raf = new RandomAccessFile(airdFile, "r");
         } catch (FileNotFoundException e) {

@@ -58,4 +58,19 @@ public class WindowRange {
             return false;
         }
     }
+
+    public static WindowRange fromProto(net.csibio.aird.bean.proto.WindowRange.WindowRangeProto proto) {
+        if (proto == null) {
+            return null;
+        }
+
+        WindowRange windowRange = new WindowRange();
+        windowRange.setStart(proto.getStart());
+        windowRange.setEnd(proto.getEnd());
+        windowRange.setMz(proto.getMz());
+        windowRange.setCharge(proto.getCharge());
+        windowRange.setFeatures(proto.getFeatures());
+
+        return windowRange;
+    }
 }

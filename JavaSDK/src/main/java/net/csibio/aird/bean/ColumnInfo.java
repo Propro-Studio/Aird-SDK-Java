@@ -2,6 +2,7 @@ package net.csibio.aird.bean;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -26,4 +27,21 @@ public class ColumnInfo {
     int mzPrecision;
 
     int intPrecision;
+
+    public static ColumnInfo fromProto(net.csibio.aird.bean.proto.ColumnInfo.ColumnInfoProto proto){
+        ColumnInfo columnInfo = new ColumnInfo();
+        columnInfo.setType(proto.getType());
+        columnInfo.setAirdPath(proto.getAirdPath());
+        columnInfo.setIntPrecision(proto.getIntPrecision());
+        columnInfo.setMzPrecision(proto.getMzPrecision());
+        if (proto.getIndexListCount() > 0) {
+            List<ColumnIndex> indexList = new ArrayList<ColumnIndex>();
+            for (int i = 0; i < proto.getIndexListCount(); i++) {
+                net.csibio.aird.bean.proto.ColumnInfo.ColumnIndexProto indexProto = proto.getIndexList(i);
+                indexList.add(ColumnIndex.fromProto(indexProto));
+            }
+            columnInfo.setIndexList(indexList);
+        }
+        return columnInfo;
+    }
 }

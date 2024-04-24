@@ -52,8 +52,8 @@ public class MRMParser extends BaseParser {
     public List<MrmPair> getAllMrmPairs() throws IOException {
         var index = getChromatogramIndex();
         if (index == null || index.getPrecursors() == null || index.getProducts() == null || index.getPrecursors()
-            .isEmpty() || index.getProducts()
-            .isEmpty()) return null;
+                .isEmpty() || index.getProducts()
+                .isEmpty()) return null;
 
         ArrayList<MrmPair> pairs = new ArrayList<>();
         HashMap<String, Xic> dict = getChromatograms(index.getStartPtr(), index.getEndPtr(), index.getIds(), index.getRts(), index.getInts());
