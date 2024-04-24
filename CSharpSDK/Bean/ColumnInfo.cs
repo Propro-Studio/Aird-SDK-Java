@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AirdSDK.Beans;
 
 public class ColumnInfo
 {
-    public List<ColumnIndex> indexList;
+    public List<ColumnIndex> indexList = new();
 
     /**
      * [Core Field]
@@ -37,5 +38,26 @@ public class ColumnInfo
         proto.MzPrecision = this.mzPrecision;
         proto.IntPrecision = this.intPrecision;
         return proto;
+    }
+    
+    public static ColumnInfo FromProto(ColumnInfoProto proto)
+    {
+        if (proto == null)
+            throw new ArgumentNullException(nameof(proto));
+
+        var columnInfo = new ColumnInfo
+        {
+            type = proto.Type,
+            airdPath = proto.AirdPath,
+            mzPrecision = proto.MzPrecision,
+            intPrecision = proto.IntPrecision
+        };
+
+        foreach (var indexProto in proto.IndexList)
+        {
+            columnInfo.indexList.Add(ColumnIndex.FromProto(indexProto));
+        }
+
+        return columnInfo;
     }
 }

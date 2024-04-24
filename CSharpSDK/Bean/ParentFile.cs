@@ -8,6 +8,8 @@
  * See the Mulan PSL v2 for more details.
  */
 
+using System;
+
 namespace AirdSDK.Beans
 {
     /**
@@ -47,6 +49,19 @@ namespace AirdSDK.Beans
             }
             
             return proto;
+        }
+        
+        public static ParentFile FromProto(ParentFileProto proto)
+        {
+            if (proto == null)
+                throw new ArgumentNullException(nameof(proto));
+
+            return new ParentFile
+            {
+                name = proto.Name,
+                location = proto.Location,
+                formatType = proto.FormatType
+            };
         }
     }
 }

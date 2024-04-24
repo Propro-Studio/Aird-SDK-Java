@@ -8,7 +8,9 @@
  * See the Mulan PSL v2 for more details.
  */
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using CSharpFastPFOR.Port;
 
 namespace AirdSDK.Beans
@@ -30,7 +32,7 @@ namespace AirdSDK.Beans
          * The compression method, sorted by the used order.
          * 压缩对象使用的压缩方法列表,按照顺序进行压缩
          */
-        public List<string> methods;
+        public List<string> methods = new();
 
         /**
          * Compressor precision.
@@ -48,6 +50,10 @@ namespace AirdSDK.Beans
          */
         public string byteOrder;
 
+        public Compressor()
+        {
+            
+        }
         public Compressor(string target)
         {
             this.target = target;
@@ -84,6 +90,21 @@ namespace AirdSDK.Beans
                 proto.ByteOrder = byteOrder;
             }
             return proto;
+        }
+        
+        public static Compressor FromProto(CompressorProto proto)
+        {
+            if (proto == null)
+                throw new ArgumentNullException(nameof(proto));
+
+            Compressor compressor = new Compressor()
+            {
+                target = proto.Target,
+                precision = proto.Precision,
+                byteOrder = proto.ByteOrder,
+                methods = proto.Methods.ToList()
+            };
+            return compressor;
         }
     }
 }

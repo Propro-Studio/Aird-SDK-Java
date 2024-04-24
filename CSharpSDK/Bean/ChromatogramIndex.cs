@@ -8,6 +8,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -132,6 +133,44 @@ namespace AirdSDK.Beans
                 proto.Features = features;
             }
             return proto;
+        }
+        
+        public static ChromatogramIndex FromProto(ChromatogramIndexProto proto)
+        {
+            if (proto == null)
+                throw new ArgumentNullException(nameof(proto));
+
+            var chromatogramIndex = new ChromatogramIndex
+            {
+                totalCount = proto.TotalCount,
+                type = proto.Type,
+                startPtr = proto.StartPtr,
+                endPtr = proto.EndPtr,
+                features = proto.Features,
+                ids = proto.Ids.ToList(),
+                compounds = proto.Compounds.ToList(),
+                activators = proto.Activators.ToList(),
+                energies = proto.Energies.ToList(),
+                polarities = proto.Polarities.ToList(),
+                nums = proto.Nums.ToList(),
+                rts = proto.Rts.ToList(),
+                ints = proto.Ints.ToList()
+            };
+
+            // 将protobuf中的WindowRange列表转换为WindowRange列表
+            chromatogramIndex.precursors = new List<WindowRange>();
+            foreach (var precursorProto in proto.Precursors)
+            {
+                chromatogramIndex.precursors.Add(WindowRange.FromProto(precursorProto));
+            }
+
+            chromatogramIndex.products = new List<WindowRange>();
+            foreach (var productProto in proto.Products)
+            {
+                chromatogramIndex.products.Add(WindowRange.FromProto(productProto));
+            }
+
+            return chromatogramIndex;
         }
     }
 }

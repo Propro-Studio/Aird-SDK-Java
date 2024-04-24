@@ -8,6 +8,8 @@
  * See the Mulan PSL v2 for more details.
  */
 
+using System;
+
 namespace AirdSDK.Beans
 {
     public class WindowRange
@@ -55,6 +57,21 @@ namespace AirdSDK.Beans
                 proto.Charge = this.charge.Value;
             }
             return proto;
+        }
+        
+        public static WindowRange FromProto(WindowRangeProto proto)
+        {
+            if (proto == null)
+                throw new ArgumentNullException(nameof(proto));
+
+            return new WindowRange
+            {
+                start = proto.Start,
+                end = proto.End,
+                mz = proto.Mz,
+                charge = proto.Charge,
+                features = proto.Features
+            };
         }
     }
 }

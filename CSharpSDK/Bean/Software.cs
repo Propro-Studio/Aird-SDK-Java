@@ -8,6 +8,8 @@
  * See the Mulan PSL v2 for more details.
  */
 
+using System;
+
 namespace AirdSDK.Beans
 {
     public class Software
@@ -38,6 +40,20 @@ namespace AirdSDK.Beans
                 proto.Version = version;
             }
             return proto;
+        }
+        
+        // 静态方法，用于从protobuf对象转换
+        public static Software FromProto(SoftwareProto proto)
+        {
+            if (proto == null)
+                throw new ArgumentNullException(nameof(proto));
+
+            return new Software
+            {
+                name = proto.Name,
+                type = proto.Type,
+                version = proto.Version
+            };
         }
     }
 }

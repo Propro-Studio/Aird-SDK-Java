@@ -8,7 +8,9 @@
  * See the Mulan PSL v2 for more details.
  */
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AirdSDK.Beans
 {
@@ -20,17 +22,7 @@ namespace AirdSDK.Beans
         /**
          * Any additional manipulation not included elsewhere in the dataProcessing element.
          */
-        List<string> processingOperations;
-
-        public void addProcessingOperation(string processingOperation)
-        {
-            if (processingOperations == null)
-            {
-                processingOperations = new List<string>();
-            }
-
-            processingOperations.Add(processingOperation);
-        }
+        List<string> processingOperations = new();
         
         public DataProcessingProto ToProto()
         {
@@ -41,6 +33,19 @@ namespace AirdSDK.Beans
                 processingOperations.AddRange(processingOperations);
             }
             return proto;
+        }
+        
+        public static DataProcessing FromProto(DataProcessingProto proto)
+        {
+            if (proto == null)
+                throw new ArgumentNullException(nameof(proto));
+
+            DataProcessing dataProcessing = new DataProcessing()
+            {
+                processingOperations = proto.ProcessingOperations.ToList()
+            };
+
+            return dataProcessing;
         }
     }
 }

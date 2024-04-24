@@ -1,4 +1,7 @@
-﻿namespace AirdSDK.Beans;
+﻿using System;
+using System.Linq;
+
+namespace AirdSDK.Beans;
 
 public class ColumnIndex
 {
@@ -98,6 +101,33 @@ public class ColumnIndex
         }
        
         return proto;
+    }
+    
+    public static ColumnIndex FromProto(ColumnIndexProto proto)
+    {
+        if (proto == null)
+            throw new ArgumentNullException(nameof(proto));
+
+        return new ColumnIndex
+        {
+            level = proto.Level,
+            startPtr = proto.StartPtr,
+            endPtr = proto.EndPtr,
+            range = WindowRange.FromProto(proto.Range),
+            startMzListPtr = proto.StartMzListPtr,
+            endMzListPtr = proto.EndMzListPtr,
+            startRtListPtr = proto.StartRtListPtr,
+            endRtListPtr = proto.EndRtListPtr,
+            startSpectraIdListPtr = proto.StartSpectraIdListPtr,
+            endSpectraIdListPtr = proto.EndSpectraIdListPtr,
+            startIntensityListPtr = proto.StartIntensityListPtr,
+            endIntensityListPtr = proto.EndIntensityListPtr,
+            mzs = proto.Mzs.ToArray(),
+            rts = proto.Rts.ToArray(),
+            spectraIds = proto.SpectraIds.ToArray(),
+            intensities = proto.Intensities.ToArray(),
+            anchors = proto.Anchors.ToArray()
+        };
     }
 
 }

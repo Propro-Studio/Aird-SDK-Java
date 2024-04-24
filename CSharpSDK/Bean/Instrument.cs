@@ -9,7 +9,9 @@
  */
 
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AirdSDK.Beans
 {
@@ -63,19 +65,26 @@ namespace AirdSDK.Beans
             {
                 proto.Model = model;
             }
-            // if (this.source != null)
-            // {
-            //     proto.Source.AddRange(this.source);
-            // }
-            // if (this.analyzer != null)
-            // {
-            //     proto.Analyzer.AddRange(this.analyzer);
-            // }
-            // if (this.detector != null)
-            // {
-            //     proto.Detector.AddRange(this.detector);
-            // }
             return proto;
+        }
+        
+        public static Instrument FromProto(InstrumentProto proto)
+        {
+            if (proto == null)
+                throw new ArgumentNullException(nameof(proto));
+
+            Instrument instrument = new Instrument()
+            {
+                manufacturer = proto.Manufacturer,
+                ionisation = proto.Ionisation,
+                resolution = proto.Resolution,
+                model = proto.Model,
+                source = proto.Source.ToList(),
+                analyzer = proto.Analyzer.ToList(),
+                detector = proto.Detector.ToList(),
+            };
+
+            return instrument;
         }
     }
 }

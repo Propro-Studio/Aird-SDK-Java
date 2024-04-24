@@ -8,6 +8,8 @@
  * See the Mulan PSL v2 for more details.
  */
 
+using System;
+
 namespace AirdSDK.Beans
 {
     public class MobiInfo
@@ -38,6 +40,21 @@ namespace AirdSDK.Beans
             
             
             return proto;
+        }
+        
+        public static MobiInfo FromProto(MobiInfoProto proto)
+        {
+            if (proto == null)
+                throw new ArgumentNullException(nameof(proto));
+
+            return new MobiInfo
+            {
+                dictStart = proto.DictStart,
+                dictEnd = proto.DictEnd,
+                unit = proto.Unit,
+                value = proto.Value,
+                type = proto.Type
+            };
         }
     }
 }

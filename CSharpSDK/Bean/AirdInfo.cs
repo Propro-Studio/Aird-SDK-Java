@@ -8,6 +8,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -81,13 +82,6 @@ namespace AirdSDK.Beans
          * 当存储SWATH窗口信息,窗口已经根据overlap进行过调整
          */
         public List<BlockIndex> indexList = new();
-
-        /**
-         * [Core Field]
-         * Used for Scene of Search. Save data in Column dim
-         * 按列存储时使用的索引，用于存储每一列的元数据
-         */
-        // public List<ColumnIndex> columnIndexList;
 
         /**
          * BlockIndex经过压缩以后的二进制数据开始位置
@@ -209,13 +203,6 @@ namespace AirdSDK.Beans
                 Version = this.version,
                 VersionCode = this.versionCode,
                 Engine = this.engine,
-                // Compressors = { this.compressors.Select(c => c.ToProto()) },
-                // Instruments = { this.instruments.Select(i => i.ToProto()) },
-                // DataProcessings = { this.dataProcessings.Select(dp => dp.ToProto()) },
-                // Softwares = { this.softwares.Select(s => s.ToProto()) },
-                // ParentFiles = { this.parentFiles.Select(pf => pf.ToProto()) },
-                // RangeList = { this.rangeList.Select(wr => wr.ToProto()) },
-                // IndexList = { this.indexList.Select(idx => idx.ToProto()) },
                 IndexStartPtr = this.indexStartPtr,
                 IndexEndPtr = this.indexEndPtr,
                 FileSize = this.fileSize,
@@ -345,6 +332,70 @@ namespace AirdSDK.Beans
             }
             
             return proto;
+        }
+
+        public static AirdInfo FromProto(AirdInfoProto proto)
+        {
+            if (proto == null)
+                throw new ArgumentNullException(nameof(proto));
+
+            var airdInfo = new AirdInfo
+            {
+                version = proto.Version,
+                versionCode = proto.VersionCode,
+                engine = proto.Engine,
+                indexStartPtr = proto.IndexStartPtr,
+                indexEndPtr = proto.IndexEndPtr,
+                type = proto.Type,
+                fileSize = proto.FileSize,
+                totalCount = proto.TotalCount,
+                airdPath = proto.AirdPath,
+                activator = proto.Activator,
+                energy = proto.Energy,
+                msType = proto.MsType,
+                rtUnit = proto.RtUnit,
+                polarity = proto.Polarity,
+                filterString = proto.FilterString,
+                ignoreZeroIntensityPoint = proto.IgnoreZeroIntensityPoint,
+                creator = proto.Creator,
+                features = proto.Features,
+                startTimeStamp = proto.StartTimeStamp,
+                createDate = proto.CreateDate,
+                mobiInfo = MobiInfo.FromProto(proto.MobiInfo),
+                chromatogramIndex = ChromatogramIndex.FromProto(proto.ChromatogramIndex)
+            };
+
+            // Convert protobuf lists to AirdInfo lists
+            foreach (var compressor in proto.Compressors)
+            {
+                airdInfo.compressors.Add(Compressor.FromProto(compressor));
+            }
+            foreach (var instrument in proto.Instruments)
+            {
+                airdInfo.instruments.Add(Instrument.FromProto(instrument));
+            } 
+            foreach (var dataProcessing in proto.DataProcessings)
+            {
+                airdInfo.dataProcessings.Add(DataProcessing.FromProto(dataProcessing));
+            } 
+            foreach (var software in proto.Softwares)
+            {
+                airdInfo.softwares.Add(Software.FromProto(software));
+            } 
+            foreach (var parentFile in proto.ParentFiles)
+            {
+                airdInfo.parentFiles.Add(ParentFile.FromProto(parentFile));
+            }
+            foreach (var windowRange in proto.RangeList)
+            {
+                airdInfo.rangeList.Add(WindowRange.FromProto(windowRange));
+            } 
+            foreach (var blockIndex in proto.IndexList)
+            {
+                airdInfo.indexList.Add(BlockIndex.FromProto(blockIndex));
+            }
+
+            return airdInfo;
         }
     }
 }

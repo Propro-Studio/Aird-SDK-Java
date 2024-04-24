@@ -8,6 +8,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -201,5 +202,38 @@ public class BlockIndex
             Features = this.features
         };
         return proto;
+    }
+    
+    public static BlockIndex FromProto(BlockIndexProto proto)
+    {
+         if (proto == null)
+              throw new ArgumentNullException(nameof(proto));
+
+         var blockIndex = new BlockIndex
+         {
+              level = proto.Level,
+              startPtr = proto.StartPtr,
+              endPtr = proto.EndPtr,
+              num = proto.Num,
+              rangeList = proto.RangeList.Count > 0 ? new List<WindowRange>(proto.RangeList.Select(rl => WindowRange.FromProto(rl))) : new List<WindowRange>(),
+              nums = proto.Nums.ToList(),
+              rts = proto.Rts.ToList(),
+              tics = proto.Tics.ToList(),
+              basePeakIntensities = proto.BasePeakIntensities.ToList(),
+              injectionTimes = proto.InjectionTimes.ToList(),
+              basePeakMzs = proto.BasePeakMzs.ToList(),
+              filterStrings = proto.FilterStrings.ToList(),
+              activators = proto.Activators.ToList(),
+              energies = proto.Energies.ToList(),
+              polarities = proto.Polarities.ToList(),
+              msTypes = proto.MsTypes.ToList(),
+              mzs = proto.Mzs.ToList(),
+              tags = proto.Tags.ToList(),
+              ints = proto.Ints.ToList(),
+              mobilities = proto.Mobilities.ToList(),
+              features = proto.Features
+         };
+
+         return blockIndex;
     }
 }
