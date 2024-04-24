@@ -13,7 +13,7 @@ namespace AirdSDK.Utils;
 
 public class DDAUtil
 {
-    public static void initFromIndex(AirdInfo airdInfo, DDAMs ms, BlockIndex index, int loc)
+    public static void InitFromIndex(AirdInfo airdInfo, DDAMs ms, BlockIndex index, int loc)
     {
         if (index.nums != null && index.nums.Count > 0)
         {
@@ -81,7 +81,7 @@ public class DDAUtil
         }
     }
 
-    public static void initFromIndex(AirdInfo airdInfo, DDAPasefMs ms, BlockIndex index, int loc)
+    public static void InitFromIndex(AirdInfo airdInfo, DDAPasefMs ms, BlockIndex index, int loc)
     {
         if (index.nums != null && index.nums.Count > 0)
         {

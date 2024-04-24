@@ -31,7 +31,7 @@ public class DDAParser : BaseParser
      *
      * @return
      */
-    public BlockIndex getMs1Index()
+    public BlockIndex GetMs1Index()
     {
         if (airdInfo != null && airdInfo.indexList != null && airdInfo.indexList.Count > 0)
         {
@@ -41,7 +41,7 @@ public class DDAParser : BaseParser
         return null;
     }
 
-    public List<BlockIndex> getAllMs2Index()
+    public List<BlockIndex> GetAllMs2Index()
     {
         if (airdInfo != null && airdInfo.indexList != null && airdInfo.indexList.Count > 0)
         {
@@ -56,7 +56,7 @@ public class DDAParser : BaseParser
     *
     * @return
     */
-    public Dictionary<int, BlockIndex> getMs2IndexMap()
+    public Dictionary<int, BlockIndex> GetMs2IndexMap()
     {
         if (airdInfo != null && airdInfo.indexList != null && airdInfo.indexList.Count > 0)
         {
@@ -80,12 +80,12 @@ public class DDAParser : BaseParser
     * MsCycle in the memory
     * @throws Exception exception when reading the file
     */
-    public List<DDAMs> readAllToMemory()
+    public List<DDAMs> ReadAllToMemory()
     {
-        BlockIndex ms1Index = getMs1Index(); //所有的ms1谱图都在第一个index中
-        Dictionary<double, Spectrum> ms1Map = getSpectra(ms1Index);
+        BlockIndex ms1Index = GetMs1Index(); //所有的ms1谱图都在第一个index中
+        Dictionary<double, Spectrum> ms1Map = GetSpectra(ms1Index);
         List<double> ms1RtList = new List<double>(ms1Map.Keys);
-        List<DDAMs> ms1List = buildDDAMsList(ms1RtList,0,ms1RtList.Count, ms1Index, ms1Map, true);
+        List<DDAMs> ms1List = BuildDdaMsList(ms1RtList,0,ms1RtList.Count, ms1Index, ms1Map, true);
         return ms1List;
     }
 
@@ -94,10 +94,10 @@ public class DDAParser : BaseParser
     *
     * @return
     */
-    public Dictionary<double, Spectrum> getMs1SpectraMap()
+    public Dictionary<double, Spectrum> GetMs1SpectraMap()
     {
-        BlockIndex ms1Index = getMs1Index();
-        return getSpectra(ms1Index);
+        BlockIndex ms1Index = GetMs1Index();
+        return GetSpectra(ms1Index);
     }
 
     /**
@@ -105,9 +105,9 @@ public class DDAParser : BaseParser
     * @param rtEnd
     * @return
     */
-    public List<DDAMs> getSpectraByRtRange(double rtStart, double rtEnd, bool includeMS2)
+    public List<DDAMs> GetSpectraByRtRange(double rtStart, double rtEnd, bool includeMS2)
     {
-        BlockIndex ms1Index = getMs1Index();
+        BlockIndex ms1Index = GetMs1Index();
         double[] rts = new double[ms1Index.rts.Count];
         rts = ms1Index.rts.ToArray();
         //如果范围不在已有的rt数组范围内,则直接返回empty map
@@ -131,40 +131,40 @@ public class DDAParser : BaseParser
         Dictionary<double, Spectrum> ms1Map = new Dictionary<double, Spectrum>();
         for (int i = start; i <= end; i++)
         {
-            ms1Map.Add(rts[i], getSpectrumByIndex(ms1Index, i));
+            ms1Map.Add(rts[i], GetSpectrumByIndex(ms1Index, i));
         }
 
-        List<DDAMs> ms1List = buildDDAMsList(ms1Index.rts, start, end + 1, ms1Index, ms1Map, includeMS2);
+        List<DDAMs> ms1List = BuildDdaMsList(ms1Index.rts, start, end + 1, ms1Index, ms1Map, includeMS2);
         return ms1List;
     }
 
-    private List<DDAMs> buildDDAMsList(List<double> rtList, int start, int end, BlockIndex ms1Index, Dictionary<double, Spectrum> ms1Map,
+    private List<DDAMs> BuildDdaMsList(List<double> rtList, int start, int end, BlockIndex ms1Index, Dictionary<double, Spectrum> ms1Map,
         bool includeMS2)
     {
         List<DDAMs> ms1List = new List<DDAMs>();
         Dictionary<int, BlockIndex> ms2IndexMap = null;
         if (includeMS2)
         {
-            ms2IndexMap = getMs2IndexMap();
+            ms2IndexMap = GetMs2IndexMap();
         }
 
         for (int i = start; i < end; i++)
         {
             DDAMs ms1 = new DDAMs(rtList[i], ms1Map[rtList[i]]);
-            DDAUtil.initFromIndex(airdInfo, ms1, ms1Index, i);
+            DDAUtil.InitFromIndex(airdInfo, ms1, ms1Index, i);
             if (includeMS2)
             {
                 BlockIndex ms2Index = ms2IndexMap[ms1.num];
                 if (ms2Index != null)
                 {
-                    Dictionary<double, Spectrum> ms2Map = getSpectra(ms2Index.startPtr, ms2Index.endPtr, ms2Index.rts,
+                    Dictionary<double, Spectrum> ms2Map = GetSpectra(ms2Index.startPtr, ms2Index.endPtr, ms2Index.rts,
                         ms2Index.mzs, ms2Index.ints);
                     List<double> ms2RtList = new List<double>(ms2Map.Keys);
                     List<DDAMs> ms2List = new List<DDAMs>();
                     for (int j = 0; j < ms2RtList.Count; j++)
                     {
                         DDAMs ms2 = new DDAMs(ms2RtList[j], ms2Map[ms2RtList[j]]);
-                        DDAUtil.initFromIndex(airdInfo, ms2, ms2Index, j);
+                        DDAUtil.InitFromIndex(airdInfo, ms2, ms2Index, j);
                         ms2List.Add(ms2);
                     }
 

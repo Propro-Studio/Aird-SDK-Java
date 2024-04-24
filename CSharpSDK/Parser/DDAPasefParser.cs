@@ -25,7 +25,7 @@ public class DDAPasefParser : BaseParser
     {
     }
 
-    public BlockIndex getMs1Index()
+    public BlockIndex GetMs1Index()
     {
         if (airdInfo != null && airdInfo.indexList != null && airdInfo.indexList.Count > 0)
         {
@@ -35,7 +35,7 @@ public class DDAPasefParser : BaseParser
         return null;
     }
 
-    public List<BlockIndex> getAllMs2Index()
+    public List<BlockIndex> GetAllMs2Index()
     {
         if (airdInfo != null && airdInfo.indexList != null && airdInfo.indexList.Count > 0)
         {
@@ -50,7 +50,7 @@ public class DDAPasefParser : BaseParser
    *
    * @return
    */
-    public Dictionary<int, BlockIndex> getMs2IndexMap()
+    public Dictionary<int, BlockIndex> GetMs2IndexMap()
     {
         if (airdInfo != null && airdInfo.indexList != null && airdInfo.indexList.Count > 0)
         {
@@ -74,19 +74,19 @@ public class DDAPasefParser : BaseParser
      * MsCycle in the memory
      * @throws Exception exception when reading the file
      */
-    public List<DDAPasefMs> readAllToMemory()
+    public List<DDAPasefMs> ReadAllToMemory()
     {
         List<DDAPasefMs> ms1List = new List<DDAPasefMs>();
-        BlockIndex ms1Index = getMs1Index(); //所有的ms1谱图都在第一个index中
-        List<BlockIndex> ms2IndexList = getAllMs2Index();
-        Dictionary<double, Spectrum> ms1Map = getSpectra(ms1Index.startPtr, ms1Index.endPtr, ms1Index.rts,
+        BlockIndex ms1Index = GetMs1Index(); //所有的ms1谱图都在第一个index中
+        List<BlockIndex> ms2IndexList = GetAllMs2Index();
+        Dictionary<double, Spectrum> ms1Map = GetSpectra(ms1Index.startPtr, ms1Index.endPtr, ms1Index.rts,
             ms1Index.mzs, ms1Index.ints, ms1Index.mobilities);
         List<double> ms1RtList = new List<double>(ms1Map.Keys);
 
         for (int i = 0; i < ms1RtList.Count; i++)
         {
             DDAPasefMs ms1 = new DDAPasefMs(ms1RtList[i], ms1Map[ms1RtList[i]]);
-            DDAUtil.initFromIndex(airdInfo, ms1, ms1Index, i);
+            DDAUtil.InitFromIndex(airdInfo, ms1, ms1Index, i);
             BlockIndex ms2Index = ms2IndexList.Find(delegate(BlockIndex index)
             {
                 return index.getParentNum().Equals(ms1.num);
@@ -94,14 +94,14 @@ public class DDAPasefParser : BaseParser
 
             if (ms2Index != null)
             {
-                Dictionary<double, Spectrum> ms2Map = getSpectra(ms2Index.startPtr, ms2Index.endPtr,
+                Dictionary<double, Spectrum> ms2Map = GetSpectra(ms2Index.startPtr, ms2Index.endPtr,
                     ms2Index.rts, ms2Index.mzs, ms2Index.ints, ms2Index.mobilities);
                 List<double> ms2RtList = new List<double>(ms2Map.Keys);
                 List<DDAPasefMs> ms2List = new List<DDAPasefMs>();
                 for (int j = 0; j < ms2RtList.Count; j++)
                 {
                     DDAPasefMs ms2 = new DDAPasefMs(ms2RtList[j], ms2Map[ms2RtList[j]]);
-                    DDAUtil.initFromIndex(airdInfo, ms2, ms2Index, j);
+                    DDAUtil.InitFromIndex(airdInfo, ms2, ms2Index, j);
                     ms2List.Add(ms2);
                 }
 
@@ -119,9 +119,9 @@ public class DDAPasefParser : BaseParser
     * @param rtEnd
     * @return
     */
-    public List<DDAPasefMs> getSpectraByRtRange(double rtStart, double rtEnd, bool includeMS2)
+    public List<DDAPasefMs> GetSpectraByRtRange(double rtStart, double rtEnd, bool includeMS2)
     {
-        BlockIndex ms1Index = getMs1Index();
+        BlockIndex ms1Index = GetMs1Index();
         double[] rts = new double[ms1Index.rts.Count];
         rts = ms1Index.rts.ToArray();
         //如果范围不在已有的rt数组范围内,则直接返回empty map
@@ -145,40 +145,40 @@ public class DDAPasefParser : BaseParser
         Dictionary<double, Spectrum> ms1Map = new Dictionary<double, Spectrum>();
         for (int i = start; i <= end; i++)
         {
-            ms1Map.Add(rts[i], getSpectrumByIndex(ms1Index, i));
+            ms1Map.Add(rts[i], GetSpectrumByIndex(ms1Index, i));
         }
 
-        List<DDAPasefMs> ms1List = buildDDAMsList(ms1Index.rts, start, end + 1, ms1Index, ms1Map, includeMS2);
+        List<DDAPasefMs> ms1List = BuildDdaMsList(ms1Index.rts, start, end + 1, ms1Index, ms1Map, includeMS2);
         return ms1List;
     }
 
-    private List<DDAPasefMs> buildDDAMsList(List<double> rtList, int start, int end, BlockIndex ms1Index, Dictionary<double, Spectrum> ms1Map,
+    private List<DDAPasefMs> BuildDdaMsList(List<double> rtList, int start, int end, BlockIndex ms1Index, Dictionary<double, Spectrum> ms1Map,
         bool includeMS2)
     {
         List<DDAPasefMs> ms1List = new List<DDAPasefMs>();
         Dictionary<int, BlockIndex> ms2IndexMap = null;
         if (includeMS2)
         {
-            ms2IndexMap = getMs2IndexMap();
+            ms2IndexMap = GetMs2IndexMap();
         }
 
         for (int i = start; i < end; i++)
         {
             DDAPasefMs ms1 = new DDAPasefMs(rtList[i], ms1Map[rtList[i]]);
-            DDAUtil.initFromIndex(airdInfo, ms1, ms1Index, i);
+            DDAUtil.InitFromIndex(airdInfo, ms1, ms1Index, i);
             if (includeMS2)
             {
                 BlockIndex ms2Index = ms2IndexMap[ms1.num];
                 if (ms2Index != null)
                 {
-                    Dictionary<double, Spectrum> ms2Map = getSpectra(ms2Index.startPtr, ms2Index.endPtr, ms2Index.rts,
+                    Dictionary<double, Spectrum> ms2Map = GetSpectra(ms2Index.startPtr, ms2Index.endPtr, ms2Index.rts,
                         ms2Index.mzs, ms2Index.ints);
                     List<double> ms2RtList = new List<double>(ms2Map.Keys);
                     List<DDAPasefMs> ms2List = new List<DDAPasefMs>();
                     for (int j = 0; j < ms2RtList.Count; j++)
                     {
                         DDAPasefMs ms2 = new DDAPasefMs(ms2RtList[j], ms2Map[ms2RtList[j]]);
-                        DDAUtil.initFromIndex(airdInfo, ms2, ms2Index, j);
+                        DDAUtil.InitFromIndex(airdInfo, ms2, ms2Index, j);
                         ms2List.Add(ms2);
                     }
 

@@ -31,9 +31,9 @@ public class DIAPasefParser : BaseParser
      * @param index block index
      * @return all the spectrums
      */
-    public Dictionary<double, Spectrum> getSpectra(BlockIndex index)
+    public Dictionary<double, Spectrum> GetSpectra(BlockIndex index)
     {
-        return getSpectra(index.startPtr, index.endPtr, index.rts, index.mzs, index.ints, index.mobilities);
+        return GetSpectra(index.startPtr, index.endPtr, index.rts, index.mzs, index.ints, index.mobilities);
     }
 
     /**
@@ -49,11 +49,11 @@ public class DIAPasefParser : BaseParser
      * @param rt         获取某一个时刻原始谱图 the retention time of the target spectrum
      * @return 某个时刻的光谱信息 the spectrum of the target retention time
      */
-    public Spectrum getSpectrumByRt(long startPtr, List<double> rtList, List<int> mzOffsets, List<int> intOffsets,
+    public Spectrum GetSpectrumByRt(long startPtr, List<double> rtList, List<int> mzOffsets, List<int> intOffsets,
         double rt)
     {
         int position = rtList.IndexOf(rt);
-        return getSpectrumByIndex(startPtr, mzOffsets, intOffsets, position);
+        return GetSpectrumByIndex(startPtr, mzOffsets, intOffsets, position);
     }
 
     /**
@@ -62,7 +62,7 @@ public class DIAPasefParser : BaseParser
      * @param index 索引序列号
      * @return 该索引号对应的光谱信息
      */
-    public Spectrum getSpectrum(int index)
+    public Spectrum GetSpectrum(int index)
     {
         List<BlockIndex> indexList = airdInfo.indexList;
         for (int i = 0; i < indexList.Count; i++)
@@ -71,7 +71,7 @@ public class DIAPasefParser : BaseParser
             if (blockIndex.nums.Contains(index))
             {
                 int targetIndex = blockIndex.nums.IndexOf(index);
-                return getSpectrumByIndex(blockIndex, targetIndex);
+                return GetSpectrumByIndex(blockIndex, targetIndex);
             }
         }
 
@@ -87,11 +87,11 @@ public class DIAPasefParser : BaseParser
      * @param rt    retention time of the target spectrum
      * @return the target spectrum
      */
-    public Spectrum getSpectrumByRt(BlockIndex index, double rt)
+    public Spectrum GetSpectrumByRt(BlockIndex index, double rt)
     {
         List<double> rts = index.rts;
         int position = rts.IndexOf(rt);
-        return getSpectrumByIndex(index, position);
+        return GetSpectrumByIndex(index, position);
     }
 
     /**
@@ -99,8 +99,8 @@ public class DIAPasefParser : BaseParser
      * @param index      块内索引值
      * @return 对应光谱数据
      */
-    public Spectrum getSpectrumByIndex(BlockIndex blockIndex, int index)
+    public Spectrum GetSpectrumByIndex(BlockIndex blockIndex, int index)
     {
-        return getSpectrumByIndex(blockIndex.startPtr, blockIndex.mzs, blockIndex.ints, blockIndex.mobilities, index);
+        return GetSpectrumByIndex(blockIndex.startPtr, blockIndex.mzs, blockIndex.ints, blockIndex.mobilities, index);
     }
 }

@@ -61,11 +61,6 @@ public abstract class BaseParser {
     public String indexPath;
 
     /**
-     * the aird index file. proto format
-     */
-    public File protoFile;
-
-    /**
      * the airdInfo from the index file.
      */
     public AirdInfo airdInfo;

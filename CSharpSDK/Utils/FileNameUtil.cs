@@ -24,7 +24,7 @@ namespace AirdSDK.Utils;
 // }
 public class FileNameUtil
 {
-    public static string parseFileName(string inputFilePath)
+    public static string ParseFileName(string inputFilePath)
     {
         var outputFileName = string.Empty;
 
@@ -61,7 +61,7 @@ public class FileNameUtil
         * @param indexPath 索引文件路径
         * @return aird文件路径
         */
-    public static string getAirdPathByIndexPath(string indexPath)
+    public static string GetAirdPathByIndexPath(string indexPath)
     {
         if (string.IsNullOrEmpty(indexPath) || !indexPath.Contains(SymbolConst.DOT) ||
             !(Path.GetExtension(indexPath).ToLower() == SuffixConst.JSON))
@@ -76,7 +76,7 @@ public class FileNameUtil
     /// 根据aird文件路径获取对应的索引文件路径 </summary>
     /// <param name="airdPath"> aird文件路径 </param>
     /// <returns> 索引文件路径 </returns>
-    public static string getIndexPathByAirdPath(string airdPath)
+    public static string GetIndexPathByAirdPath(string airdPath)
     {
         if (string.IsNullOrEmpty(airdPath) || !airdPath.Contains(SymbolConst.DOT) ||
             !airdPath.EndsWith(SuffixConst.AIRD, StringComparison.Ordinal))
@@ -92,16 +92,16 @@ public class FileNameUtil
     /// </summary>
     /// <param name="path">aird文件或索引文件路径</param>
     /// <returns></returns>
-    public static bool airdFileVerification(string path)
+    public static bool AirdFileVerification(string path)
     {
         bool value = File.Exists(path);
         if (path.EndsWith(SuffixConst.AIRD, StringComparison.Ordinal))
         {
-            value = value && File.Exists(getIndexPathByAirdPath(path));
+            value = value && File.Exists(GetIndexPathByAirdPath(path));
         }
         else if (path.EndsWith(SuffixConst.JSON, StringComparison.Ordinal))
         {
-            value = value && File.Exists(getAirdPathByIndexPath(path));
+            value = value && File.Exists(GetAirdPathByIndexPath(path));
         }
 
         return value;
@@ -112,16 +112,16 @@ public class FileNameUtil
     /// </summary>
     /// <param name="path">aird或index地址</param>
     /// <returns></returns>
-    public static string getIndexPath(string path)
+    public static string GetIndexPath(string path)
     {
-        if (!airdFileVerification(path))
+        if (!AirdFileVerification(path))
         {
             return null;
         }
 
         if (path.EndsWith(SuffixConst.AIRD, StringComparison.Ordinal))
         {
-            return getIndexPathByAirdPath(path);
+            return GetIndexPathByAirdPath(path);
         }
 
         return path;

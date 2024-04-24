@@ -1,10 +1,10 @@
 ﻿/*
  * Copyright (c) 2020 CSi Studio
  * AirdSDK and AirdPro are licensed under Mulan PSL v2.
- * You can use this software according to the terms and conditions of the Mulan PSL v2. 
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
- *          http://license.coscl.org.cn/MulanPSL2 
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.  
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
 
@@ -40,9 +40,8 @@ public abstract class BaseParser
     /**
      * the aird index file. JSON format
      */
-    public FileInfo indexFile;
-
-
+    public string indexPath;
+    
     /**
      * the intensity compressor
      */
@@ -94,16 +93,16 @@ public abstract class BaseParser
 
     public BaseParser(string indexPath)
     {
-        indexFile = new FileInfo(indexPath);
-        airdInfo = AirdScanUtil.loadAirdInfo(indexFile);
+        this.indexPath = indexPath;
+        airdInfo = AirdScanUtil.LoadAirdInfo(indexPath);
         if (airdInfo == null) throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
 
-        airdFile = new FileInfo(AirdScanUtil.getAirdPathByIndexPath(indexPath));
+        airdFile = new FileInfo(AirdScanUtil.GetAirdPathByIndexPath(indexPath));
         fs = File.OpenRead(airdFile.FullName);
-        parseIndexList();
-        parseCompsFromAirdInfo();
-        parseComboComp();
-        parseMobilityDict();
+        ParseIndexList();
+        ParseCompsFromAirdInfo();
+        ParseComboComp();
+        ParseMobilityDict();
     }
 
     /**
@@ -117,19 +116,19 @@ public abstract class BaseParser
         if (airdInfo == null) throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
 
         this.airdInfo = airdInfo;
-        airdFile = new FileInfo(AirdScanUtil.getAirdPathByIndexPath(indexPath));
+        airdFile = new FileInfo(AirdScanUtil.GetAirdPathByIndexPath(indexPath));
 
         fs = File.OpenRead(airdFile.FullName);
-        parseIndexList();
-        parseCompsFromAirdInfo();
-        parseComboComp();
-        parseMobilityDict();
+        ParseIndexList();
+        ParseCompsFromAirdInfo();
+        ParseComboComp();
+        ParseMobilityDict();
     }
 
     public BaseParser(string airdPath, Beans.Compressor mzCompressor, Beans.Compressor intCompressor,
         Beans.Compressor mobiCompressor, string airdType)
     {
-        indexFile = new FileInfo(AirdScanUtil.getIndexPathByAirdPath(airdPath));
+        indexPath = AirdScanUtil.GetIndexPathByAirdPath(airdPath);
 
         //不使用Index文件初始化的时候,会直接初始化一个空AirdInfo,用于存放传入的基础信息
         airdInfo = new AirdInfo();
@@ -154,53 +153,41 @@ public abstract class BaseParser
             this.mobiCompressor = mobiCompressor;
             mobiPrecision = mobiCompressor.precision;
         }
-        parseIndexList();
-        parseComboComp();
-        parseMobilityDict();
+        ParseIndexList();
+        ParseComboComp();
+        ParseMobilityDict();
     }
 
-    public static BaseParser buildParser(string indexPath)
+    public static BaseParser BuildParser(string indexPath)
     {
-        var indexFile = new FileInfo(indexPath);
-        return buildParser(indexFile);
-    }
+        var airdInfo = AirdScanUtil.LoadAirdInfo(indexPath);
+        if (airdInfo == null) throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
 
-    public static BaseParser buildParser(FileInfo indexFile)
-    {
-        if (indexFile.Exists)
+        BaseParser baseParser = null;
+
+        switch (airdInfo.type)
         {
-            var airdInfo = AirdScanUtil.loadAirdInfo(indexFile);
-            if (airdInfo == null) throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
-
-            BaseParser baseParser = null;
-
-            switch (airdInfo.type)
-            {
-                case "DDA_PASEF":
-                    baseParser = new DDAPasefParser(indexFile.FullName, airdInfo);
-                    break;
-                case "DIA_PASEF":
-                    baseParser = new DIAPasefParser(indexFile.FullName, airdInfo);
-                    break;
-                case "DDA":
-                    baseParser = new DDAParser(indexFile.FullName, airdInfo);
-                    break;
-                case "DIA":
-                    baseParser = new DIAParser(indexFile.FullName, airdInfo);
-                    break;
-                case "PRM":
-                    baseParser = new PRMParser(indexFile.FullName, airdInfo);
-                    break;
-                default: throw new System.Exception("Unexpected value: " + airdInfo.type);
-            }
-
-            return baseParser;
+            case "DDA_PASEF":
+                baseParser = new DDAPasefParser(indexPath, airdInfo);
+                break;
+            case "DIA_PASEF":
+                baseParser = new DIAPasefParser(indexPath, airdInfo);
+                break;
+            case "DDA":
+                baseParser = new DDAParser(indexPath, airdInfo);
+                break;
+            case "DIA":
+                baseParser = new DIAParser(indexPath, airdInfo);
+                break;
+            case "PRM":
+                baseParser = new PRMParser(indexPath, airdInfo);
+                break;
+            default: throw new System.Exception("Unexpected value: " + airdInfo.type);
         }
-
-        throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
+        return baseParser;
     }
 
-    public void parseIndexList()
+    public void ParseIndexList()
     {
         if (airdInfo != null && airdInfo.indexList == null)
         {
@@ -219,7 +206,7 @@ public abstract class BaseParser
         }
     }
 
-    public static Beans.Compressor fetchTargetCompressor(List<Beans.Compressor> compressors, string target)
+    public static Beans.Compressor FetchTargetCompressor(List<Beans.Compressor> compressors, string target)
     {
         if (compressors == null) return null;
         foreach (var compressor in compressors)
@@ -229,12 +216,12 @@ public abstract class BaseParser
         return null;
     }
 
-    public void parseCompsFromAirdInfo()
+    public void ParseCompsFromAirdInfo()
     {
-        mzCompressor = fetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_MZ);
-        intCompressor = fetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_INTENSITY);
-        mobiCompressor = fetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_MOBILITY);
-        rtCompressor = fetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_RT);
+        mzCompressor = FetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_MZ);
+        intCompressor = FetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_INTENSITY);
+        mobiCompressor = FetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_MOBILITY);
+        rtCompressor = FetchTargetCompressor(airdInfo.compressors, Beans.Compressor.TARGET_RT);
         mzPrecision = mzCompressor.precision;
         intPrecision = intCompressor.precision;
         mobiPrecision = mobiCompressor.precision;
@@ -244,7 +231,7 @@ public abstract class BaseParser
     /**
     * 必须读取索引文件以及Aird二进制文件才可以获取Dict字典
     */
-    public void parseMobilityDict()
+    public void ParseMobilityDict()
     {
         var mobiInfo = airdInfo.mobiInfo;
         if ("TIMS".Equals(mobiInfo.type))
@@ -262,7 +249,7 @@ public abstract class BaseParser
         }
     }
 
-    public void parseComboComp()
+    public void ParseComboComp()
     {
         var mzMethods = mzCompressor.methods;
         if (mzMethods.Count == 2)
@@ -413,17 +400,17 @@ public abstract class BaseParser
     /**
      * 根据位移偏差解析单张光谱图
      */
-    public Spectrum getSpectrum(byte[] bytes, int offset, int mzOffset, int intOffset)
+    public Spectrum GetSpectrum(byte[] bytes, int offset, int mzOffset, int intOffset)
     {
         if (mzOffset == 0) return new Spectrum(new double[0], new double[0]);
 
-        double[] mzArray = getMzs(bytes, offset, mzOffset);
+        double[] mzArray = GetMzs(bytes, offset, mzOffset);
         offset = offset + mzOffset;
-        double[] intensityArray = getInts(bytes, offset, intOffset);
+        double[] intensityArray = GetInts(bytes, offset, intOffset);
         return new Spectrum(mzArray, intensityArray);
     }
 
-    public Dictionary<double, Spectrum> getSpectraByRtRange(long startPtr, long endPtr, List<double> rtList,
+    public Dictionary<double, Spectrum> GetSpectraByRtRange(long startPtr, long endPtr, List<double> rtList,
         List<int> mzOffsets, List<int> intOffsets, double rtStart, double rtEnd)
     {
         //如果范围不在已有的rt数组范围内,则直接返回empty map
@@ -445,17 +432,17 @@ public abstract class BaseParser
             end = -end - 2;
         }
 
-        return getSpectra(startPtr, endPtr, rtList.GetRange(start, end + 1), mzOffsets, intOffsets);
+        return GetSpectra(startPtr, endPtr, rtList.GetRange(start, end + 1), mzOffsets, intOffsets);
     }
 
-    public Dictionary<double, Spectrum> getSpectraByRtRange(BlockIndex index, double rtStart, double rtEnd)
+    public Dictionary<double, Spectrum> GetSpectraByRtRange(BlockIndex index, double rtStart, double rtEnd)
     {
-        return getSpectraByRtRange(index.startPtr, index.endPtr, index.rts, index.mzs, index.ints, rtStart, rtEnd);
+        return GetSpectraByRtRange(index.startPtr, index.endPtr, index.rts, index.mzs, index.ints, rtStart, rtEnd);
     }
 
-    public Dictionary<double, Spectrum> getSpectra(BlockIndex index)
+    public Dictionary<double, Spectrum> GetSpectra(BlockIndex index)
     {
-        return getSpectra(index.startPtr, index.endPtr, index.rts, index.mzs, index.ints);
+        return GetSpectra(index.startPtr, index.endPtr, index.rts, index.mzs, index.ints);
     }
 
     /**
@@ -473,7 +460,7 @@ public abstract class BaseParser
      * @param intOffsets intensity块的大小列表 the intensity block size list
      * @return 每一个时刻对应的光谱信息 the spectrum of the target retention time
      */
-    public Dictionary<double, Spectrum> getSpectra(long start, long end, List<double> rtList, List<int> mzOffsets,
+    public Dictionary<double, Spectrum> GetSpectra(long start, long end, List<double> rtList, List<int> mzOffsets,
         List<int> intOffsets)
     {
         Dictionary<double, Spectrum> map = new Dictionary<double, Spectrum>();
@@ -484,7 +471,7 @@ public abstract class BaseParser
         int iter = 0;
         for (int i = 0; i < rtList.Count; i++)
         {
-            map.Add(rtList[i], getSpectrum(result, iter, mzOffsets[i], intOffsets[i]));
+            map.Add(rtList[i], GetSpectrum(result, iter, mzOffsets[i], intOffsets[i]));
             iter = iter + mzOffsets[i] + intOffsets[i];
         }
 
@@ -506,7 +493,7 @@ public abstract class BaseParser
   * @param intOffsets intensity块的大小列表 the intensity block size list
   * @return 每一个时刻对应的光谱信息 the spectrum of the target retention time
   */
-    public Dictionary<double, Spectrum> getSpectra(long start, long end, List<double> rtList, List<int> mzOffsets,
+    public Dictionary<double, Spectrum> GetSpectra(long start, long end, List<double> rtList, List<int> mzOffsets,
         List<int> intOffsets, List<int> mobiOffsets)
     {
         Dictionary<double, Spectrum> map = new Dictionary<double, Spectrum>();
@@ -533,7 +520,7 @@ public abstract class BaseParser
                 }
 
                 map.Add(rtList[rtIndex],
-                    getSpectrum(res, iterA, mzOffsets[rtIndex], intOffsets[rtIndex], mobiOffsets[rtIndex]));
+                    GetSpectrum(res, iterA, mzOffsets[rtIndex], intOffsets[rtIndex], mobiOffsets[rtIndex]));
                 iterA = iterA + mzOffsets[rtIndex] + intOffsets[rtIndex] + mobiOffsets[rtIndex];
 
                 rtIndex++;
@@ -547,7 +534,7 @@ public abstract class BaseParser
         while (rtIndex < rtList.Count)
         {
             map.Add(rtList[rtIndex],
-                getSpectrum(result, iter, mzOffsets[rtIndex], intOffsets[rtIndex], mobiOffsets[rtIndex]));
+                GetSpectrum(result, iter, mzOffsets[rtIndex], intOffsets[rtIndex], mobiOffsets[rtIndex]));
             iter = iter + mzOffsets[rtIndex] + intOffsets[rtIndex] + mobiOffsets[rtIndex];
             rtIndex++;
         }
@@ -555,18 +542,18 @@ public abstract class BaseParser
         return map;
     }
 
-    public Spectrum getSpectrum(byte[] bytes, int offset, int mzOffset, int intOffset, int mobiOffset)
+    public Spectrum GetSpectrum(byte[] bytes, int offset, int mzOffset, int intOffset, int mobiOffset)
     {
         if (mzOffset == 0)
         {
             return new Spectrum(new double[0], new double[0], new double[0]);
         }
 
-        double[] mzArray = getMzs(bytes, offset, mzOffset);
+        double[] mzArray = GetMzs(bytes, offset, mzOffset);
         offset = offset + mzOffset;
-        double[] intensityArray = getInts(bytes, offset, intOffset);
+        double[] intensityArray = GetInts(bytes, offset, intOffset);
         offset = offset + intOffset;
-        double[] mobiArray = getMobilities(bytes, offset, mobiOffset);
+        double[] mobiArray = GetMobilities(bytes, offset, mobiOffset);
         return new Spectrum(mzArray, intensityArray, mobiArray);
     }
 
@@ -574,7 +561,7 @@ public abstract class BaseParser
   * @param num 所需要搜索的scan number
   * @return
   */
-    public Spectrum getSpectrumByNum(int num)
+    public Spectrum GetSpectrumByNum(int num)
     {
         List<BlockIndex> indexList = airdInfo.indexList;
         foreach (BlockIndex blockIndex in indexList)
@@ -582,7 +569,7 @@ public abstract class BaseParser
             int index = blockIndex.nums.IndexOf(num);
             if (index >= 0)
             {
-                return getSpectrumByIndex(blockIndex, index);
+                return GetSpectrumByIndex(blockIndex, index);
             }
         }
 
@@ -593,7 +580,7 @@ public abstract class BaseParser
      * @param nums 所需要搜索的scan numbers
      * @return
      */
-    public Spectrum[] getSpectraByNums(int[] nums)
+    public Spectrum[] GetSpectraByNums(int[] nums)
     {
         List<BlockIndex> indexList = airdInfo.indexList;
         Spectrum[] spectra = new Spectrum[nums.Length];
@@ -605,7 +592,7 @@ public abstract class BaseParser
                 int index = blockIndex.nums.IndexOf(nums[i]);
                 if (index >= 0)
                 {
-                    spectrum = getSpectrumByIndex(blockIndex, index);
+                    spectrum = GetSpectrumByIndex(blockIndex, index);
                     break;
                 }
             }
@@ -625,11 +612,11 @@ public abstract class BaseParser
      * @param rt    retention time of the target spectrum
      * @return the target spectrum
      */
-    public Spectrum getSpectrumByRt(BlockIndex index, double rt)
+    public Spectrum GetSpectrumByRt(BlockIndex index, double rt)
     {
         List<double> rts = index.rts;
         int position = rts.IndexOf(rt);
-        return getSpectrumByIndex(index, position);
+        return GetSpectrumByIndex(index, position);
     }
 
     /**
@@ -645,11 +632,11 @@ public abstract class BaseParser
     * @param rt         获取某一个时刻原始谱图 the retention time of the target spectrum
     * @return 某个时刻的光谱信息 the spectrum of the target retention time
     */
-    public Spectrum getSpectrumByRt(long startPtr, List<double> rtList, List<int> mzOffsets, List<int> intOffsets,
+    public Spectrum GetSpectrumByRt(long startPtr, List<double> rtList, List<int> mzOffsets, List<int> intOffsets,
         double rt)
     {
         int position = rtList.IndexOf(rt);
-        return getSpectrumByIndex(startPtr, mzOffsets, intOffsets, position);
+        return GetSpectrumByIndex(startPtr, mzOffsets, intOffsets, position);
     }
 
     /**
@@ -658,7 +645,7 @@ public abstract class BaseParser
    * @param index 索引序列号
    * @return 该索引号对应的光谱信息
    */
-    public Spectrum getSpectrum(int index)
+    public Spectrum GetSpectrum(int index)
     {
         List<BlockIndex> indexList = airdInfo.indexList;
         for (int i = 0; i < indexList.Count; i++)
@@ -667,7 +654,7 @@ public abstract class BaseParser
             if (blockIndex.nums.Contains(index))
             {
                 int targetIndex = blockIndex.nums.IndexOf(index);
-                return getSpectrumByIndex(blockIndex, targetIndex);
+                return GetSpectrumByIndex(blockIndex, targetIndex);
             }
         }
 
@@ -679,9 +666,9 @@ public abstract class BaseParser
      * @param index 块内索引值
      * @return 对应光谱数据
      */
-    public Spectrum getSpectrumByIndex(BlockIndex blockIndex, int index)
+    public Spectrum GetSpectrumByIndex(BlockIndex blockIndex, int index)
     {
-        return getSpectrumByIndex(blockIndex.startPtr, blockIndex.mzs, blockIndex.ints, index);
+        return GetSpectrumByIndex(blockIndex.startPtr, blockIndex.mzs, blockIndex.ints, index);
     }
 
     /**
@@ -696,7 +683,7 @@ public abstract class BaseParser
      * @param index      光谱在block块中的索引位置 the spectrum index in the block
      * @return 某个时刻的光谱信息 the spectrum of the target retention time
      */
-    public Spectrum getSpectrumByIndex(long startPtr, List<int> mzOffsets, List<int> intOffsets, int index)
+    public Spectrum GetSpectrumByIndex(long startPtr, List<int> mzOffsets, List<int> intOffsets, int index)
     {
         long start = startPtr;
 
@@ -709,7 +696,7 @@ public abstract class BaseParser
         fs.Seek(start, SeekOrigin.Begin);
         byte[] reader = new byte[mzOffsets[index] + intOffsets[index]];
         fs.Read(reader, 0, reader.Length);
-        return getSpectrum(reader, 0, mzOffsets[index], intOffsets[index]);
+        return GetSpectrum(reader, 0, mzOffsets[index], intOffsets[index]);
     }
     
     /**
@@ -724,7 +711,7 @@ public abstract class BaseParser
     * @param index      光谱在block块中的索引位置 the spectrum index in the block
     * @return 某个时刻的光谱信息 the spectrum of the target retention time
     */
-    public Spectrum getSpectrumByIndex(long startPtr, List<int> mzOffsets, List<int> intOffsets, List<int> mobiOffsets, int index) 
+    public Spectrum GetSpectrumByIndex(long startPtr, List<int> mzOffsets, List<int> intOffsets, List<int> mobiOffsets, int index) 
     {
         long start = startPtr;
         for (int i = 0; i < index; i++) {
@@ -736,7 +723,7 @@ public abstract class BaseParser
         fs.Seek(start, SeekOrigin.Begin);
         byte[] reader = new byte[mzOffsets[index] + intOffsets[index] + mobiOffsets[index]];
         fs.Read(reader, 0, reader.Length);
-        return getSpectrum(reader, 0, mzOffsets[index], intOffsets[index], mobiOffsets[index]);
+        return GetSpectrum(reader, 0, mzOffsets[index], intOffsets[index], mobiOffsets[index]);
     }
 
     /**
@@ -745,9 +732,9 @@ public abstract class BaseParser
     * @param value 压缩后的数组
     * @return 解压缩后的数组
     */
-    public double[] getMzs(byte[] value)
+    public double[] GetMzs(byte[] value)
     {
-        return getMzs(value, 0, value.Length);
+        return GetMzs(value, 0, value.Length);
     }
 
     /**
@@ -758,7 +745,7 @@ public abstract class BaseParser
    * @param length 读取长度
    * @return 解压缩后的数组
    */
-    public double[] getMzs(byte[] value, int offset, int length)
+    public double[] GetMzs(byte[] value, int offset, int length)
     {
         byte[] decodedData = mzByteComp.decode(value, offset, length);
         int[] intValues = ByteTrans.byteToInt(decodedData);
@@ -778,9 +765,9 @@ public abstract class BaseParser
     * @param value 加密的数组
     * @return 解压缩后的数组
     */
-    public int[] getMzsAsInteger(byte[] value)
+    public int[] GetMzsAsInteger(byte[] value)
     {
-        return getMzsAsInteger(value, 0, value.Length);
+        return GetMzsAsInteger(value, 0, value.Length);
     }
 
     /**
@@ -791,7 +778,7 @@ public abstract class BaseParser
    * @param length 读取长度
    * @return 解压缩后的数组
    */
-    public int[] getMzsAsInteger(byte[] value, int offset, int length)
+    public int[] GetMzsAsInteger(byte[] value, int offset, int length)
     {
         byte[] decodedData = mzByteComp.decode(value, offset, length);
         int[] intValues = ByteTrans.byteToInt(decodedData);
@@ -805,9 +792,9 @@ public abstract class BaseParser
     * @param value 压缩的数组
     * @return 解压缩后的数组
     */
-    public double[] getInts(byte[] value)
+    public double[] GetInts(byte[] value)
     {
-        return getInts(value, 0, value.Length);
+        return GetInts(value, 0, value.Length);
     }
 
     /**
@@ -818,7 +805,7 @@ public abstract class BaseParser
     * @param length the specified length
     * @return the decompression intensity array
     */
-    public double[] getInts(byte[] value, int start, int length)
+    public double[] GetInts(byte[] value, int start, int length)
     {
         byte[] decodedData = intByteComp.decode(value, start, length);
         int[] intValues = ByteTrans.byteToInt(decodedData);
@@ -847,7 +834,7 @@ public abstract class BaseParser
     * @param length the specified length
     * @return the decompression intensity array
     */
-    public double[] getMobilities(byte[] value, int start, int length)
+    public double[] GetMobilities(byte[] value, int start, int length)
     {
         byte[] decodedData = mobiByteComp.decode(value, start, length);
         int[] intValues = ByteTrans.byteToInt(decodedData);
@@ -861,36 +848,36 @@ public abstract class BaseParser
         return mobilities;
     }
 
-   //  /**
-   // * get tag values only for aird file 默认从Aird文件中读取,编码Order为LITTLE_ENDIAN,精度为小数点后三位
-   // *
-   // * @param value 压缩后的数组
-   // * @return 解压缩后的数组
-   // */
-   //  public int[] getTags(byte[] value)
-   //  {
-   //      byte[] decodedData = new ZlibWrapper().decode(value);
-   //      byte[] byteValue = new byte[decodedData.Length * 8];
-   //      for (int i = 0; i < decodedData.Length; i++)
-   //      {
-   //          for (int j = 0; j < 8; j++)
-   //          {
-   //              byteValue[8 * i + j] = (byte) (((decodedData[i] & 0xff) >> j) & 1);
-   //          }
-   //      }
-   //
-   //      int digit = mzCompressor.digit;
-   //      int[] tags = new int[byteValue.Length / digit];
-   //      for (int i = 0; i < tags.Length; i++)
-   //      {
-   //          for (int j = 0; j < digit; j++)
-   //          {
-   //              tags[i] += byteValue[digit * i + j] << j;
-   //          }
-   //      }
-   //
-   //      return tags;
-   //  }
+    //  /**
+    // * get tag values only for aird file 默认从Aird文件中读取,编码Order为LITTLE_ENDIAN,精度为小数点后三位
+    // *
+    // * @param value 压缩后的数组
+    // * @return 解压缩后的数组
+    // */
+    //  public int[] getTags(byte[] value)
+    //  {
+    //      byte[] decodedData = new ZlibWrapper().decode(value);
+    //      byte[] byteValue = new byte[decodedData.Length * 8];
+    //      for (int i = 0; i < decodedData.Length; i++)
+    //      {
+    //          for (int j = 0; j < 8; j++)
+    //          {
+    //              byteValue[8 * i + j] = (byte) (((decodedData[i] & 0xff) >> j) & 1);
+    //          }
+    //      }
+    //
+    //      int digit = mzCompressor.digit;
+    //      int[] tags = new int[byteValue.Length / digit];
+    //      for (int i = 0; i < tags.Length; i++)
+    //      {
+    //          for (int j = 0; j < digit; j++)
+    //          {
+    //              tags[i] += byteValue[digit * i + j] << j;
+    //          }
+    //      }
+    //
+    //      return tags;
+    //  }
 
     /**
      * get tag values only for aird file 默认从Aird文件中读取,编码Order为LITTLE_ENDIAN,精度为小数点后三位
@@ -927,7 +914,7 @@ public abstract class BaseParser
     //     return tags;
     // }
 
-    public String getType()
+    public String GetType()
     {
         return airdInfo == null ? null : airdInfo.type;
     }

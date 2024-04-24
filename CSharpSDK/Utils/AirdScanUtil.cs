@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using AirdSDK.Beans;
 using AirdSDK.Constants;
 using Newtonsoft.Json;
@@ -28,7 +29,7 @@ public class AirdScanUtil
     * @param directoryPath 文件夹路径
     * @return 该文件夹下所有的文件列表
     */
-    public static List<FileInfo> scanIndexFiles(string directoryPath)
+    public static List<FileInfo> ScanIndexFiles(string directoryPath)
     {
         //Check and filter for effective aird files
         DirectoryInfo root = new DirectoryInfo(directoryPath);
@@ -58,11 +59,21 @@ public class AirdScanUtil
     * @param indexFile 索引文件
     * @return 该索引文件内的JSON信息, 即AirdInfo信息
     */
-    public static AirdInfo loadAirdInfo(FileInfo indexFile)
+    public static AirdInfo LoadAirdInfo(string indexPath)
     {
-        string content = FileUtil.readFile(indexFile);
-        JsonSerializer serializer = new JsonSerializer();
-        AirdInfo airdInfo = JsonConvert.DeserializeObject<AirdInfo>(content);
+        AirdInfo airdInfo = new AirdInfo();
+        if (indexPath.ToLower().EndsWith(SuffixConst.JSON))
+        {
+            string content = FileUtil.ReadFile(new FileInfo(indexPath));
+            airdInfo = JsonConvert.DeserializeObject<AirdInfo>(content);
+        }
+        else if (indexPath.ToLower().EndsWith(SuffixConst.INDEX))
+        {
+            FileStream fis = new FileStream(indexPath, FileMode.Open);
+            AirdInfoProto proto = AirdInfoProto.Parser.ParseFrom(fis);
+            airdInfo = AirdInfo.FromProto(proto);
+        }
+     
         return airdInfo;
     }
 
@@ -72,9 +83,21 @@ public class AirdScanUtil
      * @param indexFile 索引文件
      * @return 该索引文件内的JSON信息, 即ColumnInfo信息
      */
-    public static AirdSDK.Beans.ColumnInfo loadColumnInfo(FileInfo indexFile) {
-        String content = FileUtil.readFile(indexFile);
-        ColumnInfo columnInfo = JsonConvert.DeserializeObject<ColumnInfo>(content);
+    public static ColumnInfo LoadColumnInfo(string indexPath) {
+        ColumnInfo columnInfo = new ColumnInfo();
+        if (indexPath.ToLower().EndsWith(SuffixConst.CJSON)) {
+            String content = FileUtil.ReadFile(new FileInfo(indexPath));
+            columnInfo = JsonConvert.DeserializeObject<ColumnInfo>(content);
+        } else if (indexPath.ToLower().EndsWith(SuffixConst.CINDEX)) {
+            try {
+                FileStream fs = new FileStream(indexPath, FileMode.Open);
+                ColumnInfoProto proto = ColumnInfoProto.Parser.ParseFrom(fs);
+                columnInfo = ColumnInfo.FromProto(proto);
+            } catch (System.Exception e) {
+                return null;
+            }
+        }
+
         return columnInfo;
     }
     
@@ -84,7 +107,7 @@ public class AirdScanUtil
      * @param indexPath 索引文件路径
      * @return aird文件路径
      */
-    public static string getAirdPathByIndexPath(string indexPath)
+    public static string GetAirdPathByIndexPath(string indexPath)
     {
         if (indexPath == null || !indexPath.Contains(SymbolConst.DOT) || !indexPath.EndsWith(SuffixConst.JSON))
         {
@@ -94,7 +117,7 @@ public class AirdScanUtil
         return indexPath.Substring(0, indexPath.LastIndexOf(SymbolConst.DOT)) + SuffixConst.AIRD;
     }
 
-    public static string getIndexPathByAirdPath(String airdPath)
+    public static string GetIndexPathByAirdPath(String airdPath)
     {
         if (airdPath == null || !airdPath.Contains(SymbolConst.DOT) || !airdPath.EndsWith(SuffixConst.AIRD))
         {
@@ -110,7 +133,7 @@ public class AirdScanUtil
      * @param indexPath 索引文件路径
      * @return aird文件路径
      */
-    public static string getAirdPathByColumnIndexPath(string indexPath) {
+    public static string GetAirdPathByColumnIndexPath(string indexPath) {
         if (indexPath == null || !indexPath.Contains(SymbolConst.DOT) || !indexPath.EndsWith(SuffixConst.CJSON)) {
             return null;
         }

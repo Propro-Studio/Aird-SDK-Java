@@ -17,15 +17,15 @@ public class AirdMathUtil
      * @param high    right index
      * @return the search result index
      */
-    public static int binarySearch(double[] numbers, double key, int low, int high) {
+    public static int BinarySearch(double[] numbers, double key, int low, int high) {
         if (key < numbers[low] || key > numbers[high] || low > high) {
             return -1;
         }
         int middle = (low + high) / 2;
         if (numbers[middle] > key) {
-            return binarySearch(numbers, key, low, middle - 1);
+            return BinarySearch(numbers, key, low, middle - 1);
         } else if (numbers[middle] < key) {
-            return binarySearch(numbers, key, middle + 1, high);
+            return BinarySearch(numbers, key, middle + 1, high);
         } else {
             return middle;
         }
@@ -37,7 +37,7 @@ public class AirdMathUtil
      * @param values search array
      * @return the max value
      */
-    public static double max(double[] values) {
+    public static double Max(double[] values) {
         double maxValue = double.MinValue;
         foreach (double value in values) {
             if (value >= maxValue) {
@@ -53,7 +53,7 @@ public class AirdMathUtil
      * @param values search array
      * @return the min value
      */
-    public static double min(double[] values) {
+    public static double Min(double[] values) {
         double minValue = double.MaxValue;
         foreach (double value in values) {
             if (value <= minValue) {
@@ -70,7 +70,7 @@ public class AirdMathUtil
      * @param value search target
      * @return the left and right index of the target value
      */
-    public static IntPair binarySearch(int[] x, int value) {
+    public static IntPair BinarySearch(int[] x, int value) {
         if (x.Length == 1) {
             return new IntPair(0, 0);
         }
@@ -102,7 +102,7 @@ public class AirdMathUtil
      * @param value search target
      * @return the left and right index of the target value
      */
-    public static IntPair binarySearch(double[] x, double value) {
+    public static IntPair BinarySearch(double[] x, double value) {
         if (x.Length == 1) {
             return new IntPair(0, 0);
         }
@@ -134,7 +134,7 @@ public class AirdMathUtil
      * @param value search target
      * @return the left and right index of the target value
      */
-    public static IntPair binarySearch(float[] x, float value) {
+    public static IntPair BinarySearch(float[] x, float value) {
         if (x.Length == 1) {
             return new IntPair(0, 0);
         }
@@ -167,7 +167,7 @@ public class AirdMathUtil
      * @param value search target
      * @return the left and right index of the target value
      */
-    public static IntPair binarySearch(List<double> x, double value) {
+    public static IntPair BinarySearch(List<double> x, double value) {
         if (x.Count == 1) {
             return new IntPair(0, 0);
         }
@@ -201,7 +201,7 @@ public class AirdMathUtil
      * @param rightIndex    right index of the given range
      * @return the accumulate sum
      */
-    public static double accumulate(List<Double> intensityList, int leftIndex, int rightIndex) {
+    public static double Accumulate(List<Double> intensityList, int leftIndex, int rightIndex) {
         double intensity = 0f;
         for (int i = leftIndex; i < rightIndex; i++) {
             intensity += intensityList[i];
@@ -217,7 +217,7 @@ public class AirdMathUtil
      * @param rightIndex right index of the given range
      * @return the accumulate sum
      */
-    public static double integrate(Xic xic, int leftIndex, int rightIndex) {
+    public static double Integrate(Xic xic, int leftIndex, int rightIndex) {
         double intensity = 0d;
         for (int i = leftIndex + 1; i <= rightIndex; i++) {
             //area of trapezoid
@@ -236,7 +236,7 @@ public class AirdMathUtil
      * @param rightBaseline right baseline
      * @return the accumulate sum
      */
-    public static double integrate(Xic xic, int leftIndex, int rightIndex, double leftBaseline, double rightBaseline) {
+    public static double Integrate(Xic xic, int leftIndex, int rightIndex, double leftBaseline, double rightBaseline) {
         double intensity = 0d;
         double baselineStep = (rightBaseline - leftBaseline) / (rightIndex - leftIndex);
         for (int i = leftIndex + 1; i <= rightIndex; i++) {
@@ -257,7 +257,7 @@ public class AirdMathUtil
      * @param doubles given array
      * @return the max value index
      */
-    public static int findMaxIndex(double[] doubles) {
+    public static int FindMaxIndex(double[] doubles) {
         double max = double.MinValue;
         int index = -1;
         for (int i = 0; i < doubles.Length; i++) {

@@ -27,21 +27,21 @@ public class MRMParser : DDAParser
     {
     }
 
-    public ChromatogramIndex getChromatogramIndex()
+    public ChromatogramIndex GetChromatogramIndex()
     {
         if (airdInfo != null && airdInfo.chromatogramIndex != null) return airdInfo.chromatogramIndex;
 
         return null;
     }
 
-    public List<MrmPair> getAllSrmPairs()
+    public List<MrmPair> GetAllSrmPairs()
     {
-        var index = getChromatogramIndex();
+        var index = GetChromatogramIndex();
         if (index == null || index.precursors == null || index.products == null || index.precursors.Count == 0 ||
             index.products.Count == 0) return null;
 
         var pairs = new List<MrmPair>();
-        var dict = getChromatograms(index.startPtr, index.endPtr, index.ids, index.rts, index.ints);
+        var dict = GetChromatograms(index.startPtr, index.endPtr, index.ids, index.rts, index.ints);
         for (var i = 0; i < index.precursors.Count; i++)
         {
             var pair = new MrmPair();
@@ -69,7 +69,7 @@ public class MRMParser : DDAParser
    * 返回值是一个map,其中key为rt,value为这个rt对应点原始谱图信息
    * 特别需要注意的是,本函数在使用完raf对象以后并不会直接关闭该对象,需要使用者在使用完DIAParser对象以后手动关闭该对象
    */
-    public Dictionary<string, Xic> getChromatograms(long start, long end, List<string> keyList, List<int> rtOffsets,
+    public Dictionary<string, Xic> GetChromatograms(long start, long end, List<string> keyList, List<int> rtOffsets,
         List<int> intOffsets)
     {
         Dictionary<string, Xic> map = new Dictionary<string, Xic>();
@@ -80,7 +80,7 @@ public class MRMParser : DDAParser
         int iter = 0;
         for (int i = 0; i < keyList.Count; i++)
         {
-            map.Add(keyList[i], getChromatogram(result, iter, rtOffsets[i], intOffsets[i]));
+            map.Add(keyList[i], GetChromatogram(result, iter, rtOffsets[i], intOffsets[i]));
             iter = iter + rtOffsets[i] + intOffsets[i];
         }
 
@@ -90,13 +90,13 @@ public class MRMParser : DDAParser
     /**
    * 根据位移偏差解析单张光谱图
    */
-    public Xic getChromatogram(byte[] bytes, int offset, int rtOffset, int intOffset)
+    public Xic GetChromatogram(byte[] bytes, int offset, int rtOffset, int intOffset)
     {
         if (rtOffset == 0) return new Xic(new double[0], new double[0]);
 
-        double[] rtArray = getRts4Chroma(bytes, offset, rtOffset);
+        double[] rtArray = GetRts4Chroma(bytes, offset, rtOffset);
         offset = offset + rtOffset;
-        double[] intensityArray = getInts4Chroma(bytes, offset, intOffset);
+        double[] intensityArray = GetInts4Chroma(bytes, offset, intOffset);
         return new Xic(rtArray, intensityArray);
     }
 
@@ -108,7 +108,7 @@ public class MRMParser : DDAParser
   * @param length 读取长度
   * @return 解压缩后的数组
   */
-    public double[] getRts4Chroma(byte[] value, int offset, int length)
+    public double[] GetRts4Chroma(byte[] value, int offset, int length)
     {
         var decodedData = rtByteComp4Chroma.decode(value, offset, length);
         var intValues = ByteTrans.byteToInt(decodedData);
@@ -128,7 +128,7 @@ public class MRMParser : DDAParser
     * @param length the specified length
     * @return the decompression intensity array
     */
-    public double[] getInts4Chroma(byte[] value, int start, int length)
+    public double[] GetInts4Chroma(byte[] value, int start, int length)
     {
         var decodedData = intByteComp.decode(value, start, length);
         var intValues = ByteTrans.byteToInt(decodedData);

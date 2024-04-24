@@ -18,26 +18,26 @@ public class AirdManager
     /**
      * 单例对象
      */
-    public static AirdManager instance = new AirdManager();
+    public static AirdManager Instance = new AirdManager();
 
     /**
      * key为path, value为该path下的文件的parser对象
      */
-    public Hashtable parserMap = Hashtable.Synchronized(new Hashtable());
+    public Hashtable ParserMap = Hashtable.Synchronized(new Hashtable());
 
     private AirdManager()
     {
     }
 
-    public static AirdManager getInstance()
+    public static AirdManager GetInstance()
     {
-        return instance;
+        return Instance;
     }
 
-    public BaseParser load(string indexPath)
+    public BaseParser Load(string indexPath)
     {
-        BaseParser parser = BaseParser.buildParser(indexPath);
-        parserMap.Add(indexPath, parser);
+        BaseParser parser = BaseParser.BuildParser(indexPath);
+        ParserMap.Add(indexPath, parser);
         return parser;
     }
 
@@ -48,10 +48,10 @@ public class AirdManager
     * @param indexId   外部设定的key值
     * @return 返回解析器
     */
-    public BaseParser load(string indexPath, string indexId)
+    public BaseParser Load(string indexPath, string indexId)
     {
-        BaseParser parser = BaseParser.buildParser(indexPath);
-        parserMap.Add(indexId, parser);
+        BaseParser parser = BaseParser.BuildParser(indexPath);
+        ParserMap.Add(indexId, parser);
         return parser;
     }
 
@@ -61,9 +61,9 @@ public class AirdManager
     * @param indexPath
     * @return
     */
-    public BaseParser getParser(string indexPath)
+    public BaseParser GetParser(string indexPath)
     {
-        return parserMap[indexPath] as BaseParser;
+        return ParserMap[indexPath] as BaseParser;
     }
 
     /**
@@ -72,12 +72,12 @@ public class AirdManager
     * @param indexPath the index path
     * @return the parser object
     */
-    public BaseParser touchParser(string indexPath)
+    public BaseParser TouchParser(string indexPath)
     {
-        BaseParser parser = parserMap[indexPath] as BaseParser;
+        BaseParser parser = ParserMap[indexPath] as BaseParser;
         if (parser == null)
         {
-            return load(indexPath);
+            return Load(indexPath);
         }
 
         return parser;
@@ -88,8 +88,8 @@ public class AirdManager
     *
     * @param indexPath the index path
     */
-    public void removeParser(string indexPath)
+    public void RemoveParser(string indexPath)
     {
-        parserMap.Remove(indexPath);
+        ParserMap.Remove(indexPath);
     }
 }

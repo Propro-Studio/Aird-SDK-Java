@@ -15,7 +15,9 @@ namespace AirdSDK.Constants;
 public class SuffixConst
 {
     public static string JSON = ".json";
+    public static string INDEX = ".index";
     public static string CJSON = ".cjson";
+    public static string CINDEX = ".cindex";
     public static string AIRD = ".aird";
     public static string MZXML = ".mzxml";
     public static string MZML = ".mzml";

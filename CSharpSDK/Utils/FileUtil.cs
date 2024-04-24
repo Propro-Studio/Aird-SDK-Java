@@ -20,7 +20,7 @@ public class FileUtil
     * @param file 文件对象
     * @return content in the file
     */
-    public static string readFile(FileInfo file)
+    public static string ReadFile(FileInfo file)
     {
         string content = File.ReadAllText(file.FullName);
         return content;

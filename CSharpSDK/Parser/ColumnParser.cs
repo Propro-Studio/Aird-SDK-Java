@@ -19,7 +19,7 @@ public class ColumnParser
     /**
      * the column index file. JSON format,with cjson
      */
-    public FileInfo indexFile;
+    public string indexPath;
 
     /**
      * the airdInfo from the index file.
@@ -43,56 +43,55 @@ public class ColumnParser
 
     public ColumnParser(string indexPath)
     {
-        indexFile = new FileInfo(indexPath);
-        columnInfo = AirdScanUtil.loadColumnInfo(indexFile);
+        this.indexPath = indexPath;
+        columnInfo = AirdScanUtil.LoadColumnInfo(indexPath);
         if (columnInfo == null) throw new ScanException(ResultCodeEnum.AIRD_INDEX_FILE_PARSE_ERROR);
 
-        airdFile = new FileInfo(AirdScanUtil.getAirdPathByColumnIndexPath(indexPath));
+        airdFile = new FileInfo(AirdScanUtil.GetAirdPathByColumnIndexPath(indexPath));
         fs = File.OpenRead(airdFile.FullName);
 
-        //获取mzPrecision
         mzPrecision = columnInfo.mzPrecision;
         intPrecision = columnInfo.intPrecision;
-        parseColumnIndex();
+        ParseColumnIndex();
     }
 
 
-    public void parseColumnIndex()
+    public void ParseColumnIndex()
     {
         List<AirdSDK.Beans.ColumnIndex> indexList = columnInfo.indexList;
         foreach (var columnIndex in indexList)
         {
             if (columnIndex.mzs == null)
             {
-                byte[] mzsByte = readByte(columnIndex.startMzListPtr, columnIndex.endMzListPtr);
-                int[] mzsAsInt = decodeToSorted(mzsByte);
+                byte[] mzsByte = ReadByte(columnIndex.startMzListPtr, columnIndex.endMzListPtr);
+                int[] mzsAsInt = DecodeToSorted(mzsByte);
                 columnIndex.mzs = mzsAsInt;
             }
 
             if (columnIndex.rts == null)
             {
-                byte[] rtsByte = readByte(columnIndex.startRtListPtr, columnIndex.endRtListPtr);
-                int[] rtsAsInt = decodeToSorted(rtsByte);
+                byte[] rtsByte = ReadByte(columnIndex.startRtListPtr, columnIndex.endRtListPtr);
+                int[] rtsAsInt = DecodeToSorted(rtsByte);
                 columnIndex.rts = rtsAsInt;
             }
 
             if (columnIndex.spectraIds == null)
             {
-                byte[] spectraIdBytes = readByte(columnIndex.startSpectraIdListPtr, columnIndex.endSpectraIdListPtr);
-                int[] spectraIds = decode(spectraIdBytes);
+                byte[] spectraIdBytes = ReadByte(columnIndex.startSpectraIdListPtr, columnIndex.endSpectraIdListPtr);
+                int[] spectraIds = Decode(spectraIdBytes);
                 columnIndex.spectraIds = spectraIds;
             }
 
             if (columnIndex.intensities == null)
             {
-                byte[] intensityBytes = readByte(columnIndex.startIntensityListPtr, columnIndex.endIntensityListPtr);
-                int[] intensities = decode(intensityBytes);
+                byte[] intensityBytes = ReadByte(columnIndex.startIntensityListPtr, columnIndex.endIntensityListPtr);
+                int[] intensities = Decode(intensityBytes);
                 columnIndex.intensities = intensities;
             }
         }
     }
 
-    public byte[] readByte(long startPtr, long endPtr)
+    public byte[] ReadByte(long startPtr, long endPtr)
     {
         int delta = (int)(endPtr - startPtr);
         fs.Seek(startPtr, SeekOrigin.Begin);
@@ -101,7 +100,7 @@ public class ColumnParser
         return result;
     }
 
-    public byte[] readByte(long startPtr, int delta)
+    public byte[] ReadByte(long startPtr, int delta)
     {
         fs.Seek(startPtr, SeekOrigin.Begin);
         byte[] result = new byte[delta];
@@ -109,12 +108,12 @@ public class ColumnParser
         return result;
     }
 
-    public Xic calcXicByMz(double mz, double mzWindow)
+    public Xic CalcXicByMz(double mz, double mzWindow)
     {
-        return calcXic(mz - mzWindow, mz + mzWindow, null, null, null);
+        return CalcXic(mz - mzWindow, mz + mzWindow, null, null, null);
     }
 
-    public Xic calcXicByWindow(double mz, double mzWindow, double? rt, double? rtWindow, double? precursorMz)
+    public Xic CalcXicByWindow(double mz, double mzWindow, double? rt, double? rtWindow, double? precursorMz)
     {
         double? rtStart = null;
         double? rtEnd = null;
@@ -123,10 +122,10 @@ public class ColumnParser
             rtStart = rt - rtWindow;
             rtEnd = rt + rtWindow;
         }
-        return calcXic(mz - mzWindow, mz + mzWindow, rtStart, rtEnd, precursorMz);
+        return CalcXic(mz - mzWindow, mz + mzWindow, rtStart, rtEnd, precursorMz);
     }
 
-    public Xic calcXic(double mzStart, double mzEnd, double? rtStart, double? rtEnd, double? precursorMz)
+    public Xic CalcXic(double mzStart, double mzEnd, double? rtStart, double? rtEnd, double? precursorMz)
     {
         if (columnInfo.indexList == null || columnInfo.indexList.Count == 0)
         {
@@ -158,22 +157,22 @@ public class ColumnParser
         int[] mzs = index.mzs;
         int start = (int)(mzStart * mzPrecision);
         int end = (int)(mzEnd * mzPrecision);
-        IntPair leftMzPair = AirdMathUtil.binarySearch(mzs, start);
+        IntPair leftMzPair = AirdMathUtil.BinarySearch(mzs, start);
         int leftMzIndex = leftMzPair.right;
-        IntPair rightMzPair = AirdMathUtil.binarySearch(mzs, end);
+        IntPair rightMzPair = AirdMathUtil.BinarySearch(mzs, end);
         int rightMzIndex = rightMzPair.left;
 
         int leftRtIndex = 0;
         int rightRtIndex = index.rts.Length - 1;
         if (rtStart != null)
         {
-            IntPair leftRtPair = AirdMathUtil.binarySearch(index.rts, (int)(rtStart * 1000));
+            IntPair leftRtPair = AirdMathUtil.BinarySearch(index.rts, (int)(rtStart * 1000));
             leftRtIndex = leftRtPair.right;
         }
 
         if (rtEnd != null)
         {
-            IntPair rightRtPair = AirdMathUtil.binarySearch(index.rts, (int)(rtEnd * 1000));
+            IntPair rightRtPair = AirdMathUtil.BinarySearch(index.rts, (int)(rtEnd * 1000));
             rightRtIndex = rightRtPair.left;
         }
 
@@ -191,12 +190,12 @@ public class ColumnParser
         Dictionary<int, double> map = new Dictionary<int, double>();
         for (int k = leftMzIndex; k <= rightMzIndex; k++)
         {
-            byte[] spectraIdBytes = readByte(startPtr, spectraIdLengths[k]);
+            byte[] spectraIdBytes = ReadByte(startPtr, spectraIdLengths[k]);
             startPtr += spectraIdLengths[k];
-            byte[] intensityBytes = readByte(startPtr, intensityLengths[k]);
+            byte[] intensityBytes = ReadByte(startPtr, intensityLengths[k]);
             startPtr += intensityLengths[k];
-            int[] spectraIds = fastDecodeToSorted(spectraIdBytes);
-            int[] ints = fastDecode(intensityBytes);
+            int[] spectraIds = FastDecodeToSorted(spectraIdBytes);
+            int[] ints = FastDecode(intensityBytes);
             //解码intensity
             for (int t = 0; t < spectraIds.Length; t++)
             {
@@ -246,22 +245,22 @@ public class ColumnParser
         return new Xic(rts, intensities);
     }
 
-    public int[] decodeToSorted(byte[] origin)
+    public int[] DecodeToSorted(byte[] origin)
     {
         return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(origin));
     }
     
-    public int[] decode(byte[] origin)
+    public int[] Decode(byte[] origin)
     {
         return new VarByteWrapper().decode(ByteTrans.byteToInt(origin));
     }
     
-    public int[] fastDecodeToSorted(byte[] origin)
+    public int[] FastDecodeToSorted(byte[] origin)
     {
         return new IntegratedVarByteWrapper().decode(ByteTrans.byteToInt(origin));
     }
     
-    public int[] fastDecode(byte[] origin)
+    public int[] FastDecode(byte[] origin)
     {
         return new VarByteWrapper().decode(ByteTrans.byteToInt(origin));
     }
